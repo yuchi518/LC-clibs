@@ -70,6 +70,9 @@ typedef struct _MGN_MEM_ {
 
 #define MGN_MEM_REALLOCATE_IF_MULTI_OWNERS        1
 
+// This function shuold be used carefully, caller should always have its ownership,
+// else it is difficult to decide how to maintain retained count.
+// Should never call this function after autorelease.
 static inline void* mgn_mem_ralloc(mgn_memory_pool *pool, void *origin_mem, size_t new_size)
 {
     if (new_size == 0) return NULL;
@@ -100,7 +103,7 @@ static inline void* mgn_mem_ralloc(mgn_memory_pool *pool, void *origin_mem, size
             else
             {
                 // more than one owners, give up ownership
-                mgn_m->r--;
+                if (mgn_m->r > 0) mgn_m->r--;                           // if someone call ralloc after autorelease, should not decrease retained count
 #if MGN_MEM_REALLOCATE_IF_MULTI_OWNERS
                 // create a new one
                 size_t old_size = mgn_m->s;
