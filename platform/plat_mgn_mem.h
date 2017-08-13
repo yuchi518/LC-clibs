@@ -24,7 +24,7 @@
 /**
  * Managed memory API
  * 1. Declare a pool
- *    mgn_memory_pool pool;
+ *    mgn_memory_pool pool = null;
  * 2. Allocate a memory
  *    void *m0 = mgn_mem_alloc(&pool, 100);
  * 3. Release a memory
