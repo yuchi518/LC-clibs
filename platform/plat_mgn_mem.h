@@ -179,7 +179,7 @@ static inline void* mgn_mem_retain(mgn_memory_pool *pool, void *origin_mem)
     }
     else
     {
-        print_mgn_mem_err("[MGN_MEM] Who's memory (%p)?\n", origin_mem);
+        print_mgn_mem_err("[MGN_MEM] retain - Who's memory (%p)?\n", origin_mem);
         return NULL;
     }
 }
@@ -206,7 +206,7 @@ static inline void _mgn_mem_release(mgn_memory_pool *pool, void *origin_mem, int
         }
     }
     else
-        print_mgn_mem_err("[MGN_MEM] Who's memory (%p)?\n", origin_mem);    // error case ?
+        print_mgn_mem_err("[MGN_MEM] Release - Who's memory (%p)?\n", origin_mem);    // error case ?
 }
 
 static inline void mgn_mem_release(mgn_memory_pool *pool, void *origin_mem)
@@ -256,7 +256,7 @@ static inline size_t mgn_mem_retained_count(mgn_memory_pool *pool, void *origin_
     }
     else
     {
-        print_mgn_mem_err("[MGN_MEM] Who's memory (%p)?\n", origin_mem);
+        print_mgn_mem_err("[MGN_MEM] Retained Count - Who's memory (%p)?\n", origin_mem);
         return 0;
     }
 }
