@@ -41,8 +41,8 @@
 #define plat_io_printf_std(fmt, args...) printk("<6> " fmt, args)
 #define plat_io_printf_err(fmt, args...) printk("<3> " fmt, args)
 #else
-#define plat_io_printf_std(args...) fprintf(stdout, args)
-#define plat_io_printf_err(args...) fprintf(stderr, args)
+#define plat_io_printf_std(format, args...) fprintf(stdout, "%s[%s:%d] " format, __TIME__, __FILE__, __LINE__, ##args)
+#define plat_io_printf_err(format, args...) fprintf(stderr, "%s[%s:%d] " format, __TIME__, __FILE__, __LINE__, ##args)
 #endif
 #endif
 
