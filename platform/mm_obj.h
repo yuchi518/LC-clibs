@@ -20,9 +20,9 @@
 #endif
 
 typedef struct mmObj {
-    void* last_child;
-    void* pool;
     uint mmid;
+    void* pool;
+    void* last_child;
 } *mmObj;
 
 typedef struct mmBase {
@@ -45,7 +45,7 @@ static inline mmBase pos_b_##stru_name(void* ptr) {                             
 static inline struct stru_name* pos_o_##stru_name(void* ptr) {                      \
                return ((struct stru_name*) &((MM__##stru_name*)ptr)->iso);  }       \
                                                                                     \
-static inline void init_##stru_name(mgn_memory_pool* pool, void* p,                 \
+static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,                \
                                         void* last_child) {                         \
     MM__##stru_name* ptr = p;                                                       \
     ptr->isa.pool = pool;                                                           \
@@ -54,17 +54,18 @@ static inline void init_##stru_name(mgn_memory_pool* pool, void* p,             
     ptr->isb.super = null;                                                          \
     ptr->isb.init = fn_init;                                                        \
     ptr->isb.destroy = fn_destroy;                                                  \
+    if (fn_init != null && fn_init(&ptr->iso) == null) {                            \
+        return null;                                                                \
+    }                                                                               \
+    return p;                                                                       \
 }                                                                                   \
                                                                                     \
 static inline mmObj alloc##stru_name(mgn_memory_pool* pool) {                       \
     MM__##stru_name* ptr =                                                          \
           mgn_mem_alloc(pool, sizeof(MM__##stru_name));                             \
-    init_##stru_name(pool, ptr, &ptr->iso);                                         \
-    if (fn_init != null) {                                                          \
-        if (fn_init(&ptr->iso) == null) {                                           \
-            mgn_mem_release(pool, ptr);                                             \
-            return null;                                                            \
-        }                                                                           \
+    if (init_##stru_name(pool, ptr, &ptr->iso) == null) {                           \
+        mgn_mem_release(pool, ptr);                                                 \
+        return null;                                                                \
     }                                                                               \
     return (void*)ptr;                                                              \
 }
@@ -84,24 +85,27 @@ static inline mmBase pos_b_##stru_name(void* ptr) {                             
 static inline struct stru_name* pos_o_##stru_name(void* ptr) {                      \
                return ((struct stru_name*) &((MM__##stru_name*)ptr)->iso);  }       \
                                                                                     \
-static inline void init_##stru_name(mgn_memory_pool* pool, void* p,                 \
+static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,                \
                                         void* last_child) {                         \
     MM__##stru_name* ptr = p;                                                       \
-    init_##sup_name(pool, p, last_child);                                           \
     ptr->isb.super = pos_o_##sup_name(p);                                           \
     ptr->isb.init = fn_init;                                                        \
     ptr->isb.destroy = fn_destroy;                                                  \
+    if (init_##sup_name(pool, p, last_child) == null) {                             \
+        return null;                                                                \
+    }                                                                               \
+    if (fn_init != null && fn_init(&ptr->iso) == null) {                            \
+        return null;                                                                \
+    }                                                                               \
+    return p;                                                                       \
 }                                                                                   \
                                                                                     \
 static inline mmObj alloc##stru_name(mgn_memory_pool* pool) {                       \
     MM__##stru_name* ptr =                                                          \
           mgn_mem_alloc(pool, sizeof(MM__##stru_name));                             \
-    init_##stru_name(pool, ptr, &ptr->iso);                                         \
-    if (fn_init != null) {                                                          \
-        if (fn_init(&ptr->iso) == null) {                                           \
-            mgn_mem_release(pool, ptr);                                             \
-            return null;                                                            \
-        }                                                                           \
+    if (init_##stru_name(pool, ptr, &ptr->iso) == null) {                           \
+        mgn_mem_release(pool, ptr);                                                 \
+        return null;                                                                \
     }                                                                               \
     return (void*)ptr;                                                              \
 }
