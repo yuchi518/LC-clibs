@@ -73,7 +73,7 @@
       <file leaf-file-name="plat_mgn_mem.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/platform/plat_mgn_mem.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1799">
+            <state relative-caret-position="525">
               <caret line="35" column="21" lean-forward="false" selection-start-line="35" selection-start-column="6" selection-end-line="35" selection-end-column="21" />
               <folding />
             </state>
@@ -83,8 +83,8 @@
       <file leaf-file-name="mm_obj.h" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/platform/mm_obj.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="287">
-              <caret line="27" column="85" lean-forward="false" selection-start-line="27" selection-start-column="85" selection-end-line="27" selection-end-column="85" />
+            <state relative-caret-position="-1325">
+              <caret line="61" column="53" lean-forward="true" selection-start-line="61" selection-start-column="11" selection-end-line="61" selection-end-column="53" />
               <folding>
                 <element signature="e#101#123#0" expanded="true" />
                 <element signature="e#261#305#0" expanded="true" />
@@ -140,8 +140,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>la_ast_type_container</find>
-      <find>origin_mem</find>
       <find>alloc_struct</find>
       <find>la_ast_inst_number</find>
       <find>mgn_mem_release</find>
@@ -170,6 +168,8 @@
       <find>iss</find>
       <find>super</find>
       <find>super_base</find>
+      <find>cid</find>
+      <find>iso</find>
     </findStrings>
     <replaceStrings>
       <replace>la_output_declaration</replace>
@@ -186,6 +186,7 @@
       <replace>la_ast_type_combination</replace>
       <replace>iso</replace>
       <replace>pre_base</replace>
+      <replace>oid</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -357,11 +358,13 @@
       <workItem from="1503832468909" duration="8578000" />
       <workItem from="1503843897945" duration="1552000" />
       <workItem from="1503923334083" duration="4403000" />
+      <workItem from="1504009858314" duration="781000" />
+      <workItem from="1504010645060" duration="217000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="141586000" />
+    <option name="totallyTimeSpent" value="142584000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1920" height="1108" extended-state="0" />
@@ -812,7 +815,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/platform/plat_mgn_mem.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1799">
+        <state relative-caret-position="525">
           <caret line="35" column="21" lean-forward="false" selection-start-line="35" selection-start-column="6" selection-end-line="35" selection-end-column="21" />
           <folding />
         </state>
@@ -838,8 +841,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/platform/mm_obj.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="287">
-          <caret line="27" column="85" lean-forward="false" selection-start-line="27" selection-start-column="85" selection-end-line="27" selection-end-column="85" />
+        <state relative-caret-position="-1325">
+          <caret line="61" column="53" lean-forward="true" selection-start-line="61" selection-start-column="11" selection-end-line="61" selection-end-column="53" />
           <folding>
             <element signature="e#101#123#0" expanded="true" />
             <element signature="e#261#305#0" expanded="true" />

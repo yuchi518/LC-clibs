@@ -25,13 +25,14 @@ typedef struct mmObj {
 } *mmObj;
 
 typedef struct mmBase {
-    struct mmBase* pre_base;    // parent's base address or last child's base address
+    struct mmBase* pre_base;                                                // parent's base address or last child's base address
     void* init;
     void* destroy;
-    void* (*find)(struct mmBase* ptr_base, uint mmid, uint utilid);
+    void* (*find)(struct mmBase* ptr_base, uint mmid, uint utilid);         // for cast
+    mmObj (*find_obj)(struct mmBase* base);                                 // mmobj address is used for memory management.
 } *mmBase;
 
-#define MMRootObject(cid, stru_name, fn_init, fn_destroy)                           \
+#define MMRootObject(oid, stru_name, fn_init, fn_destroy)                           \
 typedef struct stru_name* (*p_init##stru_name)(struct stru_name* obj);              \
 typedef void (*p_destroy##stru_name)(struct stru_name* obj);                        \
                                                                                     \
@@ -46,15 +47,19 @@ static inline struct stru_name* pos_o_##stru_name(void* ptr) {                  
                return ((struct stru_name*) &((MM__##stru_name*)ptr)->iso);  }       \
                                                                                     \
 static inline void* find_##stru_name(mmBase ptr_base, uint mmid, uint untilid) {    \
-    if (mmid == cid) {                                                              \
+    if (mmid == oid) {                                                              \
         MM__##stru_name* p = container_of(ptr_base, MM__##stru_name);               \
         return &p->iso;                                                             \
     } else if (mmid == untilid) {                                                   \
-        return ptr_base->pre_base->find(ptr_base->pre_base, mmid, cid);             \
-    } else if (cid != untilid) {                                                    \
+        return ptr_base->pre_base->find(ptr_base->pre_base, mmid, oid);             \
+    } else if (oid != untilid) {                                                    \
         return ptr_base->pre_base->find(ptr_base->pre_base, mmid, untilid);         \
     }                                                                               \
     return null;                                                                    \
+}                                                                                   \
+                                                                                    \
+static inline mmObj find_obj_##stru_name(mmBase base) {                             \
+    return (void*)container_of(base, MM__##stru_name);                              \
 }                                                                                   \
                                                                                     \
 static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,                \
@@ -65,6 +70,7 @@ static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,            
     ptr->isb.init = fn_init;                                                        \
     ptr->isb.destroy = fn_destroy;                                                  \
     ptr->isb.find = find_##stru_name;                                               \
+    ptr->isb.find_obj = find_obj_##stru_name;                                       \
     if (fn_init != null && fn_init(&ptr->iso) == null) {                            \
         return null;                                                                \
     }                                                                               \
@@ -81,7 +87,7 @@ static inline struct stru_name* alloc##stru_name(mgn_memory_pool* pool) {       
     return &ptr->iso;                                                               \
 }
 
-#define MMSubObject(cid, stru_name, sup_name, fn_init, fn_destroy)                  \
+#define MMSubObject(oid, stru_name, sup_name, fn_init, fn_destroy)                  \
 typedef struct stru_name* (*p_init##stru_name)(struct stru_name* obj);              \
 typedef void (*p_destroy##stru_name)(struct stru_name* obj);                        \
                                                                                     \
@@ -97,15 +103,19 @@ static inline struct stru_name* pos_o_##stru_name(void* ptr) {                  
                return ((struct stru_name*) &((MM__##stru_name*)ptr)->iso);  }       \
                                                                                     \
 static inline void* find_##stru_name(mmBase ptr_base, uint mmid, uint untilid) {    \
-    if (mmid == cid) {                                                              \
+    if (mmid == oid) {                                                              \
         MM__##stru_name*p = container_of(ptr_base, MM__##stru_name);                \
         return &p->iso;                                                             \
     } else if (mmid == untilid) {                                                   \
-        return ptr_base->pre_base->find(ptr_base->pre_base, mmid, cid);             \
-    } else if (cid != untilid) {                                                    \
+        return ptr_base->pre_base->find(ptr_base->pre_base, mmid, oid);             \
+    } else if (oid != untilid) {                                                    \
         return ptr_base->pre_base->find(ptr_base->pre_base, mmid, untilid);         \
     }                                                                               \
     return null;                                                                    \
+}                                                                                   \
+                                                                                    \
+static inline mmObj find_obj_##stru_name(mmBase base) {                             \
+    return (void*)container_of(base, MM__##stru_name);                              \
 }                                                                                   \
                                                                                     \
 static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,                \
@@ -115,6 +125,7 @@ static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,            
     ptr->isb.init = fn_init;                                                        \
     ptr->isb.destroy = fn_destroy;                                                  \
     ptr->isb.find = find_##stru_name;                                               \
+    ptr->isb.find_obj = find_obj_##stru_name;                                       \
     if (init_##sup_name(pool, p, last_child_base) == null) {                        \
         return null;                                                                \
     }                                                                               \
@@ -133,6 +144,7 @@ static inline struct stru_name* alloc##stru_name(mgn_memory_pool* pool) {       
     }                                                                               \
     return &ptr->iso;                                                               \
 }
+
 
 /// ===== Root =====
 typedef struct MMRoot {
