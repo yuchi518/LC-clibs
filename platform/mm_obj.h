@@ -30,6 +30,7 @@ typedef struct mmBase {
     void* destroy;
     void* (*find)(struct mmBase* ptr_base, uint mmid, uint utilid);         // for cast
     mmObj (*find_obj)(struct mmBase* base);                                 // mmobj address is used for memory management.
+    const char* (*name)(void);
 } *mmBase;
 
 #define MMRootObject(oid, stru_name, fn_init, fn_destroy)                           \
@@ -62,6 +63,11 @@ static inline mmObj find_obj_##stru_name(mmBase base) {                         
     return (void*)container_of(base, MM__##stru_name);                              \
 }                                                                                   \
                                                                                     \
+static inline const char* name_##stru_name(void) {                                  \
+    static const char* _name = "" #stru_name;                                       \
+    return _name;                                                                   \
+}                                                                                   \
+                                                                                    \
 static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,                \
                                         void* last_child_base) {                    \
     MM__##stru_name* ptr = p;                                                       \
@@ -71,6 +77,7 @@ static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,            
     ptr->isb.destroy = fn_destroy;                                                  \
     ptr->isb.find = find_##stru_name;                                               \
     ptr->isb.find_obj = find_obj_##stru_name;                                       \
+    ptr->isb.name = name_##stru_name;                                               \
     if (fn_init != null && fn_init(&ptr->iso) == null) {                            \
         return null;                                                                \
     }                                                                               \
@@ -118,6 +125,11 @@ static inline mmObj find_obj_##stru_name(mmBase base) {                         
     return (void*)container_of(base, MM__##stru_name);                              \
 }                                                                                   \
                                                                                     \
+static inline const char* name_##stru_name(void) {                                  \
+    static const char* _name = "" #stru_name;                                       \
+    return _name;                                                                   \
+}                                                                                   \
+                                                                                    \
 static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,                \
                                         void* last_child_base) {                    \
     MM__##stru_name* ptr = p;                                                       \
@@ -126,6 +138,7 @@ static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,            
     ptr->isb.destroy = fn_destroy;                                                  \
     ptr->isb.find = find_##stru_name;                                               \
     ptr->isb.find_obj = find_obj_##stru_name;                                       \
+    ptr->isb.name = name_##stru_name;                                               \
     if (init_##sup_name(pool, p, last_child_base) == null) {                        \
         return null;                                                                \
     }                                                                               \
