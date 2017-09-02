@@ -26,7 +26,7 @@
  * 1. Declare a pool
  *    mgn_memory_pool pool = null;
  * 2. Allocate a memory
- *    void *m0 = mgn_mem_alloc(&pool, 100);
+ *    void* m0 = mgn_mem_alloc(&pool, 100);
  * 3. Release a memory
  *    mgn_mem_release(&pool, m0);
  * 4. Extend a memory
@@ -52,10 +52,12 @@
 #include "plat_io.h"
 #include "uthash.h"
 
+typedef void (*callback_before_mem_released)(void* mem);
 typedef struct _MGN_MEM_ {
-    void *m;  // memory
+    void* m;  // memory
     size_t s; // memory size
     size_t r; // retained count
+    callback_before_mem_released cb;        // called before released, each mem should maintain different function ptr.
     // ***** Hash table anchor *****
     UT_hash_handle hh; /* makes this structure hashable */
 } mgn_memory, *mgn_memory_pool;
@@ -73,10 +75,10 @@ typedef struct _MGN_MEM_ {
 // This function shuold be used carefully, caller should always have its ownership,
 // else it is difficult to decide how to maintain retained count.
 // Should never call this function after autorelease.
-static inline void* mgn_mem_ralloc(mgn_memory_pool *pool, void *origin_mem, size_t new_size)
+static inline void* mgn_mem_ralloc(mgn_memory_pool* pool, void* origin_mem, size_t new_size)
 {
     if (new_size == 0) return NULL;
-    mgn_memory *mgn_m = NULL;
+    mgn_memory* mgn_m = NULL;
     HASH_FIND_PTR((*pool), &origin_mem, mgn_m);
     if (NULL != mgn_m)
     {
@@ -86,7 +88,7 @@ static inline void* mgn_mem_ralloc(mgn_memory_pool *pool, void *origin_mem, size
             {
                 // realloc a new one
                 HASH_DEL((*pool), mgn_m);
-                void *new_m = plat_mem_allocate(new_size);
+                void* new_m = plat_mem_allocate(new_size);
                 if (NULL == new_m)
                 {
                     print_mgn_mem_err("[MGN_MEM] Allocate memory error\n");
@@ -113,7 +115,7 @@ static inline void* mgn_mem_ralloc(mgn_memory_pool *pool, void *origin_mem, size
                     print_mgn_mem_err("[MGN_MEM] Allocate memory error\n");
                     return NULL;                                        // error
                 }
-                void *new_m = plat_mem_allocate(new_size);              // allocate a zero memory
+                void* new_m = plat_mem_allocate(new_size);              // allocate a zero memory
                 if (NULL == new_m)
                 {
                     print_mgn_mem_err("[MGN_MEM] Allocate memory error\n");
@@ -146,7 +148,7 @@ static inline void* mgn_mem_ralloc(mgn_memory_pool *pool, void *origin_mem, size
             print_mgn_mem_err("[MGN_MEM] Allocate memory error\n");
             return NULL;                                       // error
         }
-        void *new_m = plat_mem_allocate(new_size);             // allocate a zero memory
+        void* new_m = plat_mem_allocate(new_size);             // allocate a zero memory
         if (NULL == new_m)
         {
             print_mgn_mem_err("[MGN_MEM] Allocate memory error\n");
@@ -163,14 +165,14 @@ static inline void* mgn_mem_ralloc(mgn_memory_pool *pool, void *origin_mem, size
     return mgn_m->m;
 }
 
-static inline void* mgn_mem_alloc(mgn_memory_pool *pool, size_t new_size)
+static inline void* mgn_mem_alloc(mgn_memory_pool* pool, size_t new_size)
 {
     return mgn_mem_ralloc(pool, NULL, new_size);
 }
 
-static inline void* mgn_mem_retain(mgn_memory_pool *pool, void *origin_mem)
+static inline void* mgn_mem_retain(mgn_memory_pool* pool, void* origin_mem)
 {
-    mgn_memory *mgn_m = NULL;
+    mgn_memory* mgn_m = NULL;
     HASH_FIND_PTR((*pool), &origin_mem, mgn_m);
     if (NULL != mgn_m)
     {
@@ -184,9 +186,9 @@ static inline void* mgn_mem_retain(mgn_memory_pool *pool, void *origin_mem)
     }
 }
 
-static inline void _mgn_mem_release(mgn_memory_pool *pool, void *origin_mem, int release)
+static inline void _mgn_mem_release(mgn_memory_pool* pool, void* origin_mem, int release, callback_before_mem_released cb)
 {
-    mgn_memory *mgn_m = NULL;
+    mgn_memory* mgn_m = NULL;
     HASH_FIND_PTR((*pool), &origin_mem, mgn_m);
     if (NULL != mgn_m)
     {
@@ -197,35 +199,53 @@ static inline void _mgn_mem_release(mgn_memory_pool *pool, void *origin_mem, int
             return;
         }
         mgn_m->r--;
+        mgn_m->cb = cb;
         if (0 == mgn_m->r && release)
         {
+            if (cb) cb(mgn_m->m);
             HASH_DEL((*pool), mgn_m);
             plat_mem_release(mgn_m->m);
             print_mgn_mem_dbg("[MGN_MEM] Removed memory (%p), size %zu - %u left\n", mgn_m->m, mgn_m->s, HASH_COUNT(*pool));
             plat_mem_release(mgn_m);
+        }
+        else
+        {
+            print_mgn_mem_dbg("[MGN_MEM] Not Removed memory (%p) , size %zu retain count %zu, - %u left\n", mgn_m->m, mgn_m->s, mgn_m->r, HASH_COUNT(*pool));
         }
     }
     else
         print_mgn_mem_err("[MGN_MEM] Release - Who's memory (%p)?\n", origin_mem);    // error case ?
 }
 
-static inline void mgn_mem_release(mgn_memory_pool *pool, void *origin_mem)
+static inline void mgn_mem_release(mgn_memory_pool* pool, void* origin_mem)
 {
-    _mgn_mem_release(pool, origin_mem, 1);
+    _mgn_mem_release(pool, origin_mem, 1, null);
 }
 
-static inline void mgn_mem_autorelease(mgn_memory_pool *pool, void *origin_mem)
+static inline void mgn_mem_release_w_cb(mgn_memory_pool* pool, void* origin_mem, callback_before_mem_released cb)
 {
-    _mgn_mem_release(pool, origin_mem, 0);
+    _mgn_mem_release(pool, origin_mem, 1, cb);
 }
 
-static inline void mgn_mem_release_unused(mgn_memory_pool *pool)
+static inline void mgn_mem_autorelease(mgn_memory_pool* pool, void* origin_mem)
 {
-    mgn_memory *mgn_m, *tmp;
+    _mgn_mem_release(pool, origin_mem, 0, null);
+}
+
+static inline void mgn_mem_autorelease_w_cb(mgn_memory_pool* pool, void* origin_mem, callback_before_mem_released cb)
+{
+    _mgn_mem_release(pool, origin_mem, 0, cb);
+}
+
+static inline void mgn_mem_release_unused(mgn_memory_pool* pool)
+{
+    mgn_memory* mgn_m;
+    mgn_memory* tmp;
     HASH_ITER(hh, (*pool), mgn_m, tmp)
     {
         if (0 == mgn_m->r)
         {
+            if (mgn_m->cb) mgn_m->cb(mgn_m->m);
             HASH_DEL((*pool), mgn_m);
             plat_mem_release(mgn_m->m);
             print_mgn_mem_dbg("[MGN_MEM] Removed memory (%p), size %zu - %u left\n", mgn_m->m, mgn_m->s, HASH_COUNT(*pool));
@@ -234,11 +254,13 @@ static inline void mgn_mem_release_unused(mgn_memory_pool *pool)
     }
 }
 
-static inline void mgn_mem_release_all(mgn_memory_pool *pool)
+static inline void mgn_mem_release_all(mgn_memory_pool* pool)
 {
-    mgn_memory *mgn_m, *tmp;
+    mgn_memory* mgn_m;
+    mgn_memory* tmp;
     HASH_ITER(hh, (*pool), mgn_m, tmp)
     {
+        // do not call released cb, because of unordered objects' allocation
         HASH_DEL((*pool), mgn_m);
         plat_mem_release(mgn_m->m);
         print_mgn_mem_dbg("[MGN_MEM] Removed memory (%p), size %zu - %u left\n", mgn_m->m, mgn_m->s, HASH_COUNT(*pool));
@@ -246,9 +268,9 @@ static inline void mgn_mem_release_all(mgn_memory_pool *pool)
     }
 }
 
-static inline size_t mgn_mem_retained_count(mgn_memory_pool *pool, void *origin_mem)
+static inline size_t mgn_mem_retained_count(mgn_memory_pool* pool, void* origin_mem)
 {
-    mgn_memory *mgn_m = NULL;
+    mgn_memory* mgn_m = NULL;
     HASH_FIND_PTR((*pool), &origin_mem, mgn_m);
     if (NULL != mgn_m)
     {
