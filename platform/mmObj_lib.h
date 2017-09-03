@@ -43,13 +43,9 @@ MMRootObject(MMOBJ_OBJECT, MMObject, initMMObject, destroyMMObject);
 
 /// ====== Primary type =====
 typedef struct MMPrimary {
-    void* key;
-    uint key_len;
 }*MMPrimary;
 
 static inline MMPrimary initMMPrimary(MMPrimary primary) {
-    primary->key = null;
-    primary->key_len = 0;
     return primary;
 }
 
@@ -66,8 +62,6 @@ typedef struct MMInt {
 
 static inline MMInt initMMInt(MMInt obj) {
     MMPrimary pri = toMMPrimary(obj);
-    pri->key_len = sizeof(obj->value);
-    pri->key = &obj->value;
     return obj;
 }
 
@@ -83,8 +77,6 @@ typedef struct MMLong {
 
 static inline MMLong initMMLong(MMLong obj) {
     MMPrimary pri = toMMPrimary(obj);
-    pri->key_len = sizeof(obj->value);
-    pri->key = &obj->value;
     return obj;
 }
 
@@ -101,8 +93,6 @@ typedef struct MMFloat {
 
 static inline MMFloat initMMFloat(MMFloat obj) {
     MMPrimary pri = toMMPrimary(obj);
-    pri->key_len = sizeof(obj->value);
-    pri->key = &obj->value;
     return obj;
 }
 
@@ -119,8 +109,6 @@ typedef struct MMDouble {
 
 static inline MMDouble initMMDouble(MMDouble obj) {
     MMPrimary pri = toMMPrimary(obj);
-    pri->key_len = sizeof(obj->value);
-    pri->key = &obj->value;
     return obj;
 }
 
@@ -136,10 +124,16 @@ typedef struct MMString {
     char* value;
 }*MMString;
 
+static inline void hash_of_MMString(void* stru, void** key, uint* key_len)
+{
+    char* c = ((MMString)stru)->value;
+    if (key) *key = c;
+    if (key_len) *key_len = plat_cstr_length(c);
+}
+
 static inline MMString initMMString(MMString obj) {
     MMPrimary pri = toMMPrimary(obj);
-    pri->key_len = 0;
-    pri->key = null;
+    set_hash_for_mmobj(pri, hash_of_MMString);
     return obj;
 }
 
@@ -164,8 +158,6 @@ static inline MMString allocMMStringWithCString(mgn_memory_pool* pool, char* str
     }
     obj->value = new_string;
     MMPrimary pri = toMMPrimary(obj);
-    pri->key_len = len+1;
-    pri->key = obj->value;
 
     return obj;
 }
@@ -255,8 +247,11 @@ static inline void addMMMapItem(MMMap map, MMPrimary key, MMObject value)
     if (key == null || value==null) return;
     mgn_memory_pool* pool = pool_of_mmobj(map);
     MMMapItem item;
+    void* hash_key = null;
+    uint hash_key_len = 0;
+    hash_of_mmobj(key, &hash_key, &hash_key_len);
 
-    HASH_FIND(hh, map->rootItem, key->key, key->key_len, item);
+    HASH_FIND(hh, map->rootItem, hash_key, (size_t)hash_key_len, item);
     if (item != null)
     {
         HASH_DEL(map->rootItem, item);
@@ -266,15 +261,18 @@ static inline void addMMMapItem(MMMap map, MMPrimary key, MMObject value)
     {
         item = allocMMMapItemWithKeyValue(pool, key, value);
     }
-    HASH_ADD_KEYPTR(hh, map->rootItem, key->key, key->key_len, item);
+    HASH_ADD_KEYPTR(hh, map->rootItem, hash_key, hash_key_len, item);
 
 }
 
 static inline MMObject getMMMapItemValue(MMMap map, MMPrimary key) {
     MMMapItem item;
     if (key==null) return null;
+    void* hash_key = null;
+    uint hash_key_len = 0;
+    hash_of_mmobj(key, &hash_key, &hash_key_len);
 
-    HASH_FIND(hh, map->rootItem, key->key, key->key_len, item);
+    HASH_FIND(hh, map->rootItem, hash_key, (size_t)hash_key_len, item);
     if (item == null) {
         return null;
     }
@@ -284,8 +282,11 @@ static inline MMObject getMMMapItemValue(MMMap map, MMPrimary key) {
 static inline void removeMMMapItem(MMMap map, MMPrimary key) {
     MMMapItem item;
     if (key==null) return;
+    void* hash_key = null;
+    uint hash_key_len = 0;
+    hash_of_mmobj(key, &hash_key, &hash_key_len);
 
-    HASH_FIND(hh, map->rootItem, key->key, key->key_len, item);
+    HASH_FIND(hh, map->rootItem, hash_key, (size_t)hash_key_len, item);
     if (item == null) {
         return;
     }

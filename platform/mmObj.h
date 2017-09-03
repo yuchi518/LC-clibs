@@ -27,11 +27,11 @@ typedef struct mmObj {
 
 typedef struct mmBase {
     struct mmBase* pre_base;                                                // parent's base address or last child's base address
-    //void* init;
     void (*destroy)(struct mmBase* ptr_base);
     void* (*find)(struct mmBase* ptr_base, uint mmid, uint utilid);         // for cast
     mmObj (*find_obj)(struct mmBase* base);                                 // mmobj address is used for memory management.
     const char* (*name)(void);
+    void (*hash)(void* stru, void** key, uint* key_len);
 } *mmBase;
 
 static inline mmBase __stru2base(void* stru) {
@@ -87,6 +87,11 @@ static inline void destroy_##stru_name(mmBase ptr_base) {                       
     }                                                                               \
 }                                                                                   \
                                                                                     \
+static inline void hash_##stru_name(void* stru, void** key, uint* key_len) {        \
+    if (key) *key = (void*)stru;                                                    \
+    if (key_len) *key_len = sizeof(struct stru_name);                               \
+}                                                                                   \
+                                                                                    \
 static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,                \
                                         mmBase last_child_base, uint mmid) {        \
     MM__##stru_name* ptr = p;                                                       \
@@ -97,6 +102,7 @@ static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,            
     ptr->isb.find = find_##stru_name;                                               \
     ptr->isb.find_obj = find_obj_##stru_name;                                       \
     ptr->isb.name = name_##stru_name;                                               \
+    ptr->isb.hash = hash_##stru_name;                                               \
     if (fn_init != null && fn_init(&ptr->iso) == null) {                            \
         return null;                                                                \
     }                                                                               \
@@ -162,6 +168,11 @@ static inline void destroy_##stru_name(mmBase ptr_base) {                       
     }                                                                               \
 }                                                                                   \
                                                                                     \
+static inline void hash_##stru_name(void* stru, void** key, uint* key_len) {        \
+    if (key) *key = (void*)stru;                                                    \
+    if (key_len) *key_len = sizeof(struct stru_name);                               \
+}                                                                                   \
+                                                                                    \
 static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,                \
                                         mmBase last_child_base, uint mmid) {        \
     MM__##stru_name* ptr = p;                                                       \
@@ -170,6 +181,13 @@ static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,            
     ptr->isb.find = find_##stru_name;                                               \
     ptr->isb.find_obj = find_obj_##stru_name;                                       \
     ptr->isb.name = name_##stru_name;                                               \
+    if (ptr->isb.pre_base->hash == null ||                                          \
+                ptr->isb.pre_base->hash != hash_##sup_name) {                       \
+        /*if paraent updated hash, child follows it.*/                              \
+        ptr->isb.hash = null;                                                       \
+    } else {                                                                        \
+        ptr->isb.hash = hash_##stru_name;                                           \
+    }                                                                               \
     if (init_##sup_name(pool, p, last_child_base, mmid) == null) {                  \
         return null;                                                                \
     }                                                                               \
@@ -208,7 +226,7 @@ static inline void __trigger_release_flow(void* mem) {
         struct mmBase isb;
     } *ptr;
     ptr = (struct obj*)mem;                             /*it's first obj*/
-    ptr->isb.pre_base->destroy(ptr->isb.pre_base);    /*call last child destroy*/
+    ptr->isb.pre_base->destroy(ptr->isb.pre_base);      /*call last child destroy*/
 }
 
 static inline void release_mmobj(void* stru) {
@@ -245,6 +263,31 @@ static inline uint oid_of_mmobj(void* stru) {
     mmBase base = __stru2base(stru);
     mmObj obj = base->find_obj(base);
     return obj->_oid;
+}
+
+static void set_hash_for_mmobj(void* stru, void (*hash)(void* base, void** key, uint* key_len)) {
+    if (stru == null) return;
+    mmBase base = __stru2base(stru);
+    base->hash = hash;
+}
+
+static inline void hash_of_mmobj(void* stru, void** key, void* key_len) {
+    if (stru == null || key == null || key_len == null) return;
+    mmBase base = __stru2base(stru);
+    struct obj {
+        struct mmObj isa;
+        struct mmBase isb;
+        struct {
+            uint8 __dummy;
+        } c;
+    } oo;
+    base = ((struct obj*)base->find_obj(base))->isb.pre_base;       // user first one to find last one
+    while(base->hash == null) {
+        // search last one hash implementation
+        base = base->pre_base;
+    }
+
+    base->hash((((void*)base) + (uint)&oo.c - (uint)&oo.isb), key, key_len);
 }
 
 /// samples
