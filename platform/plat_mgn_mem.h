@@ -283,4 +283,9 @@ static inline size_t mgn_mem_retained_count(mgn_memory_pool* pool, void* origin_
     }
 }
 
+static inline size_t mgn_mem_count_of_mem(mgn_memory_pool* pool)
+{
+    return HASH_COUNT(*pool);
+}
+
 #endif
