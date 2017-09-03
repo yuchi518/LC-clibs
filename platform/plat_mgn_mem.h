@@ -62,12 +62,12 @@ typedef struct _MGN_MEM_ {
     UT_hash_handle hh; /* makes this structure hashable */
 } mgn_memory, *mgn_memory_pool;
 
-#if 0
-#define print_mgn_mem_err plat_io_printf_err
-#define print_mgn_mem_dbg
+#if 1
+#define print_mgn_mem_err(...) plat_io_printf_err(__VA_ARGS__)
+#define print_mgn_mem_dbg(...)
 #else
-#define print_mgn_mem_err plat_io_printf_err
-#define print_mgn_mem_dbg plat_io_printf_std
+#define print_mgn_mem_err(...) plat_io_printf_err(__VA_ARGS__)
+#define print_mgn_mem_dbg(...) plat_io_printf_std(__VA_ARGS__)
 #endif
 
 #define MGN_MEM_REALLOCATE_IF_MULTI_OWNERS        1

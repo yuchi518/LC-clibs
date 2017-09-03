@@ -2,8 +2,8 @@
 <project version="4">
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true" buildAllGenerated="true">
     <generated>
-      <config projectName="proc_la" targetName="proc_la" />
       <config projectName="proc_la" targetName="RunGenerator" />
+      <config projectName="proc_la" targetName="proc_la" />
     </generated>
   </component>
   <component name="CMakeSettings">
@@ -17,7 +17,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ast_obj.c" afterPath="$PROJECT_DIR$/ast_obj.c" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/platform/mmObj.h" afterPath="$PROJECT_DIR$/platform/mmObj.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/platform/mmObj_lib.h" afterPath="$PROJECT_DIR$/platform/mmObj_lib.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/platform/plat_mgn_mem.h" afterPath="$PROJECT_DIR$/platform/plat_mgn_mem.h" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -32,8 +31,8 @@
       <file leaf-file-name="main.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="15" column="32" lean-forward="false" selection-start-line="15" selection-start-column="4" selection-end-line="15" selection-end-column="32" />
+            <state relative-caret-position="255">
+              <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
               </folding>
@@ -41,14 +40,12 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="plat_mgn_mem.h" pinned="false" current-in-tab="false">
+      <file leaf-file-name="plat_mgn_mem.h" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/platform/plat_mgn_mem.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="565">
-              <caret line="285" column="41" lean-forward="false" selection-start-line="285" selection-start-column="21" selection-end-line="285" selection-end-column="41" />
-              <folding>
-                <element signature="e#2054#2124#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="366">
+              <caret line="69" column="61" lean-forward="false" selection-start-line="69" selection-start-column="61" selection-end-line="69" selection-end-column="61" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -56,8 +53,8 @@
       <file leaf-file-name="mmObj.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/platform/mmObj.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="483">
-              <caret line="289" column="60" lean-forward="false" selection-start-line="289" selection-start-column="60" selection-end-line="289" selection-end-column="60" />
+            <state relative-caret-position="2820">
+              <caret line="188" column="84" lean-forward="false" selection-start-line="188" selection-start-column="84" selection-end-line="188" selection-end-column="84" />
               <folding>
                 <element signature="e#101#123#0" expanded="true" />
                 <element signature="e#261#305#0" expanded="true" />
@@ -66,11 +63,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mmObj_lib.h" pinned="false" current-in-tab="true">
+      <file leaf-file-name="mmObj_lib.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/platform/mmObj_lib.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1833">
-              <caret line="130" column="48" lean-forward="false" selection-start-line="130" selection-start-column="48" selection-end-line="130" selection-end-column="48" />
+            <state relative-caret-position="1860">
+              <caret line="124" column="24" lean-forward="false" selection-start-line="124" selection-start-column="19" selection-end-line="124" selection-end-column="24" />
               <folding>
                 <element signature="e#102#120#0" expanded="true" />
               </folding>
@@ -81,8 +78,8 @@
       <file leaf-file-name="ast_obj.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ast_obj.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="863">
-              <caret line="73" column="44" lean-forward="false" selection-start-line="73" selection-start-column="44" selection-end-line="73" selection-end-column="44" />
+            <state relative-caret-position="1080">
+              <caret line="72" column="0" lean-forward="false" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -103,8 +100,8 @@
       <file leaf-file-name="ast.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ast.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3555">
-              <caret line="237" column="40" lean-forward="false" selection-start-line="237" selection-start-column="40" selection-end-line="237" selection-end-column="40" />
+            <state relative-caret-position="2865">
+              <caret line="191" column="65" lean-forward="false" selection-start-line="191" selection-start-column="16" selection-end-line="191" selection-end-column="65" />
               <folding>
                 <element signature="e#45#64#0" expanded="true" />
               </folding>
@@ -115,8 +112,8 @@
       <file leaf-file-name="ast.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ast.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2805">
-              <caret line="187" column="55" lean-forward="false" selection-start-line="187" selection-start-column="55" selection-end-line="188" selection-end-column="63" />
+            <state relative-caret-position="4080">
+              <caret line="272" column="23" lean-forward="false" selection-start-line="272" selection-start-column="13" selection-end-line="272" selection-end-column="23" />
               <folding>
                 <element signature="e#95#120#0" expanded="true" />
                 <element signature="e#5065#5109#0" expanded="true" />
@@ -129,14 +126,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>release(</find>
-      <find>const</find>
-      <find>name_of</find>
-      <find>pool_managed</find>
-      <find>retain(</find>
-      <find>oid</find>
-      <find>releaseMMObj</find>
-      <find>MMOBJ_INT</find>
       <find>MMOBJ_LONG</find>
       <find>MMOBJ_FLOAT</find>
       <find>MMOBJ_DOUBLE</find>
@@ -159,6 +148,14 @@
       <find>stru_name</find>
       <find>mgn_mem_alloc</find>
       <find>HASH_COUNT</find>
+      <find>list</find>
+      <find>ut_ast__icd</find>
+      <find>utarray_done</find>
+      <find>collection</find>
+      <find>coll</find>
+      <find>hash_key</find>
+      <find>hash_</find>
+      <find>##sup_name</find>
     </findStrings>
     <replaceStrings>
       <replace>la_output_declaration</replace>
@@ -211,10 +208,10 @@
         <option value="$PROJECT_DIR$/platform/mm_obj.h" />
         <option value="$PROJECT_DIR$/main.c" />
         <option value="$PROJECT_DIR$/ast_obj.h" />
-        <option value="$PROJECT_DIR$/platform/mmObj.h" />
         <option value="$PROJECT_DIR$/platform/mmObj_lib.h" />
-        <option value="$PROJECT_DIR$/platform/plat_mgn_mem.h" />
         <option value="$PROJECT_DIR$/ast_obj.c" />
+        <option value="$PROJECT_DIR$/platform/mmObj.h" />
+        <option value="$PROJECT_DIR$/platform/plat_mgn_mem.h" />
       </list>
     </option>
   </component>
@@ -366,11 +363,14 @@
       <workItem from="1504347623094" duration="1615000" />
       <workItem from="1504402595291" duration="3790000" />
       <workItem from="1504406531814" duration="1106000" />
+      <workItem from="1504408004558" duration="3440000" />
+      <workItem from="1504413569180" duration="2960000" />
+      <workItem from="1504416651317" duration="13000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="179431000" />
+    <option name="totallyTimeSpent" value="185844000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1920" height="1110" extended-state="6" />
@@ -378,18 +378,18 @@
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Tool Output" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16570328" sideWeight="0.67395836" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.42003852" sideWeight="0.67395836" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3291506" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1988417" sideWeight="0.32604167" order="9" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24662814" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24662814" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3291506" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="LuaJ" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="ANTLR Preview" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3996139" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.60308284" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -428,7 +428,7 @@
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="17" />
+      <option name="time" value="24" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -700,13 +700,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/platform/utarray.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="259">
-          <caret line="176" column="22" lean-forward="false" selection-start-line="176" selection-start-column="16" selection-end-line="176" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
@@ -758,37 +751,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="15" column="32" lean-forward="false" selection-start-line="15" selection-start-column="4" selection-end-line="15" selection-end-column="32" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ast.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3555">
-          <caret line="237" column="40" lean-forward="false" selection-start-line="237" selection-start-column="40" selection-end-line="237" selection-end-column="40" />
-          <folding>
-            <element signature="e#45#64#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ast.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2805">
-          <caret line="187" column="55" lean-forward="false" selection-start-line="187" selection-start-column="55" selection-end-line="188" selection-end-column="63" />
-          <folding>
-            <element signature="e#95#120#0" expanded="true" />
-            <element signature="e#5065#5109#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/platform/plat_mem.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="337">
@@ -797,22 +759,48 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/platform/mmObj.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="483">
-          <caret line="289" column="60" lean-forward="false" selection-start-line="289" selection-start-column="60" selection-end-line="289" selection-end-column="60" />
-          <folding>
-            <element signature="e#101#123#0" expanded="true" />
-            <element signature="e#261#305#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/platform/plat_string.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="510">
           <caret line="34" column="33" lean-forward="false" selection-start-line="34" selection-start-column="17" selection-end-line="34" selection-end-column="33" />
-          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ast.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4080">
+          <caret line="272" column="23" lean-forward="false" selection-start-line="272" selection-start-column="13" selection-end-line="272" selection-end-column="23" />
+          <folding>
+            <element signature="e#95#120#0" expanded="true" />
+            <element signature="e#5065#5109#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/platform/utarray.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="481">
+          <caret line="220" column="8" lean-forward="false" selection-start-line="220" selection-start-column="8" selection-end-line="220" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#16#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ast.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2865">
+          <caret line="191" column="65" lean-forward="false" selection-start-line="191" selection-start-column="16" selection-end-line="191" selection-end-column="65" />
+          <folding>
+            <element signature="e#45#64#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -826,31 +814,40 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/platform/plat_mgn_mem.h">
+    <entry file="file://$PROJECT_DIR$/platform/mmObj_lib.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="565">
-          <caret line="285" column="41" lean-forward="false" selection-start-line="285" selection-start-column="21" selection-end-line="285" selection-end-column="41" />
+        <state relative-caret-position="1860">
+          <caret line="124" column="24" lean-forward="false" selection-start-line="124" selection-start-column="19" selection-end-line="124" selection-end-column="24" />
           <folding>
-            <element signature="e#2054#2124#0" expanded="true" />
+            <element signature="e#102#120#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ast_obj.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="863">
-          <caret line="73" column="44" lean-forward="false" selection-start-line="73" selection-start-column="44" selection-end-line="73" selection-end-column="44" />
+        <state relative-caret-position="1080">
+          <caret line="72" column="0" lean-forward="false" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/platform/mmObj_lib.h">
+    <entry file="file://$PROJECT_DIR$/platform/mmObj.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1833">
-          <caret line="130" column="48" lean-forward="false" selection-start-line="130" selection-start-column="48" selection-end-line="130" selection-end-column="48" />
+        <state relative-caret-position="2820">
+          <caret line="188" column="84" lean-forward="false" selection-start-line="188" selection-start-column="84" selection-end-line="188" selection-end-column="84" />
           <folding>
-            <element signature="e#102#120#0" expanded="true" />
+            <element signature="e#101#123#0" expanded="true" />
+            <element signature="e#261#305#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/platform/plat_mgn_mem.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="366">
+          <caret line="69" column="61" lean-forward="false" selection-start-line="69" selection-start-column="61" selection-end-line="69" selection-end-column="61" />
+          <folding />
         </state>
       </provider>
     </entry>

@@ -175,6 +175,9 @@ static inline void hash_##stru_name(void* stru, void** key, uint* key_len) {    
                                                                                     \
 static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,                \
                                         mmBase last_child_base, uint mmid) {        \
+    if (init_##sup_name(pool, p, last_child_base, mmid) == null) {                  \
+        return null;                                                                \
+    }                                                                               \
     MM__##stru_name* ptr = p;                                                       \
     ptr->isb.pre_base = pos_b_##sup_name(p);                                        \
     ptr->isb.destroy = destroy_##stru_name;                                         \
@@ -183,13 +186,10 @@ static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,            
     ptr->isb.name = name_##stru_name;                                               \
     if (ptr->isb.pre_base->hash == null ||                                          \
                 ptr->isb.pre_base->hash != hash_##sup_name) {                       \
-        /*if paraent updated hash, child follows it.*/                              \
+        /*if paraent updated hash, child follows it. TODO: verify this feature */   \
         ptr->isb.hash = null;                                                       \
     } else {                                                                        \
         ptr->isb.hash = hash_##stru_name;                                           \
-    }                                                                               \
-    if (init_##sup_name(pool, p, last_child_base, mmid) == null) {                  \
-        return null;                                                                \
     }                                                                               \
     if (fn_init != null && fn_init(&ptr->iso) == null) {                            \
         return null;                                                                \

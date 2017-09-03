@@ -61,7 +61,6 @@ typedef struct MMInt {
 }*MMInt;
 
 static inline MMInt initMMInt(MMInt obj) {
-    MMPrimary pri = toMMPrimary(obj);
     return obj;
 }
 
@@ -76,7 +75,6 @@ typedef struct MMLong {
 }*MMLong;
 
 static inline MMLong initMMLong(MMLong obj) {
-    MMPrimary pri = toMMPrimary(obj);
     return obj;
 }
 
@@ -132,8 +130,7 @@ static inline void hash_of_MMString(void* stru, void** key, uint* key_len)
 }
 
 static inline MMString initMMString(MMString obj) {
-    MMPrimary pri = toMMPrimary(obj);
-    set_hash_for_mmobj(pri, hash_of_MMString);
+    set_hash_for_mmobj(obj, hash_of_MMString);
     return obj;
 }
 
@@ -157,7 +154,6 @@ static inline MMString allocMMStringWithCString(mgn_memory_pool* pool, char* str
         return null;
     }
     obj->value = new_string;
-    MMPrimary pri = toMMPrimary(obj);
 
     return obj;
 }
@@ -298,18 +294,50 @@ MMSubObject(MMOBJ_MAP, MMMap, MMContainer, initMMMap, destroyMMMap);
 
 /// ====== List =====
 typedef struct MMList {
-
+    UT_array list;
 }*MMList;
 
+/*void ut_ast_init(void *ptr)
+{
+    *(void**)ptr = null;
+}*/
+
+static inline void ut_ast_copy(void *dst, const void *src)
+{
+    void** dst_obj = (void**)dst;
+    void** src_obj = (void**)src;
+    *dst_obj = *src_obj;
+    retain_mmobj(*dst_obj);
+}
+
+static inline void ut_ast_del(void *ptr)
+{
+    release_mmobj(*(void**)ptr);
+}
+
+
 static inline MMList initMMList(MMList obj) {
+    static UT_icd ut_ast__icd = { sizeof(void*), /*ut_ast_init*/null, ut_ast_copy, ut_ast_del };
+    utarray_init(&obj->list, &ut_ast__icd);
     return obj;
 }
 
 static inline void destroyMMList(MMList obj) {
-
+    utarray_done(&obj->list);
 }
 
 MMSubObject(MMOBJ_LIST, MMList, MMContainer, initMMList, destroyMMList);
+
+static inline void pushMMListItem(MMList list, MMObject item) {
+    utarray_push_back(&list->list, &item);
+}
+
+static inline MMObject popMMListItem(MMList list) {
+    MMObject obj = (MMObject)utarray_back(&list->list);;
+    retain_mmobj(obj);
+    utarray_pop_back(&list->list);
+    return autorelease_mmobj(obj);
+}
 
 #endif //PROC_LA_MMOBJ_LIB_H
 
