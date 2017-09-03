@@ -2,8 +2,8 @@
 <project version="4">
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true" buildAllGenerated="true">
     <generated>
-      <config projectName="proc_la" targetName="proc_la" />
       <config projectName="proc_la" targetName="RunGenerator" />
+      <config projectName="proc_la" targetName="proc_la" />
     </generated>
   </component>
   <component name="CMakeSettings">
@@ -42,7 +42,7 @@
       <file leaf-file-name="plat_mgn_mem.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/platform/plat_mgn_mem.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="355">
+            <state relative-caret-position="1035">
               <caret line="69" column="61" lean-forward="false" selection-start-line="69" selection-start-column="61" selection-end-line="69" selection-end-column="61" />
               <folding />
             </state>
@@ -52,11 +52,11 @@
       <file leaf-file-name="mmObj.h" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/platform/mmObj.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2148">
-              <caret line="89" column="24" lean-forward="false" selection-start-line="89" selection-start-column="19" selection-end-line="89" selection-end-column="24" />
+            <state relative-caret-position="-4010">
+              <caret line="18" column="75" lean-forward="false" selection-start-line="18" selection-start-column="72" selection-end-line="18" selection-end-column="75" />
               <folding>
                 <element signature="e#101#123#0" expanded="true" />
-                <element signature="e#261#305#0" expanded="true" />
+                <element signature="e#266#310#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -65,8 +65,8 @@
       <file leaf-file-name="mmObj_lib.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/platform/mmObj_lib.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-9">
-              <caret line="126" column="0" lean-forward="false" selection-start-line="124" selection-start-column="0" selection-end-line="126" selection-end-column="0" />
+            <state relative-caret-position="4090">
+              <caret line="287" column="13" lean-forward="false" selection-start-line="287" selection-start-column="4" selection-end-line="287" selection-end-column="13" />
               <folding>
                 <element signature="e#102#120#0" expanded="true" />
               </folding>
@@ -77,7 +77,7 @@
       <file leaf-file-name="ast_obj.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ast_obj.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="123">
+            <state relative-caret-position="825">
               <caret line="55" column="26" lean-forward="false" selection-start-line="55" selection-start-column="8" selection-end-line="55" selection-end-column="26" />
               <folding />
             </state>
@@ -125,8 +125,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>pool</find>
-      <find>callback_before_mem_released</find>
       <find>struct</find>
       <find>Removed memory</find>
       <find>release</find>
@@ -155,6 +153,8 @@
       <find>hash_of_MMString</find>
       <find>baseTo</find>
       <find>string</find>
+      <find>container_of</find>
+      <find>isb</find>
     </findStrings>
     <replaceStrings>
       <replace>la_output_declaration</replace>
@@ -179,6 +179,7 @@
       <replace>pool_of_mmobj</replace>
       <replace>retain_mmobj(</replace>
       <replace>*</replace>
+      <replace>container_of_base</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -366,11 +367,12 @@
       <workItem from="1504413569180" duration="2960000" />
       <workItem from="1504416651317" duration="13000" />
       <workItem from="1504417572412" duration="2251000" />
+      <workItem from="1504439117770" duration="1049000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="188095000" />
+    <option name="totallyTimeSpent" value="189144000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1920" height="1110" extended-state="6" />
@@ -386,6 +388,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3291506" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="LuaJ" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32851636" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="ANTLR Preview" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -396,7 +399,6 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3291506" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -816,7 +818,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/platform/plat_mgn_mem.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="355">
+        <state relative-caret-position="1035">
           <caret line="69" column="61" lean-forward="false" selection-start-line="69" selection-start-column="61" selection-end-line="69" selection-end-column="61" />
           <folding />
         </state>
@@ -824,7 +826,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ast_obj.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="123">
+        <state relative-caret-position="825">
           <caret line="55" column="26" lean-forward="false" selection-start-line="55" selection-start-column="8" selection-end-line="55" selection-end-column="26" />
           <folding />
         </state>
@@ -832,8 +834,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/platform/mmObj_lib.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-9">
-          <caret line="126" column="0" lean-forward="false" selection-start-line="124" selection-start-column="0" selection-end-line="126" selection-end-column="0" />
+        <state relative-caret-position="4090">
+          <caret line="287" column="13" lean-forward="false" selection-start-line="287" selection-start-column="4" selection-end-line="287" selection-end-column="13" />
           <folding>
             <element signature="e#102#120#0" expanded="true" />
           </folding>
@@ -842,11 +844,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/platform/mmObj.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2148">
-          <caret line="89" column="24" lean-forward="false" selection-start-line="89" selection-start-column="19" selection-end-line="89" selection-end-column="24" />
+        <state relative-caret-position="-4010">
+          <caret line="18" column="75" lean-forward="false" selection-start-line="18" selection-start-column="72" selection-end-line="18" selection-end-column="75" />
           <folding>
             <element signature="e#101#123#0" expanded="true" />
-            <element signature="e#261#305#0" expanded="true" />
+            <element signature="e#266#310#0" expanded="true" />
           </folding>
         </state>
       </provider>

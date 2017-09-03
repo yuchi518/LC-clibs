@@ -60,7 +60,10 @@ typedef struct MMInt {
     uint32 value;
 }*MMInt;
 
+static inline void hash_of_MMInt(mmBase base, void** key, uint* key_len);
+
 static inline MMInt initMMInt(MMInt obj) {
+    set_hash_for_mmobj(obj, hash_of_MMInt);
     return obj;
 }
 
@@ -69,12 +72,23 @@ static inline void destroyMMInt(MMInt obj) {
 
 MMSubObject(MMOBJ_INT, MMInt, MMPrimary, initMMInt, destroyMMInt);
 
+static inline void hash_of_MMInt(mmBase base, void** key, uint* key_len)
+{
+    MMInt obj = baseToMMInt(base);
+    if (key) *key = &obj->value;
+    if (key_len) *key_len = sizeof(obj->value);
+}
+
+
 /// ====== Primary type - Long (64bits) =====
 typedef struct MMLong {
     uint64 value;
 }*MMLong;
 
+static inline void hash_of_MMLong(mmBase base, void** key, uint* key_len);
+
 static inline MMLong initMMLong(MMLong obj) {
+    set_hash_for_mmobj(obj, hash_of_MMLong);
     return obj;
 }
 
@@ -84,13 +98,23 @@ static inline void destroyMMLong(MMLong oint) {
 
 MMSubObject(MMOBJ_LONG, MMLong, MMPrimary, initMMLong, destroyMMLong);
 
+static inline void hash_of_MMLong(mmBase base, void** key, uint* key_len)
+{
+    MMLong obj = baseToMMLong(base);
+    if (key) *key = &obj->value;
+    if (key_len) *key_len = sizeof(obj->value);
+}
+
+
 /// ====== Primary type - Float (32bits) =====
 typedef struct MMFloat {
     float value;
 }*MMFloat;
 
+static inline void hash_of_MMFloat(mmBase base, void** key, uint* key_len);
+
 static inline MMFloat initMMFloat(MMFloat obj) {
-    MMPrimary pri = toMMPrimary(obj);
+    set_hash_for_mmobj(obj, hash_of_MMFloat);
     return obj;
 }
 
@@ -100,13 +124,23 @@ static inline void destroyMMFloat(MMFloat obj) {
 
 MMSubObject(MMOBJ_FLOAT, MMFloat, MMPrimary, initMMFloat, destroyMMFloat);
 
+static inline void hash_of_MMFloat(mmBase base, void** key, uint* key_len)
+{
+    MMFloat obj = baseToMMFloat(base);
+    if (key) *key = &obj->value;
+    if (key_len) *key_len = sizeof(obj->value);
+}
+
+
 /// ====== Primary type - Double (64bits) =====
 typedef struct MMDouble {
     double value;
 }*MMDouble;
 
+static inline void hash_of_MMDouble(mmBase base, void** key, uint* key_len);
+
 static inline MMDouble initMMDouble(MMDouble obj) {
-    MMPrimary pri = toMMPrimary(obj);
+    set_hash_for_mmobj(obj, hash_of_MMDouble);
     return obj;
 }
 
@@ -116,6 +150,12 @@ static inline void destroyMMDouble(MMDouble obj) {
 
 MMSubObject(MMOBJ_DOUBLE, MMDouble, MMPrimary, initMMDouble, destroyMMDouble);
 
+static inline void hash_of_MMDouble(mmBase base, void** key, uint* key_len)
+{
+    MMDouble obj = baseToMMDouble(base);
+    if (key) *key = &obj->value;
+    if (key_len) *key_len = sizeof(obj->value);
+}
 
 /// ====== Primary type - String =====
 typedef struct MMString {

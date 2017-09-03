@@ -8,15 +8,17 @@
 #include "plat_type.h"
 #include "plat_mgn_mem.h"
 
-#ifndef container_of
+#ifndef container_of_base
 #ifdef __GNUC__
 #define member_type(type, member) __typeof__ (((type *)0)->member)
 #else
 #define member_type(type, member) const void
 #endif
 
-#define container_of(ptr, type) ((type *)( \
+#define container_of_base(ptr, type) ((type *)( \
     (char *)(member_type(type, isb) *){ ptr } - ((size_t) &((type *)0)->isb) ))
+#define container_of_stru(ptr, type) ((type *)( \
+    (char *)(member_type(type, iso) *){ ptr } - ((size_t) &((type *)0)->iso) ))
 #endif
 
 struct mmBase;
@@ -28,7 +30,7 @@ typedef struct mmObj {
 typedef struct mmBase {
     struct mmBase* pre_base;                                                // parent's base address or last child's base address
     void (*destroy)(struct mmBase* base);
-    void* (*find)(struct mmBase* base, uint mmid, uint utilid);         // for cast
+    void* (*find)(struct mmBase* base, uint mmid, uint utilid);             // for cast
     mmObj (*find_obj)(struct mmBase* base);                                 // mmobj address is used for memory management.
     const char* (*name)(void);
     void (*hash)(struct mmBase* base, void** key, uint* key_len);
@@ -61,7 +63,7 @@ static inline struct stru_name* pos_o_##stru_name(void* ptr) {                  
                                                                                     \
 static inline void* find_##stru_name(mmBase ptr_base, uint mmid, uint untilid) {    \
     if (mmid == oid) {                                                              \
-        MM__##stru_name* p = container_of(ptr_base, MM__##stru_name);               \
+        MM__##stru_name* p = container_of_base(ptr_base, MM__##stru_name);          \
         return &p->iso;                                                             \
     } else if (mmid == untilid) {                                                   \
         return ptr_base->pre_base->find(ptr_base->pre_base, mmid, oid);             \
@@ -72,7 +74,7 @@ static inline void* find_##stru_name(mmBase ptr_base, uint mmid, uint untilid) {
 }                                                                                   \
                                                                                     \
 static inline mmObj find_obj_##stru_name(mmBase base) {                             \
-    return (void*)container_of(base, MM__##stru_name);                              \
+    return (void*)container_of_base(base, MM__##stru_name);                         \
 }                                                                                   \
                                                                                     \
 static inline const char* name_##stru_name(void) {                                  \
@@ -82,7 +84,7 @@ static inline const char* name_##stru_name(void) {                              
                                                                                     \
 static inline void destroy_##stru_name(mmBase ptr_base) {                           \
     if (fn_destroy != null) {                                                       \
-        MM__##stru_name* ptr = container_of(ptr_base, MM__##stru_name);             \
+        MM__##stru_name* ptr = container_of_base(ptr_base, MM__##stru_name);        \
         fn_destroy(&ptr->iso);                                                      \
     }                                                                               \
 }                                                                                   \
@@ -145,7 +147,7 @@ static inline struct stru_name* pos_o_##stru_name(void* ptr) {                  
                                                                                     \
 static inline void* find_##stru_name(mmBase ptr_base, uint mmid, uint untilid) {    \
     if (mmid == oid) {                                                              \
-        MM__##stru_name*p = container_of(ptr_base, MM__##stru_name);                \
+        MM__##stru_name*p = container_of_base(ptr_base, MM__##stru_name);           \
         return &p->iso;                                                             \
     } else if (mmid == untilid) {                                                   \
         return ptr_base->pre_base->find(ptr_base->pre_base, mmid, oid);             \
@@ -156,7 +158,7 @@ static inline void* find_##stru_name(mmBase ptr_base, uint mmid, uint untilid) {
 }                                                                                   \
                                                                                     \
 static inline mmObj find_obj_##stru_name(mmBase base) {                             \
-    return (void*)container_of(base, MM__##stru_name);                              \
+    return (void*)container_of_base(base, MM__##stru_name);                         \
 }                                                                                   \
                                                                                     \
 static inline const char* name_##stru_name(void) {                                  \
@@ -166,7 +168,7 @@ static inline const char* name_##stru_name(void) {                              
                                                                                     \
 static inline void destroy_##stru_name(mmBase ptr_base) {                           \
     if (fn_destroy != null) {                                                       \
-        MM__##stru_name* ptr = container_of(ptr_base, MM__##stru_name);             \
+        MM__##stru_name* ptr = container_of_base(ptr_base, MM__##stru_name);        \
         ptr->isb.pre_base->destroy(ptr->isb.pre_base);                              \
         fn_destroy(&ptr->iso);                                                      \
     }                                                                               \
