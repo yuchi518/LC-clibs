@@ -122,12 +122,7 @@ typedef struct MMString {
     char* value;
 }*MMString;
 
-static inline void hash_of_MMString(void* stru, void** key, uint* key_len)
-{
-    char* c = ((MMString)stru)->value;
-    if (key) *key = c;
-    if (key_len) *key_len = plat_cstr_length(c);
-}
+static inline void hash_of_MMString(mmBase base, void** key, uint* key_len);
 
 static inline MMString initMMString(MMString obj) {
     set_hash_for_mmobj(obj, hash_of_MMString);
@@ -143,6 +138,14 @@ static inline void destroyMMString(MMString obj) {
 }
 
 MMSubObject(MMOBJ_STRING, MMString, MMPrimary, initMMString, destroyMMString);
+
+static inline void hash_of_MMString(mmBase base, void** key, uint* key_len)
+{
+    MMString string = baseToMMString(base);
+    char* c = string->value;
+    if (key) *key = c;
+    if (key_len) *key_len = plat_cstr_length(c);
+}
 
 static inline MMString allocMMStringWithCString(mgn_memory_pool* pool, char* string) {
     uint len = plat_cstr_length(string);
