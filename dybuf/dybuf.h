@@ -863,7 +863,7 @@ enum {
 #endif    
     typdex_typ_string   = 0xa,              // variable length string
     typdex_typ_bytes    = 0xb,              // variable length binary
-    typdex_typ_array    = 0xc,              // array of items
+    typdex_typ_list     = 0xc,              // array of items
     typdex_typ_map      = 0xd,              // items map
     typdex_typ_f        = 0xf,              // functions
 };

@@ -36,7 +36,7 @@ typedef struct mmBase {
     void (*hash)(struct mmBase* base, void** key, uint* key_len);
 } *mmBase;
 
-static inline mmBase __stru2base(void* stru) {
+plat_inline mmBase __stru2base(void* stru) {
     struct {
         struct mmObj a;
         struct mmBase b;
@@ -56,12 +56,12 @@ typedef struct {                                                                
     struct mmBase isb;                                                              \
     struct stru_name iso;                                                           \
 } MM__##stru_name;                                                                  \
-static inline mmBase pos_b_##stru_name(void* ptr) {                                 \
+plat_inline mmBase pos_b_##stru_name(void* ptr) {                                   \
                return ((mmBase) &((MM__##stru_name*)ptr)->isb);  }                  \
-static inline struct stru_name* pos_o_##stru_name(void* ptr) {                      \
+plat_inline struct stru_name* pos_o_##stru_name(void* ptr) {                        \
                return ((struct stru_name*) &((MM__##stru_name*)ptr)->iso);  }       \
                                                                                     \
-static inline void* find_##stru_name(mmBase ptr_base, uint mmid, uint untilid) {    \
+plat_inline void* find_##stru_name(mmBase ptr_base, uint mmid, uint untilid) {      \
     if (mmid == oid) {                                                              \
         MM__##stru_name* p = container_of_base(ptr_base, MM__##stru_name);          \
         return &p->iso;                                                             \
@@ -73,28 +73,28 @@ static inline void* find_##stru_name(mmBase ptr_base, uint mmid, uint untilid) {
     return null;                                                                    \
 }                                                                                   \
                                                                                     \
-static inline mmObj find_obj_##stru_name(mmBase base) {                             \
+plat_inline mmObj find_obj_##stru_name(mmBase base) {                               \
     return (void*)container_of_base(base, MM__##stru_name);                         \
 }                                                                                   \
                                                                                     \
-static inline const char* name_##stru_name(void) {                                  \
+plat_inline const char* name_##stru_name(void) {                                    \
     static const char* _name = "" #stru_name;                                       \
     return _name;                                                                   \
 }                                                                                   \
                                                                                     \
-static inline void destroy_##stru_name(mmBase ptr_base) {                           \
+plat_inline void destroy_##stru_name(mmBase ptr_base) {                             \
     if (fn_destroy != null) {                                                       \
         MM__##stru_name* ptr = container_of_base(ptr_base, MM__##stru_name);        \
         fn_destroy(&ptr->iso);                                                      \
     }                                                                               \
 }                                                                                   \
                                                                                     \
-static inline void hash_##stru_name(mmBase base, void** key, uint* key_len) {       \
+plat_inline void hash_##stru_name(mmBase base, void** key, uint* key_len) {         \
     if (key) *key = &(base->pre_base);                                              \
     if (key_len) *key_len = sizeof(base->pre_base);                                 \
 }                                                                                   \
                                                                                     \
-static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,                \
+plat_inline void* init_##stru_name(mgn_memory_pool* pool, void* p,                  \
                                         mmBase last_child_base, uint mmid) {        \
     MM__##stru_name* ptr = p;                                                       \
     ptr->isa._pool = pool;                                                          \
@@ -111,7 +111,7 @@ static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,            
     return p;                                                                       \
 }                                                                                   \
                                                                                     \
-static inline struct stru_name* alloc##stru_name(mgn_memory_pool* pool) {           \
+plat_inline struct stru_name* alloc##stru_name(mgn_memory_pool* pool) {             \
     MM__##stru_name* ptr =                                                          \
           mgn_mem_alloc(pool, sizeof(MM__##stru_name));                             \
     if (init_##stru_name(pool, ptr, &ptr->isb, oid) == null) {                      \
@@ -121,12 +121,12 @@ static inline struct stru_name* alloc##stru_name(mgn_memory_pool* pool) {       
     return &ptr->iso;                                                               \
 }                                                                                   \
                                                                                     \
-static inline struct stru_name* to##stru_name(void* stru) {                         \
+plat_inline struct stru_name* to##stru_name(void* stru) {                           \
     mmBase base = __stru2base(stru);                                                \
     return (struct stru_name*)(base->find(base, oid, oid));                         \
 }                                                                                   \
                                                                                     \
-static inline struct stru_name* baseTo##stru_name(mmBase base) {                    \
+plat_inline struct stru_name* baseTo##stru_name(mmBase base) {                      \
     return (struct stru_name*)(base->find(base, oid, oid));                         \
 }
 
@@ -140,12 +140,12 @@ typedef struct {                                                                
     struct stru_name iso;                                                           \
 } MM__##stru_name;                                                                  \
                                                                                     \
-static inline mmBase pos_b_##stru_name(void* ptr) {                                 \
+plat_inline mmBase pos_b_##stru_name(void* ptr) {                                   \
                return ((mmBase) &((MM__##stru_name*)ptr)->isb);  }                  \
-static inline struct stru_name* pos_o_##stru_name(void* ptr) {                      \
+plat_inline struct stru_name* pos_o_##stru_name(void* ptr) {                        \
                return ((struct stru_name*) &((MM__##stru_name*)ptr)->iso);  }       \
                                                                                     \
-static inline void* find_##stru_name(mmBase ptr_base, uint mmid, uint untilid) {    \
+plat_inline void* find_##stru_name(mmBase ptr_base, uint mmid, uint untilid) {      \
     if (mmid == oid) {                                                              \
         MM__##stru_name*p = container_of_base(ptr_base, MM__##stru_name);           \
         return &p->iso;                                                             \
@@ -157,16 +157,16 @@ static inline void* find_##stru_name(mmBase ptr_base, uint mmid, uint untilid) {
     return null;                                                                    \
 }                                                                                   \
                                                                                     \
-static inline mmObj find_obj_##stru_name(mmBase base) {                             \
+plat_inline mmObj find_obj_##stru_name(mmBase base) {                               \
     return (void*)container_of_base(base, MM__##stru_name);                         \
 }                                                                                   \
                                                                                     \
-static inline const char* name_##stru_name(void) {                                  \
+plat_inline const char* name_##stru_name(void) {                                    \
     static const char* _name = "" #stru_name;                                       \
     return _name;                                                                   \
 }                                                                                   \
                                                                                     \
-static inline void destroy_##stru_name(mmBase ptr_base) {                           \
+plat_inline void destroy_##stru_name(mmBase ptr_base) {                             \
     if (fn_destroy != null) {                                                       \
         MM__##stru_name* ptr = container_of_base(ptr_base, MM__##stru_name);        \
         ptr->isb.pre_base->destroy(ptr->isb.pre_base);                              \
@@ -174,7 +174,7 @@ static inline void destroy_##stru_name(mmBase ptr_base) {                       
     }                                                                               \
 }                                                                                   \
                                                                                     \
-static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,                \
+plat_inline void* init_##stru_name(mgn_memory_pool* pool, void* p,                  \
                                         mmBase last_child_base, uint mmid) {        \
     if (init_##sup_name(pool, p, last_child_base, mmid) == null) {                  \
         return null;                                                                \
@@ -192,7 +192,7 @@ static inline void* init_##stru_name(mgn_memory_pool* pool, void* p,            
     return p;                                                                       \
 }                                                                                   \
                                                                                     \
-static inline struct stru_name* alloc##stru_name(mgn_memory_pool* pool) {           \
+plat_inline struct stru_name* alloc##stru_name(mgn_memory_pool* pool) {             \
     MM__##stru_name* ptr =                                                          \
           mgn_mem_alloc(pool, sizeof(MM__##stru_name));                             \
     if (init_##stru_name(pool, ptr, &ptr->isb, oid) == null) {                      \
@@ -202,16 +202,16 @@ static inline struct stru_name* alloc##stru_name(mgn_memory_pool* pool) {       
     return &ptr->iso;                                                               \
 }                                                                                   \
                                                                                     \
-static inline struct stru_name* to##stru_name(void* stru) {                         \
+plat_inline struct stru_name* to##stru_name(void* stru) {                           \
     mmBase base = __stru2base(stru);                                                \
     return (struct stru_name*)(base->find(base, oid, oid));                         \
 }                                                                                   \
                                                                                     \
-static inline struct stru_name* baseTo##stru_name(mmBase base) {                    \
+plat_inline struct stru_name* baseTo##stru_name(mmBase base) {                      \
     return (struct stru_name*)(base->find(base, oid, oid));                         \
 }
 
-static inline void* __retain_mmobj(void* stru) {
+plat_inline void* __retain_mmobj(void* stru) {
     if (stru == null) return null;
     mmBase base = __stru2base(stru);
     mmObj obj = base->find_obj(base);
@@ -219,7 +219,7 @@ static inline void* __retain_mmobj(void* stru) {
 }
 #define retain_mmobj(stru) ((typeof(stru))__retain_mmobj(stru))
 
-static inline void __trigger_release_flow(void* mem) {
+plat_inline void __trigger_release_flow(void* mem) {
     struct obj {
         struct mmObj isa;
         struct mmBase isb;
@@ -228,14 +228,14 @@ static inline void __trigger_release_flow(void* mem) {
     ptr->isb.pre_base->destroy(ptr->isb.pre_base);      /*call last child destroy*/
 }
 
-static inline void release_mmobj(void* stru) {
+plat_inline void release_mmobj(void* stru) {
     if (stru == null) return;
     mmBase base = __stru2base(stru);
     mmObj obj = base->find_obj(base);                   /*find first obj*/
     mgn_mem_release_w_cb(obj->_pool, obj, __trigger_release_flow);
 }
 
-static inline void* __autorelease_mmobj(void* stru) {
+plat_inline void* __autorelease_mmobj(void* stru) {
     if (stru == null) return null;
     mmBase base = __stru2base(stru);
     mmObj obj = base->find_obj(base);
@@ -244,20 +244,20 @@ static inline void* __autorelease_mmobj(void* stru) {
 }
 #define autorelease_mmobj(stru) ((typeof(stru))__autorelease_mmobj(stru))
 
-static inline const char* name_of_mmobj(void* stru) {
+plat_inline const char* name_of_mmobj(void* stru) {
     if (stru == null) return null;
     mmBase base = __stru2base(stru);
     return base->name();
 }
 
-static inline mgn_memory_pool* pool_of_mmobj(void* stru) {
+plat_inline mgn_memory_pool* pool_of_mmobj(void* stru) {
     if (stru == null) return null;
     mmBase base = __stru2base(stru);
     mmObj obj = base->find_obj(base);
     return obj->_pool;
 }
 
-static inline uint oid_of_mmobj(void* stru) {
+plat_inline uint oid_of_mmobj(void* stru) {
     if (stru == null) return null;
     mmBase base = __stru2base(stru);
     mmObj obj = base->find_obj(base);
@@ -270,7 +270,7 @@ static void set_hash_for_mmobj(void* stru, void (*hash)(mmBase base, void** key,
     base->hash = hash;
 }
 
-static inline void hash_of_mmobj(void* stru, void** key, void* key_len) {
+plat_inline void hash_of_mmobj(void* stru, void** key, void* key_len) {
     if (stru == null || key == null || key_len == null) return;
     mmBase base = __stru2base(stru);
     struct objobj {
@@ -297,11 +297,11 @@ typedef struct MMRoot {
 
 }*MMRoot;
 
-static inline MMRoot initMMRoot(MMRoot obj) {
+plat_inline MMRoot initMMRoot(MMRoot obj) {
     return obj;
 }
 
-static inline void destroyMMRoot(MMRoot obj) {
+plat_inline void destroyMMRoot(MMRoot obj) {
 
 }
 
@@ -312,11 +312,11 @@ typedef struct MMChild {
 
 }*MMChild;
 
-static inline MMChild initMMChild(MMChild obj) {
+plat_inline MMChild initMMChild(MMChild obj) {
     return obj;
 }
 
-static inline void destroyMMChild(MMChild obj) {
+plat_inline void destroyMMChild(MMChild obj) {
 
 }
 
@@ -327,11 +327,11 @@ typedef struct MMSon {
 
 }*MMSon;
 
-static inline MMSon initMMSon(MMSon obj) {
+plat_inline MMSon initMMSon(MMSon obj) {
     return obj;
 }
 
-static inline void destroyMMSon(MMSon obj) {
+plat_inline void destroyMMSon(MMSon obj) {
 
 }
 

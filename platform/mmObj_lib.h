@@ -31,11 +31,11 @@ typedef struct MMObject {
 
 }* MMObject;
 
-static inline MMObject initMMObject(MMObject obj) {
+plat_inline MMObject initMMObject(MMObject obj) {
     return obj;
 }
 
-static inline void destroyMMObject(MMObject obj) {
+plat_inline void destroyMMObject(MMObject obj) {
 
 }
 
@@ -45,11 +45,11 @@ MMRootObject(MMOBJ_OBJECT, MMObject, initMMObject, destroyMMObject);
 typedef struct MMPrimary {
 }*MMPrimary;
 
-static inline MMPrimary initMMPrimary(MMPrimary primary) {
+plat_inline MMPrimary initMMPrimary(MMPrimary primary) {
     return primary;
 }
 
-static inline void destroyMMPrimary(MMPrimary primary) {
+plat_inline void destroyMMPrimary(MMPrimary primary) {
 
 }
 
@@ -60,19 +60,19 @@ typedef struct MMInt {
     uint32 value;
 }*MMInt;
 
-static inline void hash_of_MMInt(mmBase base, void** key, uint* key_len);
+plat_inline void hash_of_MMInt(mmBase base, void** key, uint* key_len);
 
-static inline MMInt initMMInt(MMInt obj) {
+plat_inline MMInt initMMInt(MMInt obj) {
     set_hash_for_mmobj(obj, hash_of_MMInt);
     return obj;
 }
 
-static inline void destroyMMInt(MMInt obj) {
+plat_inline void destroyMMInt(MMInt obj) {
 }
 
 MMSubObject(MMOBJ_INT, MMInt, MMPrimary, initMMInt, destroyMMInt);
 
-static inline void hash_of_MMInt(mmBase base, void** key, uint* key_len)
+plat_inline void hash_of_MMInt(mmBase base, void** key, uint* key_len)
 {
     MMInt obj = baseToMMInt(base);
     if (key) *key = &obj->value;
@@ -85,20 +85,20 @@ typedef struct MMLong {
     uint64 value;
 }*MMLong;
 
-static inline void hash_of_MMLong(mmBase base, void** key, uint* key_len);
+plat_inline void hash_of_MMLong(mmBase base, void** key, uint* key_len);
 
-static inline MMLong initMMLong(MMLong obj) {
+plat_inline MMLong initMMLong(MMLong obj) {
     set_hash_for_mmobj(obj, hash_of_MMLong);
     return obj;
 }
 
-static inline void destroyMMLong(MMLong oint) {
+plat_inline void destroyMMLong(MMLong oint) {
 
 }
 
 MMSubObject(MMOBJ_LONG, MMLong, MMPrimary, initMMLong, destroyMMLong);
 
-static inline void hash_of_MMLong(mmBase base, void** key, uint* key_len)
+plat_inline void hash_of_MMLong(mmBase base, void** key, uint* key_len)
 {
     MMLong obj = baseToMMLong(base);
     if (key) *key = &obj->value;
@@ -111,20 +111,20 @@ typedef struct MMFloat {
     float value;
 }*MMFloat;
 
-static inline void hash_of_MMFloat(mmBase base, void** key, uint* key_len);
+plat_inline void hash_of_MMFloat(mmBase base, void** key, uint* key_len);
 
-static inline MMFloat initMMFloat(MMFloat obj) {
+plat_inline MMFloat initMMFloat(MMFloat obj) {
     set_hash_for_mmobj(obj, hash_of_MMFloat);
     return obj;
 }
 
-static inline void destroyMMFloat(MMFloat obj) {
+plat_inline void destroyMMFloat(MMFloat obj) {
 
 }
 
 MMSubObject(MMOBJ_FLOAT, MMFloat, MMPrimary, initMMFloat, destroyMMFloat);
 
-static inline void hash_of_MMFloat(mmBase base, void** key, uint* key_len)
+plat_inline void hash_of_MMFloat(mmBase base, void** key, uint* key_len)
 {
     MMFloat obj = baseToMMFloat(base);
     if (key) *key = &obj->value;
@@ -137,20 +137,20 @@ typedef struct MMDouble {
     double value;
 }*MMDouble;
 
-static inline void hash_of_MMDouble(mmBase base, void** key, uint* key_len);
+plat_inline void hash_of_MMDouble(mmBase base, void** key, uint* key_len);
 
-static inline MMDouble initMMDouble(MMDouble obj) {
+plat_inline MMDouble initMMDouble(MMDouble obj) {
     set_hash_for_mmobj(obj, hash_of_MMDouble);
     return obj;
 }
 
-static inline void destroyMMDouble(MMDouble obj) {
+plat_inline void destroyMMDouble(MMDouble obj) {
 
 }
 
 MMSubObject(MMOBJ_DOUBLE, MMDouble, MMPrimary, initMMDouble, destroyMMDouble);
 
-static inline void hash_of_MMDouble(mmBase base, void** key, uint* key_len)
+plat_inline void hash_of_MMDouble(mmBase base, void** key, uint* key_len)
 {
     MMDouble obj = baseToMMDouble(base);
     if (key) *key = &obj->value;
@@ -162,14 +162,14 @@ typedef struct MMString {
     char* value;
 }*MMString;
 
-static inline void hash_of_MMString(mmBase base, void** key, uint* key_len);
+plat_inline void hash_of_MMString(mmBase base, void** key, uint* key_len);
 
-static inline MMString initMMString(MMString obj) {
+plat_inline MMString initMMString(MMString obj) {
     set_hash_for_mmobj(obj, hash_of_MMString);
     return obj;
 }
 
-static inline void destroyMMString(MMString obj) {
+plat_inline void destroyMMString(MMString obj) {
     if (obj->value) {
         mgn_memory_pool* pool = pool_of_mmobj(obj);
         mgn_mem_release(pool, obj->value);
@@ -179,7 +179,7 @@ static inline void destroyMMString(MMString obj) {
 
 MMSubObject(MMOBJ_STRING, MMString, MMPrimary, initMMString, destroyMMString);
 
-static inline void hash_of_MMString(mmBase base, void** key, uint* key_len)
+plat_inline void hash_of_MMString(mmBase base, void** key, uint* key_len)
 {
     MMString string = baseToMMString(base);
     char* c = string->value;
@@ -187,7 +187,7 @@ static inline void hash_of_MMString(mmBase base, void** key, uint* key_len)
     if (key_len) *key_len = plat_cstr_length(c);
 }
 
-static inline MMString allocMMStringWithCString(mgn_memory_pool* pool, char* string) {
+plat_inline MMString allocMMStringWithCString(mgn_memory_pool* pool, char* string) {
     uint len = plat_cstr_length(string);
     char* new_string = mgn_mem_alloc(pool, len+1);
     plat_mem_copy(new_string, string, len+1);
@@ -206,11 +206,11 @@ typedef struct MMContainer {
 
 }*MMContainer;
 
-static inline MMContainer initMMContainer(MMContainer obj) {
+plat_inline MMContainer initMMContainer(MMContainer obj) {
     return obj;
 }
 
-static inline void destroyMMContainer(MMContainer obj) {
+plat_inline void destroyMMContainer(MMContainer obj) {
 
 }
 
@@ -223,20 +223,20 @@ typedef struct MMMapItem {
     UT_hash_handle hh;
 }*MMMapItem;
 
-static inline MMMapItem initMMMapItem(MMMapItem item) {
+plat_inline MMMapItem initMMMapItem(MMMapItem item) {
     item->key = null;
     item->value = null;
     return item;
 }
 
-static inline void destroyMMMapItem(MMMapItem item) {
+plat_inline void destroyMMMapItem(MMMapItem item) {
     if (item->key) release_mmobj(item->key);
     if (item->value) release_mmobj(item->value);
 }
 
 MMSubObject(MMOBJ_MAPITEM, MMMapItem, MMObject, initMMMapItem, destroyMMMapItem);
 
-static inline MMMapItem allocMMMapItemWithKeyValue(mgn_memory_pool* pool, MMPrimary key, MMObject value) {
+plat_inline MMMapItem allocMMMapItemWithKeyValue(mgn_memory_pool* pool, MMPrimary key, MMObject value) {
     if (key == null || value == null) return null;
     MMMapItem item = allocMMMapItem(pool);
     if (item == null) return null;
@@ -245,7 +245,7 @@ static inline MMMapItem allocMMMapItemWithKeyValue(mgn_memory_pool* pool, MMPrim
     return item;
 }
 
-static inline MMMapItem replaceMMMapItemKeyValue(MMMapItem item, MMPrimary key, MMObject value) {
+plat_inline MMMapItem replaceMMMapItemKeyValue(MMMapItem item, MMPrimary key, MMObject value) {
     retain_mmobj(key);
     retain_mmobj(value);
     release_mmobj(item->key);
@@ -265,12 +265,12 @@ typedef struct MMMap {
     MMMapItem rootItem;
 }*MMMap;
 
-static inline MMMap initMMMap(MMMap map) {
+plat_inline MMMap initMMMap(MMMap map) {
     map->rootItem = null;
     return map;
 }
 
-static inline void destroyMMMap(MMMap map) {
+plat_inline void destroyMMMap(MMMap map) {
     MMMapItem item;
     MMMapItem tmp;
 
@@ -281,7 +281,7 @@ static inline void destroyMMMap(MMMap map) {
     }
 }
 
-static inline void addMMMapItem(MMMap map, MMPrimary key, MMObject value)
+plat_inline void addMMMapItem(MMMap map, MMPrimary key, MMObject value)
 {
     if (key == null || value==null) return;
     mgn_memory_pool* pool = pool_of_mmobj(map);
@@ -304,7 +304,7 @@ static inline void addMMMapItem(MMMap map, MMPrimary key, MMObject value)
 
 }
 
-static inline MMObject getMMMapItemValue(MMMap map, MMPrimary key) {
+plat_inline MMObject getMMMapItemValue(MMMap map, MMPrimary key) {
     MMMapItem item;
     if (key==null) return null;
     void* hash_key = null;
@@ -318,7 +318,7 @@ static inline MMObject getMMMapItemValue(MMMap map, MMPrimary key) {
     return item->value;
 }
 
-static inline void removeMMMapItem(MMMap map, MMPrimary key) {
+plat_inline void removeMMMapItem(MMMap map, MMPrimary key) {
     MMMapItem item;
     if (key==null) return;
     void* hash_key = null;
@@ -345,7 +345,7 @@ typedef struct MMList {
     *(void**)ptr = null;
 }*/
 
-static inline void ut_ast_copy(void *dst, const void *src)
+plat_inline void ut_ast_copy(void *dst, const void *src)
 {
     void** dst_obj = (void**)dst;
     void** src_obj = (void**)src;
@@ -353,29 +353,29 @@ static inline void ut_ast_copy(void *dst, const void *src)
     retain_mmobj(*dst_obj);
 }
 
-static inline void ut_ast_del(void *ptr)
+plat_inline void ut_ast_del(void *ptr)
 {
     release_mmobj(*(void**)ptr);
 }
 
 
-static inline MMList initMMList(MMList obj) {
+plat_inline MMList initMMList(MMList obj) {
     static UT_icd ut_ast__icd = { sizeof(void*), /*ut_ast_init*/null, ut_ast_copy, ut_ast_del };
     utarray_init(&obj->list, &ut_ast__icd);
     return obj;
 }
 
-static inline void destroyMMList(MMList obj) {
+plat_inline void destroyMMList(MMList obj) {
     utarray_done(&obj->list);
 }
 
 MMSubObject(MMOBJ_LIST, MMList, MMContainer, initMMList, destroyMMList);
 
-static inline void pushMMListItem(MMList list, MMObject item) {
+plat_inline void pushMMListItem(MMList list, MMObject item) {
     utarray_push_back(&list->list, &item);
 }
 
-static inline MMObject popMMListItem(MMList list) {
+plat_inline MMObject popMMListItem(MMList list) {
     MMObject obj = (MMObject)utarray_back(&list->list);;
     retain_mmobj(obj);
     utarray_pop_back(&list->list);
