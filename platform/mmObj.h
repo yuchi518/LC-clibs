@@ -27,6 +27,7 @@ typedef struct mmObj {
     mgn_memory_pool* _pool;
 } *mmObj;
 
+struct Packer;
 typedef struct mmBase {
     struct mmBase* pre_base;                                                // parent's base address or last child's base address
     void (*destroy)(struct mmBase* base);
@@ -34,6 +35,7 @@ typedef struct mmBase {
     mmObj (*find_obj)(struct mmBase* base);                                 // mmobj address is used for memory management.
     const char* (*name)(void);
     void (*hash)(struct mmBase* base, void** key, uint* key_len);
+    void (*pack)(struct mmBase* base, struct Packer* pkr);
 } *mmBase;
 
 plat_inline mmBase __stru2base(void* stru) {
@@ -44,10 +46,18 @@ plat_inline mmBase __stru2base(void* stru) {
             uint8 _dummp;
         } c;
     } obj;
-    return (mmBase)(((void*)stru) - (((uint)&obj.c) - ((uint)&obj.b)));
+    return (mmBase)((/*(void*)*/stru) - (((uint)&obj.c) - ((uint)&obj.b)));
 }
 
-#define MMRootObject(oid, stru_name, fn_init, fn_destroy)                           \
+typedef struct Unpacker {
+
+} *Unpacker;
+
+typedef struct Packer {
+
+} *Packer;
+
+#define MMRootObject(oid, stru_name, fn_init, fn_destroy, fn_pack)                  \
 typedef struct stru_name* (*p_init##stru_name)(struct stru_name* obj);              \
 typedef void (*p_destroy##stru_name)(struct stru_name* obj);                        \
                                                                                     \
@@ -57,17 +67,17 @@ typedef struct {                                                                
     struct stru_name iso;                                                           \
 } MM__##stru_name;                                                                  \
 plat_inline mmBase pos_b_##stru_name(void* ptr) {                                   \
-               return ((mmBase) &((MM__##stru_name*)ptr)->isb);  }                  \
+               return (mmBase) &((MM__##stru_name*)ptr)->isb;  }                    \
 plat_inline struct stru_name* pos_o_##stru_name(void* ptr) {                        \
-               return ((struct stru_name*) &((MM__##stru_name*)ptr)->iso);  }       \
+               return (struct stru_name*) &((MM__##stru_name*)ptr)->iso;  }         \
                                                                                     \
 plat_inline void* find_##stru_name(mmBase ptr_base, uint mmid, uint untilid) {      \
-    if (mmid == oid) {                                                              \
+    if (mmid == (oid)) {                                                            \
         MM__##stru_name* p = container_of_base(ptr_base, MM__##stru_name);          \
         return &p->iso;                                                             \
     } else if (mmid == untilid) {                                                   \
-        return ptr_base->pre_base->find(ptr_base->pre_base, mmid, oid);             \
-    } else if (oid != untilid) {                                                    \
+        return ptr_base->pre_base->find(ptr_base->pre_base, mmid, (oid));           \
+    } else if ((oid) != untilid) {                                                  \
         return ptr_base->pre_base->find(ptr_base->pre_base, mmid, untilid);         \
     }                                                                               \
     return null;                                                                    \
@@ -83,9 +93,10 @@ plat_inline const char* name_##stru_name(void) {                                
 }                                                                                   \
                                                                                     \
 plat_inline void destroy_##stru_name(mmBase ptr_base) {                             \
-    if (fn_destroy != null) {                                                       \
+    void (*destroy_impl)(struct stru_name* base) = fn_destroy;                      \
+    if (destroy_impl != null) {                                                     \
         MM__##stru_name* ptr = container_of_base(ptr_base, MM__##stru_name);        \
-        fn_destroy(&ptr->iso);                                                      \
+        destroy_impl(&ptr->iso);                                                    \
     }                                                                               \
 }                                                                                   \
                                                                                     \
@@ -94,8 +105,10 @@ plat_inline void hash_##stru_name(mmBase base, void** key, uint* key_len) {     
     if (key_len) *key_len = sizeof(base->pre_base);                                 \
 }                                                                                   \
                                                                                     \
+plat_inline void pack_##stru_name(mmBase base, Packer pkr);                         \
 plat_inline void* init_##stru_name(mgn_memory_pool* pool, void* p,                  \
-                                        mmBase last_child_base, uint mmid) {        \
+                                        mmBase last_child_base, uint mmid,          \
+                                                        Unpacker unpkr) {           \
     MM__##stru_name* ptr = p;                                                       \
     ptr->isa._pool = pool;                                                          \
     ptr->isa._oid = mmid;                                                           \
@@ -105,7 +118,9 @@ plat_inline void* init_##stru_name(mgn_memory_pool* pool, void* p,              
     ptr->isb.find_obj = find_obj_##stru_name;                                       \
     ptr->isb.name = name_##stru_name;                                               \
     ptr->isb.hash = hash_##stru_name;                                               \
-    if (fn_init != null && fn_init(&ptr->iso) == null) {                            \
+    ptr->isb.pack = pack_##stru_name;                                               \
+    struct stru_name* (*init_impl)(struct stru_name*, Unpacker) = fn_init;          \
+    if (init_impl != null && init_impl(&ptr->iso, unpkr) == null) {                 \
         return null;                                                                \
     }                                                                               \
     return p;                                                                       \
@@ -114,23 +129,40 @@ plat_inline void* init_##stru_name(mgn_memory_pool* pool, void* p,              
 plat_inline struct stru_name* alloc##stru_name(mgn_memory_pool* pool) {             \
     MM__##stru_name* ptr =                                                          \
           mgn_mem_alloc(pool, sizeof(MM__##stru_name));                             \
-    if (init_##stru_name(pool, ptr, &ptr->isb, oid) == null) {                      \
+    if (init_##stru_name(pool, ptr, &ptr->isb, (oid), null) == null) {              \
         mgn_mem_release(pool, ptr);                                                 \
         return null;                                                                \
     }                                                                               \
     return &ptr->iso;                                                               \
 }                                                                                   \
                                                                                     \
+plat_inline struct stru_name* unpack##stru_name(mgn_memory_pool* pool,              \
+                                                        Unpacker unpkr) {           \
+    MM__##stru_name* ptr =                                                          \
+          mgn_mem_alloc(pool, sizeof(MM__##stru_name));                             \
+    if (init_##stru_name(pool, ptr, &ptr->isb, (oid), unpkr) == null) {             \
+        mgn_mem_release(pool, ptr);                                                 \
+        return null;                                                                \
+    }                                                                               \
+    return &ptr->iso;                                                               \
+}                                                                                   \
+                                                                                    \
+plat_inline void pack_##stru_name(mmBase base, Packer pkr) {                        \
+    MM__##stru_name* ptr = container_of_base(base, MM__##stru_name);                \
+    void (*pack_impl)(struct stru_name*, Packer) = fn_pack;                         \
+    if (pack_impl != null) pack_impl(&ptr->iso, pkr);                               \
+}                                                                                   \
+                                                                                    \
 plat_inline struct stru_name* to##stru_name(void* stru) {                           \
     mmBase base = __stru2base(stru);                                                \
-    return (struct stru_name*)(base->find(base, oid, oid));                         \
+    return (struct stru_name*)(base->find(base, (oid), (oid)));                     \
 }                                                                                   \
                                                                                     \
 plat_inline struct stru_name* baseTo##stru_name(mmBase base) {                      \
-    return (struct stru_name*)(base->find(base, oid, oid));                         \
+    return (struct stru_name*)(base->find(base, (oid), (oid)));                     \
 }
 
-#define MMSubObject(oid, stru_name, sup_name, fn_init, fn_destroy)                  \
+#define MMSubObject(oid, stru_name, sup_name, fn_init, fn_destroy, fn_pack)         \
 typedef struct stru_name* (*p_init##stru_name)(struct stru_name* obj);              \
 typedef void (*p_destroy##stru_name)(struct stru_name* obj);                        \
                                                                                     \
@@ -141,17 +173,17 @@ typedef struct {                                                                
 } MM__##stru_name;                                                                  \
                                                                                     \
 plat_inline mmBase pos_b_##stru_name(void* ptr) {                                   \
-               return ((mmBase) &((MM__##stru_name*)ptr)->isb);  }                  \
+               return (mmBase) &((MM__##stru_name*)ptr)->isb;  }                    \
 plat_inline struct stru_name* pos_o_##stru_name(void* ptr) {                        \
-               return ((struct stru_name*) &((MM__##stru_name*)ptr)->iso);  }       \
+               return (struct stru_name*) &((MM__##stru_name*)ptr)->iso;  }         \
                                                                                     \
 plat_inline void* find_##stru_name(mmBase ptr_base, uint mmid, uint untilid) {      \
-    if (mmid == oid) {                                                              \
+    if (mmid == (oid)) {                                                            \
         MM__##stru_name*p = container_of_base(ptr_base, MM__##stru_name);           \
         return &p->iso;                                                             \
     } else if (mmid == untilid) {                                                   \
-        return ptr_base->pre_base->find(ptr_base->pre_base, mmid, oid);             \
-    } else if (oid != untilid) {                                                    \
+        return ptr_base->pre_base->find(ptr_base->pre_base, mmid, (oid));           \
+    } else if ((oid) != untilid) {                                                  \
         return ptr_base->pre_base->find(ptr_base->pre_base, mmid, untilid);         \
     }                                                                               \
     return null;                                                                    \
@@ -167,16 +199,19 @@ plat_inline const char* name_##stru_name(void) {                                
 }                                                                                   \
                                                                                     \
 plat_inline void destroy_##stru_name(mmBase ptr_base) {                             \
-    if (fn_destroy != null) {                                                       \
-        MM__##stru_name* ptr = container_of_base(ptr_base, MM__##stru_name);        \
-        ptr->isb.pre_base->destroy(ptr->isb.pre_base);                              \
-        fn_destroy(&ptr->iso);                                                      \
+    MM__##stru_name* ptr = container_of_base(ptr_base, MM__##stru_name);            \
+    ptr->isb.pre_base->destroy(ptr->isb.pre_base);                                  \
+    void (*destroy_impl)(struct stru_name* base) = fn_destroy;                      \
+    if (destroy_impl != null) {                                                     \
+        destroy_impl(&ptr->iso);                                                    \
     }                                                                               \
 }                                                                                   \
                                                                                     \
+plat_inline void pack_##stru_name(mmBase base, Packer pkr);                         \
 plat_inline void* init_##stru_name(mgn_memory_pool* pool, void* p,                  \
-                                        mmBase last_child_base, uint mmid) {        \
-    if (init_##sup_name(pool, p, last_child_base, mmid) == null) {                  \
+                                        mmBase last_child_base, uint mmid,          \
+                                                        Unpacker unpkr) {           \
+    if (init_##sup_name(pool, p, last_child_base, mmid, unpkr) == null) {           \
         return null;                                                                \
     }                                                                               \
     MM__##stru_name* ptr = p;                                                       \
@@ -186,7 +221,9 @@ plat_inline void* init_##stru_name(mgn_memory_pool* pool, void* p,              
     ptr->isb.find_obj = find_obj_##stru_name;                                       \
     ptr->isb.name = name_##stru_name;                                               \
     ptr->isb.hash = null;                                                           \
-    if (fn_init != null && fn_init(&ptr->iso) == null) {                            \
+    ptr->isb.pack = pack_##stru_name;                                               \
+    struct stru_name* (*init_impl)(struct stru_name*, Unpacker) = fn_init;          \
+    if (init_impl != null && init_impl(&ptr->iso, unpkr) == null) {                 \
         return null;                                                                \
     }                                                                               \
     return p;                                                                       \
@@ -195,20 +232,38 @@ plat_inline void* init_##stru_name(mgn_memory_pool* pool, void* p,              
 plat_inline struct stru_name* alloc##stru_name(mgn_memory_pool* pool) {             \
     MM__##stru_name* ptr =                                                          \
           mgn_mem_alloc(pool, sizeof(MM__##stru_name));                             \
-    if (init_##stru_name(pool, ptr, &ptr->isb, oid) == null) {                      \
+    if (init_##stru_name(pool, ptr, &ptr->isb, (oid), null) == null) {              \
         mgn_mem_release(pool, ptr);                                                 \
         return null;                                                                \
     }                                                                               \
     return &ptr->iso;                                                               \
 }                                                                                   \
                                                                                     \
+plat_inline struct stru_name* unpack##stru_name(mgn_memory_pool* pool,              \
+                                                        Unpacker unpkr) {           \
+    MM__##stru_name* ptr =                                                          \
+          mgn_mem_alloc(pool, sizeof(MM__##stru_name));                             \
+    if (init_##stru_name(pool, ptr, &ptr->isb, (oid), unpkr) == null) {             \
+        mgn_mem_release(pool, ptr);                                                 \
+        return null;                                                                \
+    }                                                                               \
+    return &ptr->iso;                                                               \
+}                                                                                   \
+                                                                                    \
+plat_inline void pack_##stru_name(mmBase base, Packer pkr) {                        \
+    MM__##stru_name* ptr = container_of_base(base, MM__##stru_name);                \
+    pack_##sup_name(ptr->isb.pre_base, pkr);                                        \
+    void (*pack_impl)(struct stru_name*, Packer) = fn_pack;                         \
+    if (pack_impl != null) pack_impl(&ptr->iso, pkr);                               \
+}                                                                                   \
+                                                                                    \
 plat_inline struct stru_name* to##stru_name(void* stru) {                           \
     mmBase base = __stru2base(stru);                                                \
-    return (struct stru_name*)(base->find(base, oid, oid));                         \
+    return (struct stru_name*)(base->find(base, (oid), (oid)));                     \
 }                                                                                   \
                                                                                     \
 plat_inline struct stru_name* baseTo##stru_name(mmBase base) {                      \
-    return (struct stru_name*)(base->find(base, oid, oid));                         \
+    return (struct stru_name*)(base->find(base, (oid), (oid)));                     \
 }
 
 plat_inline void* __retain_mmobj(void* stru) {
@@ -220,11 +275,11 @@ plat_inline void* __retain_mmobj(void* stru) {
 #define retain_mmobj(stru) ((typeof(stru))__retain_mmobj(stru))
 
 plat_inline void __trigger_release_flow(void* mem) {
-    struct obj {
+    struct {
         struct mmObj isa;
         struct mmBase isb;
     } *ptr;
-    ptr = (struct obj*)mem;                             /*it's first obj*/
+    ptr = mem;                                          /*it's first obj*/
     ptr->isb.pre_base->destroy(ptr->isb.pre_base);      /*call last child destroy*/
 }
 
@@ -264,26 +319,46 @@ plat_inline uint oid_of_mmobj(void* stru) {
     return obj->_oid;
 }
 
-static void set_hash_for_mmobj(void* stru, void (*hash)(mmBase base, void** key, uint* key_len)) {
+static void set_hash_for_mmobj(void* stru, void (*hash)(mmBase /*base*/, void** /*key*/, uint* /*key_len*/)) {
     if (stru == null) return;
     mmBase base = __stru2base(stru);
     base->hash = hash;
 }
 
-plat_inline void hash_of_mmobj(void* stru, void** key, void* key_len) {
-    if (stru == null || key == null || key_len == null) return;
+plat_inline mmBase find_first_base(void* stru) {
+    if (stru == null) return null;
     mmBase base = __stru2base(stru);
-    struct objobj {
+    struct {
         struct mmObj isa;
         struct mmBase isb;
-    };
-    base = ((struct objobj*)base->find_obj(base))->isb.pre_base;       // use first one to find last one
+    } *ptr;
+    ptr = (void*)base->find_obj(base);
+    base = &ptr->isb;
+
+    return base;
+}
+
+plat_inline void hash_of_mmobj(void* stru, void** key, void* key_len) {
+    if (stru == null || key == null || key_len == null) return;
+    mmBase base = find_first_base(stru)->pre_base;       // use first one to find last one
     while(base->hash == null) {
         // search last one hash implementation
         base = base->pre_base;
     }
 
     base->hash(base, key, key_len);
+}
+
+plat_inline void pack(void* stru, Packer pkr) {
+    if (stru == null) return;
+    mmBase base = find_first_base(stru)->pre_base;       // use first one to find last one
+    base->pack(base, pkr);
+}
+
+plat_inline void* unpack(Unpacker unpkr) {
+    mgn_memory_pool* pool = pool_of_mmobj(unpkr);
+
+    return null;
 }
 
 /// samples
@@ -297,7 +372,7 @@ typedef struct MMRoot {
 
 }*MMRoot;
 
-plat_inline MMRoot initMMRoot(MMRoot obj) {
+plat_inline MMRoot initMMRoot(MMRoot obj, Unpacker unpkr) {
     return obj;
 }
 
@@ -305,14 +380,14 @@ plat_inline void destroyMMRoot(MMRoot obj) {
 
 }
 
-MMRootObject(MMOBJ_ROOT, MMRoot, initMMRoot, destroyMMRoot);
+MMRootObject(MMOBJ_ROOT, MMRoot, initMMRoot, destroyMMRoot, null);
 
 /// ====== Child =====
 typedef struct MMChild {
 
 }*MMChild;
 
-plat_inline MMChild initMMChild(MMChild obj) {
+plat_inline MMChild initMMChild(MMChild obj, Unpacker unpkr) {
     return obj;
 }
 
@@ -320,14 +395,14 @@ plat_inline void destroyMMChild(MMChild obj) {
 
 }
 
-MMSubObject(MMOBJ_CHILD, MMChild, MMRoot, initMMChild, destroyMMChild);
+MMSubObject(MMOBJ_CHILD, MMChild, MMRoot, initMMChild, destroyMMChild, null);
 
 /// ===== Son =====
 typedef struct MMSon {
 
 }*MMSon;
 
-plat_inline MMSon initMMSon(MMSon obj) {
+plat_inline MMSon initMMSon(MMSon obj, Unpacker unpkr) {
     return obj;
 }
 
@@ -335,7 +410,7 @@ plat_inline void destroyMMSon(MMSon obj) {
 
 }
 
-MMSubObject(MMOBJ_SON, MMSon, MMChild, initMMSon, destroyMMSon);
+MMSubObject(MMOBJ_SON, MMSon, MMChild, initMMSon, destroyMMSon, null);
 
 
 
