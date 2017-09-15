@@ -27,7 +27,9 @@ typedef struct mmObj {
     mgn_memory_pool* _pool;
 } *mmObj;
 
-struct Packer;
+typedef void* Unpacker;
+typedef void* Packer;
+
 typedef struct mmBase {
     struct mmBase* pre_base;                                                // parent's base address or last child's base address
     void (*destroy)(struct mmBase* base);
@@ -35,7 +37,7 @@ typedef struct mmBase {
     mmObj (*find_obj)(struct mmBase* base);                                 // mmobj address is used for memory management.
     const char* (*name)(void);
     void (*hash)(struct mmBase* base, void** key, uint* key_len);
-    void (*pack)(struct mmBase* base, struct Packer* pkr);
+    void (*pack)(struct mmBase* base, Packer pkr);
 } *mmBase;
 
 plat_inline mmBase __stru2base(void* stru) {
@@ -48,14 +50,6 @@ plat_inline mmBase __stru2base(void* stru) {
     } obj;
     return (mmBase)((/*(void*)*/stru) - (((uint)&obj.c) - ((uint)&obj.b)));
 }
-
-typedef struct Unpacker {
-
-} *Unpacker;
-
-typedef struct Packer {
-
-} *Packer;
 
 #define MMRootObject(oid, stru_name, fn_init, fn_destroy, fn_pack)                              \
                                                                                                 \

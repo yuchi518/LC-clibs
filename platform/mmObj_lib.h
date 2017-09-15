@@ -22,8 +22,10 @@ enum {
     MMOBJ_CONTAINER     = 0xFFFF0101,
     MMOBJ_MAP,
     MMOBJ_LIST,
+    MMOBJ_MAPITEM,
 
-    MMOBJ_MAPITEM       = 0xFFFF0201,
+    MMOBJ_PACKER       = 0xFFFF0201,
+    MMOBJ_UNPACKER
 };
 
 /// ===== Object =====
@@ -381,6 +383,41 @@ plat_inline MMObject popMMListItem(MMList list) {
     utarray_pop_back(&list->list);
     return autorelease_mmobj(obj);
 }
+
+/// ===== Packer =====
+typedef struct MMPacker {
+
+}*MMPacker;
+
+plat_inline MMPacker initMMPacker(MMPacker obj, Unpacker unpkr) {
+    return obj;
+}
+
+plat_inline void destroyMMPacker(MMPacker obj) {
+
+}
+
+MMSubObject(MMOBJ_PACKER, MMPacker, MMObject , initMMPacker, destroyMMPacker, null);
+
+/// ===== Unpacker =====
+typedef struct MMUnpacker {
+
+}*MMUnpacker;
+
+plat_inline MMUnpacker initMMUnpacker(MMUnpacker obj, Unpacker unpkr) {
+    return obj;
+}
+
+plat_inline void destroyMMUnpacker(MMUnpacker obj) {
+
+}
+
+plat_inline void packMMUnpacker(MMUnpacker obj, Packer pkr) {
+
+}
+
+MMSubObject(MMOBJ_UNPACKER, MMUnpacker, MMObject , initMMUnpacker, destroyMMUnpacker, packMMUnpacker);
+
 
 #endif //PROC_LA_MMOBJ_LIB_H
 
