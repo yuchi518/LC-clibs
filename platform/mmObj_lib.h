@@ -19,6 +19,8 @@ enum {
     MMOBJ_DOUBLE,
     MMOBJ_STRING,
 
+    MMOBJ_DATA          = 0xFFFF0081,
+
     MMOBJ_CONTAINER     = 0xFFFF0101,
     MMOBJ_MAP,
     MMOBJ_LIST,
@@ -202,6 +204,63 @@ plat_inline MMString allocMMStringWithCString(mgn_memory_pool* pool, char* strin
 
     return obj;
 }
+
+
+/// ===== MMData =====
+
+typedef struct MMData {
+    void* data;
+    uint size;
+}*MMData;
+
+plat_inline MMData initMMData(MMData obj, Unpacker unpkr) {
+    return obj;
+}
+
+plat_inline void destroyMMData(MMData obj) {
+    if (obj->data) {
+        mgn_memory_pool* pool = pool_of_mmobj(obj);
+        mgn_mem_release(pool, obj->data);
+        obj->data = null;
+    }
+}
+
+plat_inline void packMMData(MMData obj, Packer pkr) {
+
+}
+
+MMSubObject(MMOBJ_DATA, MMData, MMObject , initMMData, destroyMMData, packMMData);
+
+plat_inline MMData allocMMDataWithData(mgn_memory_pool* pool, void* data, uint size)
+{
+    MMData obj = allocMMData(pool);
+    if (obj) {
+        obj->size = size;
+        if (size > 0) {
+            obj->data = mgn_mem_alloc(pool, size);
+            if (obj->data == null) {
+                release_mmobj(obj);
+                return null;
+            }
+            if (data) plat_mem_copy(obj->data, data, size);
+        } else {
+            obj->data = null;
+        }
+    }
+    return obj;
+}
+
+plat_inline MMData allocMMDataWithDataNoCopy(mgn_memory_pool* pool, void* data, uint size)
+{
+    if (!((data!=null && size>0) || (data==null && size==0))) return null;
+    MMData obj = allocMMData(pool);
+    if (obj) {
+        obj->size = size;
+        obj->data = data;
+    }
+    return obj;
+}
+
 
 /// ====== Container =====
 typedef struct MMContainer {

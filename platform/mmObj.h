@@ -193,18 +193,20 @@ plat_inline const char* name_##stru_name(void) {                                
 }                                                                                               \
                                                                                                 \
 plat_inline void destroy_##stru_name(mmBase base) {                                             \
+    /* destroy self first, then destroy super */                                                \
     struct MM__##stru_name* ptr = ((void*)base) - (uint)&((struct MM__##stru_name*)0)->isb;     \
-    ptr->isb.pre_base->destroy(ptr->isb.pre_base);                                              \
     void (*destroy_impl)(struct stru_name* base) = fn_destroy;                                  \
     if (destroy_impl != null) {                                                                 \
         destroy_impl(&ptr->iso);                                                                \
     }                                                                                           \
+    ptr->isb.pre_base->destroy(ptr->isb.pre_base);                                              \
 }                                                                                               \
                                                                                                 \
 plat_inline void pack_##stru_name(mmBase base, Packer pkr);                                     \
 plat_inline void* init_##stru_name(mgn_memory_pool* pool, void* p,                              \
                                         mmBase last_child_base, uint mmid,                      \
                                                         Unpacker unpkr) {                       \
+    /* init super first, then init self */                                                      \
     if (init_##sup_name(pool, p, last_child_base, mmid, unpkr) == null) {                       \
         return null;                                                                            \
     }                                                                                           \
