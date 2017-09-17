@@ -61,7 +61,7 @@ MMSubObject(MMOBJ_PRIMARY, MMPrimary, MMObject, initMMPrimary, destroyMMPrimary,
 
 /// ====== Primary type - Int (32bits) =====
 typedef struct MMInt {
-    uint32 value;
+    int32 value;
 }*MMInt;
 
 plat_inline void hash_of_MMInt(mmBase base, void** key, uint* key_len);
@@ -83,10 +83,17 @@ plat_inline void hash_of_MMInt(mmBase base, void** key, uint* key_len)
     if (key_len) *key_len = sizeof(obj->value);
 }
 
+plat_inline MMInt allocMMIntWithValue(mgn_memory_pool* pool, int32 value) {
+    MMInt obj = allocMMInt(pool);
+    if (obj) {
+        obj->value = value;
+    }
+    return obj;
+}
 
 /// ====== Primary type - Long (64bits) =====
 typedef struct MMLong {
-    uint64 value;
+    int64 value;
 }*MMLong;
 
 plat_inline void hash_of_MMLong(mmBase base, void** key, uint* key_len);
@@ -109,6 +116,13 @@ plat_inline void hash_of_MMLong(mmBase base, void** key, uint* key_len)
     if (key_len) *key_len = sizeof(obj->value);
 }
 
+plat_inline MMLong allocMMLongWithValue(mgn_memory_pool* pool, int64 value) {
+    MMLong obj = allocMMLong(pool);
+    if (obj) {
+        obj->value = value;
+    }
+    return obj;
+}
 
 /// ====== Primary type - Float (32bits) =====
 typedef struct MMFloat {
@@ -135,6 +149,14 @@ plat_inline void hash_of_MMFloat(mmBase base, void** key, uint* key_len)
     if (key_len) *key_len = sizeof(obj->value);
 }
 
+plat_inline MMFloat allocMMFloatWithValue(mgn_memory_pool* pool, float value) {
+    MMFloat obj = allocMMFloat(pool);
+    if (obj) {
+        obj->value = value;
+    }
+    return obj;
+}
+
 
 /// ====== Primary type - Double (64bits) =====
 typedef struct MMDouble {
@@ -159,6 +181,14 @@ plat_inline void hash_of_MMDouble(mmBase base, void** key, uint* key_len)
     MMDouble obj = baseToMMDouble(base);
     if (key) *key = &obj->value;
     if (key_len) *key_len = sizeof(obj->value);
+}
+
+plat_inline MMDouble allocMMDoubleWithValue(mgn_memory_pool* pool, double value) {
+    MMDouble obj = allocMMDouble(pool);
+    if (obj) {
+        obj->value = value;
+    }
+    return obj;
 }
 
 /// ====== Primary type - String =====
@@ -194,6 +224,7 @@ plat_inline void hash_of_MMString(mmBase base, void** key, uint* key_len)
 plat_inline MMString allocMMStringWithCString(mgn_memory_pool* pool, char* string) {
     uint len = plat_cstr_length(string);
     char* new_string = mgn_mem_alloc(pool, len+1);
+    if (new_string == null) return null;
     plat_mem_copy(new_string, string, len+1);
     MMString obj = allocMMString(pool);
     if (obj == null) {
@@ -453,6 +484,10 @@ plat_inline void insertMMListItem(MMList list, MMObject item, int idx) {
 
 plat_inline MMObject getMMListItem(MMList list, int idx) {
     return (MMObject)utarray_eltptr(&list->list, idx);
+}
+
+plat_inline void concatMMList(MMList dest_list, MMList a_list) {
+    utarray_concat(&dest_list->list, &a_list->list);
 }
 
 /// ===== Packer =====

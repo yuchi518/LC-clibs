@@ -148,6 +148,7 @@ plat_inline void pack_##stru_name(mmBase base, Packer pkr) {                    
 }                                                                                               \
                                                                                                 \
 plat_inline struct stru_name* to##stru_name(void* stru) {                                       \
+    if (stru == null) return null;                                                              \
     mmBase base = __stru2base(stru);                                                            \
     return (struct stru_name*)(base->find(base, (oid), (oid)));                                 \
 }                                                                                               \
@@ -254,6 +255,7 @@ plat_inline void pack_##stru_name(mmBase base, Packer pkr) {                    
 }                                                                                               \
                                                                                                 \
 plat_inline struct stru_name* to##stru_name(void* stru) {                                       \
+    if (stru == null) return null;                                                              \
     mmBase base = __stru2base(stru);                                                            \
     return (struct stru_name*)(base->find(base, (oid), (oid)));                                 \
 }                                                                                               \
