@@ -432,15 +432,27 @@ plat_inline void destroyMMList(MMList obj) {
 
 MMSubObject(MMOBJ_LIST, MMList, MMContainer, initMMList, destroyMMList, null);
 
+plat_inline uint sizeOfMMList(MMList list) {
+    return utarray_len(&list->list);
+}
+
 plat_inline void pushMMListItem(MMList list, MMObject item) {
     utarray_push_back(&list->list, &item);
 }
 
 plat_inline MMObject popMMListItem(MMList list) {
-    MMObject obj = (MMObject)utarray_back(&list->list);;
+    MMObject obj = (MMObject)utarray_back(&list->list);
     retain_mmobj(obj);
     utarray_pop_back(&list->list);
     return autorelease_mmobj(obj);
+}
+
+plat_inline void insertMMListItem(MMList list, MMObject item, int idx) {
+    utarray_insert(&list->list, &item, idx);
+}
+
+plat_inline MMObject getMMListItem(MMList list, int idx) {
+    return (MMObject)utarray_eltptr(&list->list, idx);
 }
 
 /// ===== Packer =====
