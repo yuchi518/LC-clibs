@@ -173,8 +173,8 @@ plat_inline struct stru_name* pos_o_##stru_name(void* ptr) {                    
                                                                                                 \
 plat_inline void* find_##stru_name(mmBase base, uint mmid, uint untilid) {                      \
     if (mmid == (oid)) {                                                                        \
-    struct MM__##stru_name* ptr = ((void*)base) - (uint)&((struct MM__##stru_name*)0)->isb;     \
-    return &ptr->iso;                                                                           \
+        struct MM__##stru_name* ptr = ((void*)base) - (uint)&((struct MM__##stru_name*)0)->isb; \
+        return &ptr->iso;                                                                       \
     } else if (mmid == untilid) {                                                               \
         return base->pre_base->find(base->pre_base, mmid, (oid));                               \
     } else if ((oid) != untilid) {                                                              \
@@ -346,6 +346,17 @@ plat_inline void hash_of_mmobj(void* stru, void** key, void* key_len) {
     }
 
     base->hash(base, key, key_len);
+}
+
+plat_inline const char* last_name_of_mmobj(void* stru) {
+    if (stru == null) return null;
+    return find_first_base(stru)->pre_base->name();
+}
+
+plat_inline bool is_oid(void* stru, uint oid) {
+    if (stru == null) return null;
+    mmBase base = __stru2base(stru);
+    return base->find(base, oid, oid)==null?true:false;
 }
 
 plat_inline void pack(void* stru, Packer pkr) {
