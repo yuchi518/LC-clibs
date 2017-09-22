@@ -221,6 +221,9 @@ plat_inline void* init_##stru_name(mgn_memory_pool* pool, void* p,              
     ptr->isb.pack = pack_##stru_name;                                                           \
     struct stru_name* (*init_impl)(struct stru_name*, Unpacker) = fn_init;                      \
     if (init_impl != null && init_impl(&ptr->iso, unpkr) == null) {                             \
+        /*Init fail, destroy super.*/                                                           \
+        void (*destroy_super_impl)(mmBase base) = ptr->isb.pre_base->destroy;                   \
+        destroy_super_impl(ptr->isb.pre_base);                                                  \
         return null;                                                                            \
     }                                                                                           \
     return p;                                                                                   \
