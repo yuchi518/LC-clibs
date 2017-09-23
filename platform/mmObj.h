@@ -40,17 +40,6 @@ typedef struct mmBase {
     void (*pack)(struct mmBase* base, Packer pkr);
 } *mmBase;
 
-plat_inline mmBase __stru2base(void* stru) {
-    struct {
-        struct mmObj a;
-        struct mmBase b;
-        struct {
-            uint8 _dummy;
-        } c;
-    } obj;
-    return (mmBase)((/*(void*)*/stru) - (((uint)&obj.c) - ((uint)&obj.b)));
-}
-
 #define MMRootObject(oid, stru_name, fn_init, fn_destroy, fn_pack)                              \
                                                                                                 \
 struct MM__##stru_name {                                                                        \
@@ -149,7 +138,7 @@ plat_inline void pack_##stru_name(mmBase base, Packer pkr) {                    
                                                                                                 \
 plat_inline struct stru_name* to##stru_name(void* stru) {                                       \
     if (stru == null) return null;                                                              \
-    mmBase base = __stru2base(stru);                                                            \
+    mmBase base = base_of_mmobj(stru);                                                          \
     return (struct stru_name*)(base->find(base, (oid), (oid)));                                 \
 }                                                                                               \
                                                                                                 \
@@ -259,7 +248,7 @@ plat_inline void pack_##stru_name(mmBase base, Packer pkr) {                    
                                                                                                 \
 plat_inline struct stru_name* to##stru_name(void* stru) {                                       \
     if (stru == null) return null;                                                              \
-    mmBase base = __stru2base(stru);                                                            \
+    mmBase base = base_of_mmobj(stru);                                                          \
     return (struct stru_name*)(base->find(base, (oid), (oid)));                                 \
 }                                                                                               \
                                                                                                 \
@@ -267,76 +256,21 @@ plat_inline struct stru_name* baseTo##stru_name(mmBase base) {                  
     return (struct stru_name*)(base->find(base, (oid), (oid)));                                 \
 }                                                                                               \
 
-
-plat_inline void* __retain_mmobj(void* stru) {
-    if (stru == null) return null;
-    mmBase base = __stru2base(stru);
-    mmObj obj = base->find_obj(base);
-    return (mgn_mem_retain(obj->_pool, obj) == null)?null:stru;
-}
-#define retain_mmobj(stru) ((typeof(stru))__retain_mmobj(stru))
-
-plat_inline void __trigger_release_flow(void* mem) {
+plat_inline mmBase __base_of_mmobj(void* stru) {
     struct {
-        struct mmObj isa;
-        struct mmBase isb;
-    } *ptr;
-    ptr = mem;                                          /*it's first obj*/
-    ptr->isb.pre_base->destroy(ptr->isb.pre_base);      /*call last child destroy*/
+        struct mmObj a;
+        struct mmBase b;
+        struct {
+            uint8 _dummy;
+        } c;
+    } obj;
+    return (mmBase)((/*(void*)*/stru) - (((uint)&obj.c) - ((uint)&obj.b)));
 }
+#define base_of_mmobj(stru) __base_of_mmobj(stru)
 
-plat_inline void release_mmobj(void* stru) {
-    if (stru == null) return;
-    mmBase base = __stru2base(stru);
-    mmObj obj = base->find_obj(base);                   /*find first obj*/
-    mgn_mem_release_w_cb(obj->_pool, obj, __trigger_release_flow);
-}
-
-plat_inline void* __autorelease_mmobj(void* stru) {
+plat_inline mmBase __base_of_first_mmobj(void* stru) {
     if (stru == null) return null;
-    mmBase base = __stru2base(stru);
-    mmObj obj = base->find_obj(base);
-    mgn_mem_autorelease_w_cb(obj->_pool, obj, __trigger_release_flow);
-    return stru;
-}
-#define autorelease_mmobj(stru) ((typeof(stru))__autorelease_mmobj(stru))
-
-plat_inline uint retain_count_of_mmobj(void* stru) {
-    if (stru == null) return 0;
-    mmBase base = __stru2base(stru);
-    mmObj obj = base->find_obj(base);
-    return mgn_mem_retained_count(obj->_pool, obj);
-}
-
-plat_inline const char* name_of_mmobj(void* stru) {
-    if (stru == null) return null;
-    mmBase base = __stru2base(stru);
-    return base->name();
-}
-
-plat_inline mgn_memory_pool* pool_of_mmobj(void* stru) {
-    if (stru == null) return null;
-    mmBase base = __stru2base(stru);
-    mmObj obj = base->find_obj(base);
-    return obj->_pool;
-}
-
-plat_inline uint oid_of_mmobj(void* stru) {
-    if (stru == null) return null;
-    mmBase base = __stru2base(stru);
-    mmObj obj = base->find_obj(base);
-    return obj->_oid;
-}
-
-static void set_hash_for_mmobj(void* stru, void (*hash)(mmBase /*base*/, void** /*key*/, uint* /*key_len*/)) {
-    if (stru == null) return;
-    mmBase base = __stru2base(stru);
-    base->hash = hash;
-}
-
-plat_inline mmBase find_first_base(void* stru) {
-    if (stru == null) return null;
-    mmBase base = __stru2base(stru);
+    mmBase base = base_of_mmobj(stru);
     struct {
         struct mmObj isa;
         struct mmBase isb;
@@ -346,10 +280,89 @@ plat_inline mmBase find_first_base(void* stru) {
 
     return base;
 }
+#define base_of_first_mmobj(stru) __base_of_first_mmobj(stru)
 
-plat_inline void hash_of_mmobj(void* stru, void** key, void* key_len) {
+plat_inline void* __retain_mmobj(void* stru) {
+    if (stru == null) return null;
+    mmBase base = base_of_mmobj(stru);
+    mmObj obj = base->find_obj(base);
+    return (mgn_mem_retain(obj->_pool, obj) == null)?null:stru;
+}
+#define retain_mmobj(stru) ((typeof(stru))__retain_mmobj(stru))
+
+plat_inline void __trigger_release_mmobj(void* mem) {
+    struct {
+        struct mmObj isa;
+        struct mmBase isb;
+    } *ptr;
+    ptr = mem;                                          /*it's first obj*/
+    ptr->isb.pre_base->destroy(ptr->isb.pre_base);      /*call last child destroy*/
+}
+
+plat_inline void __release_mmobj(void* stru) {
+    if (stru == null) return;
+    mmBase base = base_of_mmobj(stru);
+    mmObj obj = base->find_obj(base);                   /*find first obj*/
+    mgn_mem_release_w_cb(obj->_pool, obj, __trigger_release_mmobj);
+}
+#define release_mmobj(stru) __release_mmobj(stru)
+
+plat_inline void* __autorelease_mmobj(void* stru) {
+    if (stru == null) return null;
+    mmBase base = base_of_mmobj(stru);
+    mmObj obj = base->find_obj(base);
+    mgn_mem_autorelease_w_cb(obj->_pool, obj, __trigger_release_mmobj);
+    return stru;
+}
+#define autorelease_mmobj(stru) ((typeof(stru))__autorelease_mmobj(stru))
+
+plat_inline uint __retain_count_of_mmobj(void* stru) {
+    if (stru == null) return 0;
+    mmBase base = base_of_mmobj(stru);
+    mmObj obj = base->find_obj(base);
+    return mgn_mem_retained_count(obj->_pool, obj);
+}
+#define retain_count_of_mmobj(stru) __retain_count_of_mmobj(stru)
+
+plat_inline const char* __name_of_mmobj(void* stru) {
+    if (stru == null) return null;
+    mmBase base = base_of_mmobj(stru);
+    return base->name();
+}
+#define name_of_mmobj(stru) __name_of_mmobj(stru)
+
+plat_inline const char* __name_of_last_mmobj(void* stru) {
+    if (stru == null) return null;
+    return base_of_first_mmobj(stru)->pre_base->name();
+}
+#define name_of_last_mmobj(stru) __name_of_last_mmobj(stru)
+
+plat_inline mgn_memory_pool* __pool_of_mmobj(void* stru) {
+    if (stru == null) return null;
+    mmBase base = base_of_mmobj(stru);
+    mmObj obj = base->find_obj(base);
+    return obj->_pool;
+}
+#define pool_of_mmobj(stru) __pool_of_mmobj(stru)
+
+plat_inline uint __oid_of_last_mmobj(void* stru) {
+    if (stru == null) return null;
+    mmBase base = base_of_mmobj(stru);
+    mmObj obj = base->find_obj(base);
+    return obj->_oid;
+}
+#define oid_of_last_mmobj(stru) __oid_of_last_mmobj(stru)
+
+plat_inline void __set_hash_for_mmobj(void* stru, void (*hash)(mmBase /*base*/, void** /*key*/, uint* /*key_len*/)) {
+    if (stru == null) return;
+    mmBase base = base_of_mmobj(stru);
+    base->hash = hash;
+}
+#define set_hash_for_mmobj(stru, hash) __set_hash_for_mmobj(stru, hash)
+
+plat_inline void __hash_of_mmobj(void* stru, void** key, void* key_len) {
     if (stru == null || key == null || key_len == null) return;
-    mmBase base = find_first_base(stru)->pre_base;       // use first one to find last one
+    mmBase base = base_of_first_mmobj(stru)->pre_base;       // use first one to find last one
     while(base->hash == null) {
         // search last one hash implementation
         base = base->pre_base;
@@ -357,29 +370,28 @@ plat_inline void hash_of_mmobj(void* stru, void** key, void* key_len) {
 
     base->hash(base, key, key_len);
 }
+#define hash_of_mmobj(stru, key, key_len) __hash_of_mmobj(stru, key, key_len)
 
-plat_inline const char* last_name_of_mmobj(void* stru) {
+plat_inline bool __is_mmobj_kind_of_oid(void* stru, uint oid) {
     if (stru == null) return null;
-    return find_first_base(stru)->pre_base->name();
-}
-
-plat_inline bool is_oid(void* stru, uint oid) {
-    if (stru == null) return null;
-    mmBase base = __stru2base(stru);
+    mmBase base = base_of_mmobj(stru);
     return base->find(base, oid, oid)==null?true:false;
 }
+#define is_mmobj_kind_of_oid(stru, oid) __is_mmobj_kind_of_oid(stru, oid)
 
-plat_inline void pack(void* stru, Packer pkr) {
+plat_inline void __pack_mmobj(void* stru, Packer pkr) {
     if (stru == null) return;
-    mmBase base = find_first_base(stru)->pre_base;       // use first one to find last one
+    mmBase base = base_of_first_mmobj(stru)->pre_base;       // use first one to find last one
     base->pack(base, pkr);
 }
+#define pack_mmobj(stru, pkr) __pack_mmobj(stru, pkr)
 
-plat_inline void* unpack(Unpacker unpkr) {
+plat_inline void* __unpack_mmobj(Unpacker unpkr) {
     //mgn_memory_pool* pool = pool_of_mmobj(unpkr);
 
     return null;
 }
+#define unpack_mmobj(unpkr) __unpack_mmobj(unpkr)
 
 /// samples
 /// ================ MMObj ===========

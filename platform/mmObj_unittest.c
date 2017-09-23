@@ -39,17 +39,17 @@ void unit_test_mmobj(void)
     addMMMapItem(map, toMMPrimary(hi6), toMMObject(v6));
 
     MMObject obj = getMMMapItemValue(map, toMMPrimary(hi5));
-    if (oid_of_mmobj(obj) == MMOBJ_INT) {
+    if (oid_of_last_mmobj(obj) == MMOBJ_INT) {
         plat_io_printf_dbg("Got it!! (%d)\n", toMMInt(obj)->value);
     } else {
-        plat_io_printf_err("What is this?(%u)\n", oid_of_mmobj(obj));
+        plat_io_printf_err("What is this?(%u)\n", oid_of_last_mmobj(obj));
     }
 
     obj = getMMMapItemValue(map, toMMPrimary(hi6));
-    if (oid_of_mmobj(obj) == MMOBJ_DOUBLE) {
+    if (oid_of_last_mmobj(obj) == MMOBJ_DOUBLE) {
         plat_io_printf_dbg("Got it!! (%f)\n", toMMDouble(obj)->value);
     } else {
-        plat_io_printf_err("What is this?(%u)\n", oid_of_mmobj(obj));
+        plat_io_printf_err("What is this?(%u)\n", oid_of_last_mmobj(obj));
     }
 
     release_mmobj(map);
@@ -76,7 +76,7 @@ void unit_test_mmobj(void)
     addMMMapItem(map, toMMPrimary(v8), toMMObject(hi8));
 
     obj = getMMMapItemValue(map, toMMPrimary(v7));
-    if (oid_of_mmobj(obj) == MMOBJ_STRING) {
+    if (oid_of_last_mmobj(obj) == MMOBJ_STRING) {
         plat_io_printf_dbg("Got it!! (%s)\n", toMMString(obj)->value);
     }
 
