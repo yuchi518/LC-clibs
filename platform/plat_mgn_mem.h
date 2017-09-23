@@ -67,7 +67,7 @@ typedef struct _MGN_MEM_ {
 #define print_mgn_mem_dbg(...)
 #else
 #define print_mgn_mem_err(...) plat_io_printf_err(__VA_ARGS__)
-#define print_mgn_mem_dbg(...) plat_io_printf_std(__VA_ARGS__)
+#define print_mgn_mem_dbg(...) plat_io_printf_dbg(__VA_ARGS__)
 #endif
 
 #define MGN_MEM_REALLOCATE_IF_MULTI_OWNERS        1
@@ -248,7 +248,7 @@ static inline void mgn_mem_release_unused(mgn_memory_pool* pool)
             if (mgn_m->cb) mgn_m->cb(mgn_m->m);
             HASH_DEL((*pool), mgn_m);
             plat_mem_release(mgn_m->m);
-            print_mgn_mem_dbg("[MGN_MEM] Removed memory (%p), size %zu - %u left\n", mgn_m->m, mgn_m->s, HASH_COUNT(*pool));
+            print_mgn_mem_dbg("[MGN_MEM] Removed memory (%p), size:%zu rc:%zu - %u left\n", mgn_m->m, mgn_m->s, mgn_m->r, HASH_COUNT(*pool));
             plat_mem_release(mgn_m);
         }
     }
@@ -263,7 +263,7 @@ static inline void mgn_mem_release_all(mgn_memory_pool* pool)
         // do not call released cb, because of unordered objects' allocation
         HASH_DEL((*pool), mgn_m);
         plat_mem_release(mgn_m->m);
-        print_mgn_mem_dbg("[MGN_MEM] Removed memory (%p), size %zu - %u left\n", mgn_m->m, mgn_m->s, HASH_COUNT(*pool));
+        print_mgn_mem_dbg("[MGN_MEM] Removed memory (%p), size:%zu, rc:%zu - %u left\n", mgn_m->m, mgn_m->s, mgn_m->r, HASH_COUNT(*pool));
         plat_mem_release(mgn_m);
     }
 }

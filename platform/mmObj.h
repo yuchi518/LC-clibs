@@ -301,6 +301,13 @@ plat_inline void* __autorelease_mmobj(void* stru) {
 }
 #define autorelease_mmobj(stru) ((typeof(stru))__autorelease_mmobj(stru))
 
+plat_inline uint retain_count_of_mmobj(void* stru) {
+    if (stru == null) return 0;
+    mmBase base = __stru2base(stru);
+    mmObj obj = base->find_obj(base);
+    return mgn_mem_retained_count(obj->_pool, obj);
+}
+
 plat_inline const char* name_of_mmobj(void* stru) {
     if (stru == null) return null;
     mmBase base = __stru2base(stru);

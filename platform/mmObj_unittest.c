@@ -8,16 +8,16 @@
 
 void unit_test_mmobj(void)
 {
-    plat_io_printf_std("===== unit_test_mmobj - START =====\n");
+    plat_io_printf_dbg("===== unit_test_mmobj - START =====\n");
 
     mgn_memory_pool pool = null;
     MMSon son = allocMMSon(&pool);
     MMChild child = toMMChild(son);
     MMRoot root = toMMRoot(child);
 
-    plat_io_printf_std("Son's name = %s\n", name_of_mmobj(son));
-    plat_io_printf_std("Child's name = %s\n", name_of_mmobj(child));
-    plat_io_printf_std("Root's name = %s\n", name_of_mmobj(root));
+    plat_io_printf_dbg("Son's name = %s\n", name_of_mmobj(son));
+    plat_io_printf_dbg("Child's name = %s\n", name_of_mmobj(child));
+    plat_io_printf_dbg("Root's name = %s\n", name_of_mmobj(root));
 
     release_mmobj(child);
     if (mgn_mem_count_of_mem(&pool) != 0)
@@ -40,14 +40,14 @@ void unit_test_mmobj(void)
 
     MMObject obj = getMMMapItemValue(map, toMMPrimary(hi5));
     if (oid_of_mmobj(obj) == MMOBJ_INT) {
-        plat_io_printf_std("Got it!! (%d)\n", toMMInt(obj)->value);
+        plat_io_printf_dbg("Got it!! (%d)\n", toMMInt(obj)->value);
     } else {
         plat_io_printf_err("What is this?(%u)\n", oid_of_mmobj(obj));
     }
 
     obj = getMMMapItemValue(map, toMMPrimary(hi6));
     if (oid_of_mmobj(obj) == MMOBJ_DOUBLE) {
-        plat_io_printf_std("Got it!! (%f)\n", toMMDouble(obj)->value);
+        plat_io_printf_dbg("Got it!! (%f)\n", toMMDouble(obj)->value);
     } else {
         plat_io_printf_err("What is this?(%u)\n", oid_of_mmobj(obj));
     }
@@ -77,7 +77,7 @@ void unit_test_mmobj(void)
 
     obj = getMMMapItemValue(map, toMMPrimary(v7));
     if (oid_of_mmobj(obj) == MMOBJ_STRING) {
-        plat_io_printf_std("Got it!! (%s)\n", toMMString(obj)->value);
+        plat_io_printf_dbg("Got it!! (%s)\n", toMMString(obj)->value);
     }
 
     release_mmobj(map);
@@ -100,5 +100,5 @@ void unit_test_mmobj(void)
     }
 
 
-    plat_io_printf_std("===== unit_test_mmobj - END =====\n");
+    plat_io_printf_dbg("===== unit_test_mmobj - END =====\n");
 }

@@ -439,15 +439,15 @@ typedef struct MMList {
 
 plat_inline void ut_ast_copy(void *dst, const void *src)
 {
-    void** dst_obj = (void**)dst;
-    void** src_obj = (void**)src;
+    MMObject* dst_obj = (MMObject*)dst;
+    MMObject* src_obj = (MMObject*)src;
     *dst_obj = *src_obj;
     retain_mmobj(*dst_obj);
 }
 
 plat_inline void ut_ast_del(void *ptr)
 {
-    release_mmobj(*(void**)ptr);
+    release_mmobj(*(MMObject*)ptr);
 }
 
 
@@ -472,18 +472,18 @@ plat_inline void pushMMListItem(MMList list, MMObject item) {
 }
 
 plat_inline MMObject popMMListItem(MMList list) {
-    MMObject obj = (MMObject)utarray_back(&list->list);
+    MMObject obj = *(MMObject*)utarray_back(&list->list);
     retain_mmobj(obj);
     utarray_pop_back(&list->list);
     return autorelease_mmobj(obj);
 }
 
-plat_inline void insertMMListItem(MMList list, MMObject item, int idx) {
+plat_inline void insertMMListItem(MMList list, MMObject item, uint idx) {
     utarray_insert(&list->list, &item, idx);
 }
 
-plat_inline MMObject getMMListItem(MMList list, int idx) {
-    return (MMObject)utarray_eltptr(&list->list, idx);
+plat_inline MMObject getMMListItem(MMList list, uint idx) {
+    return *(MMObject*)utarray_eltptr(&list->list, idx);
 }
 
 plat_inline void concatMMList(MMList dest_list, MMList a_list) {
