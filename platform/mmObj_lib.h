@@ -64,7 +64,7 @@ typedef struct MMInt {
     int32 value;
 }*MMInt;
 
-plat_inline void hash_of_MMInt(mmBase base, void** key, uint* key_len);
+plat_inline void hash_of_MMInt(void*, void** key, uint* key_len);
 
 plat_inline MMInt initMMInt(MMInt obj, Unpacker unpkr) {
     set_hash_for_mmobj(obj, hash_of_MMInt);
@@ -76,9 +76,9 @@ plat_inline void destroyMMInt(MMInt obj) {
 
 MMSubObject(MMOBJ_INT, MMInt, MMPrimary, initMMInt, destroyMMInt, null);
 
-plat_inline void hash_of_MMInt(mmBase base, void** key, uint* key_len)
+plat_inline void hash_of_MMInt(void* stru, void** key, uint* key_len)
 {
-    MMInt obj = baseToMMInt(base);
+    MMInt obj = toMMInt(stru);
     if (key) *key = &obj->value;
     if (key_len) *key_len = sizeof(obj->value);
 }
@@ -96,7 +96,7 @@ typedef struct MMLong {
     int64 value;
 }*MMLong;
 
-plat_inline void hash_of_MMLong(mmBase base, void** key, uint* key_len);
+plat_inline void hash_of_MMLong(void* stru, void** key, uint* key_len);
 
 plat_inline MMLong initMMLong(MMLong obj, Unpacker unpkr) {
     set_hash_for_mmobj(obj, hash_of_MMLong);
@@ -109,9 +109,9 @@ plat_inline void destroyMMLong(MMLong oint) {
 
 MMSubObject(MMOBJ_LONG, MMLong, MMPrimary, initMMLong, destroyMMLong, null);
 
-plat_inline void hash_of_MMLong(mmBase base, void** key, uint* key_len)
+plat_inline void hash_of_MMLong(void* stru, void** key, uint* key_len)
 {
-    MMLong obj = baseToMMLong(base);
+    MMLong obj = toMMLong(stru);
     if (key) *key = &obj->value;
     if (key_len) *key_len = sizeof(obj->value);
 }
@@ -129,7 +129,7 @@ typedef struct MMFloat {
     float value;
 }*MMFloat;
 
-plat_inline void hash_of_MMFloat(mmBase base, void** key, uint* key_len);
+plat_inline void hash_of_MMFloat(void* stru, void** key, uint* key_len);
 
 plat_inline MMFloat initMMFloat(MMFloat obj, Unpacker unpkr) {
     set_hash_for_mmobj(obj, hash_of_MMFloat);
@@ -142,9 +142,9 @@ plat_inline void destroyMMFloat(MMFloat obj) {
 
 MMSubObject(MMOBJ_FLOAT, MMFloat, MMPrimary, initMMFloat, destroyMMFloat, null);
 
-plat_inline void hash_of_MMFloat(mmBase base, void** key, uint* key_len)
+plat_inline void hash_of_MMFloat(void* stru, void** key, uint* key_len)
 {
-    MMFloat obj = baseToMMFloat(base);
+    MMFloat obj = toMMFloat(stru);
     if (key) *key = &obj->value;
     if (key_len) *key_len = sizeof(obj->value);
 }
@@ -163,7 +163,7 @@ typedef struct MMDouble {
     double value;
 }*MMDouble;
 
-plat_inline void hash_of_MMDouble(mmBase base, void** key, uint* key_len);
+plat_inline void hash_of_MMDouble(void* stru, void** key, uint* key_len);
 
 plat_inline MMDouble initMMDouble(MMDouble obj, Unpacker unpkr) {
     set_hash_for_mmobj(obj, hash_of_MMDouble);
@@ -176,9 +176,9 @@ plat_inline void destroyMMDouble(MMDouble obj) {
 
 MMSubObject(MMOBJ_DOUBLE, MMDouble, MMPrimary, initMMDouble, destroyMMDouble, null);
 
-plat_inline void hash_of_MMDouble(mmBase base, void** key, uint* key_len)
+plat_inline void hash_of_MMDouble(void* stru, void** key, uint* key_len)
 {
-    MMDouble obj = baseToMMDouble(base);
+    MMDouble obj = toMMDouble(stru);
     if (key) *key = &obj->value;
     if (key_len) *key_len = sizeof(obj->value);
 }
@@ -196,7 +196,7 @@ typedef struct MMString {
     char* value;
 }*MMString;
 
-plat_inline void hash_of_MMString(mmBase base, void** key, uint* key_len);
+plat_inline void hash_of_MMString(void* stru, void** key, uint* key_len);
 
 plat_inline MMString initMMString(MMString obj, Unpacker unpkr) {
     set_hash_for_mmobj(obj, hash_of_MMString);
@@ -213,9 +213,9 @@ plat_inline void destroyMMString(MMString obj) {
 
 MMSubObject(MMOBJ_STRING, MMString, MMPrimary, initMMString, destroyMMString, null);
 
-plat_inline void hash_of_MMString(mmBase base, void** key, uint* key_len)
+plat_inline void hash_of_MMString(void* stru, void** key, uint* key_len)
 {
-    MMString string = baseToMMString(base);
+    MMString string = toMMString(stru);
     char* c = string->value;
     if (key) *key = c;
     if (key_len) *key_len = plat_cstr_length(c);

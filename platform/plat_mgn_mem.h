@@ -241,9 +241,25 @@ static inline void mgn_mem_release_unused(mgn_memory_pool* pool)
 {
     mgn_memory* mgn_m;
     mgn_memory* tmp;
+    void* free_m[16];
+    uint cnt, i;
+    //** Avoid releasing memory in HAST_ITER to prevent nest release problem. **
+    again:
+    cnt = 0;
     HASH_ITER(hh, (*pool), mgn_m, tmp)
     {
         if (0 == mgn_m->r)
+        {
+            free_m[cnt++] = mgn_m->m;
+            if (cnt >= (sizeof(free_m) / sizeof(free_m[0]))) break;
+
+        }
+    }
+
+    for (i=0; i<cnt; i++)
+    {
+        HASH_FIND_PTR((*pool), &free_m[i], mgn_m);
+        if (mgn_m && mgn_m->r == 0)
         {
             if (mgn_m->cb) mgn_m->cb(mgn_m->m);
             HASH_DEL((*pool), mgn_m);
@@ -252,6 +268,8 @@ static inline void mgn_mem_release_unused(mgn_memory_pool* pool)
             plat_mem_release(mgn_m);
         }
     }
+
+    if (cnt >= (sizeof(free_m) / sizeof(free_m[0]))) goto again;
 }
 
 static inline void mgn_mem_release_all(mgn_memory_pool* pool)
