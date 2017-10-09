@@ -420,12 +420,17 @@ plat_inline void* __unpack_mmobj(Unpacker unpkr) {
 }
 #define unpack_mmobj(unpkr) __unpack_mmobj(unpkr)
 
-/// samples
-/// ================ MMObj ===========
+/*
+ * ============= Samples ================
+ * Three objects: MMObj, MMChild, MMSon
+ *
+ * ======================================
+ */
+// ===========  MMObj ===========
 #define MMOBJ_ROOT              (0xFFFF0000)
 #define MMOBJ_CHILD             (0xFFFF0001)
 #define MMOBJ_SON               (0xFFFF0002)
-/// ===== Root =====
+// ===== Root =====
 
 typedef struct MMRoot {
 

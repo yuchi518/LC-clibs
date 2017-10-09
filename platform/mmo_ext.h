@@ -5,7 +5,7 @@
 #ifndef PROC_LA_MMOBJ_LIB_H
 #define PROC_LA_MMOBJ_LIB_H
 
-#include "mmObj.h"
+#include "mmo.h"
 #include "uthash.h"
 #include "utarray.h"
 #include "plat_string.h"

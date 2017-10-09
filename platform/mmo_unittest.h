@@ -5,7 +5,7 @@
 #ifndef PROC_LA_AST_OBJ_H
 #define PROC_LA_AST_OBJ_H
 
-#include "mmObj_lib.h"
+#include "mmo_ext.h"
 
 /// ===== unit test =====
 
