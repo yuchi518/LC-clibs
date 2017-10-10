@@ -100,7 +100,7 @@ plat_inline void* init_##stru_name(mgn_memory_pool* pool, void* p,              
     ptr->isb.pack = pack_##stru_name;                                                           \
     struct stru_name* (*init_impl)(struct stru_name*, Unpacker) = fn_init;                      \
     if (init_impl != null) {                                                                    \
-        call_f(unpkr, unpackNextContext, name_##stru_name());                                   \
+        call_f(unpkr, unpackNextContext, &ptr->iso);                                            \
         if (init_impl(&ptr->iso, unpkr) == null) {                                              \
             return null;                                                                        \
         }                                                                                       \
@@ -133,7 +133,7 @@ plat_inline void pack_##stru_name(mmBase base, Packer pkr) {                    
     struct MM__##stru_name* ptr = ((void*)base) - (uint)&((struct MM__##stru_name*)0)->isb;     \
     void (*pack_impl)(struct stru_name*, Packer) = fn_pack;                                     \
     if (pack_impl != null) {                                                                    \
-        call_f(pkr, packNextContext, base->name());                                             \
+        call_f(pkr, packNextContext, &ptr->iso);                                                \
         pack_impl(&ptr->iso, pkr);                                                              \
     }                                                                                           \
 }                                                                                               \
@@ -211,7 +211,7 @@ plat_inline void* init_##stru_name(mgn_memory_pool* pool, void* p,              
     ptr->isb.pack = pack_##stru_name;                                                           \
     struct stru_name* (*init_impl)(struct stru_name*, Unpacker) = fn_init;                      \
     if (init_impl != null) {                                                                    \
-        call_f(unpkr, unpackNextContext, name_##stru_name());                                   \
+        call_f(unpkr, unpackNextContext, &ptr->iso);                                            \
         if (init_impl(&ptr->iso, unpkr) == null) {                                              \
             /*Init fail, destroy super.*/                                                       \
             void (*destroy_super_impl)(mmBase base) = ptr->isb.pre_base->destroy;               \
@@ -248,7 +248,7 @@ plat_inline void pack_##stru_name(mmBase base, Packer pkr) {                    
     pack_##sup_name(ptr->isb.pre_base, pkr);                                                    \
     void (*pack_impl)(struct stru_name*, Packer) = fn_pack;                                     \
     if (pack_impl != null) {                                                                    \
-        call_f(pkr, packNextContext, base->name());                                             \
+        call_f(pkr, packNextContext, &ptr->iso);                                                \
         pack_impl(&ptr->iso, pkr);                                                              \
     }                                                                                           \
 }                                                                                               \
@@ -439,7 +439,7 @@ typedef void (*packDouble)(Packer pkr, const uint key, double value);
 typedef void (*packData)(Packer pkr, const uint key, uint8* value, uint len);
 typedef void (*packObject)(Packer pkr, const uint key, void* value);
 typedef void (*packArray)(Packer pkr, const uint key, uint len);
-typedef void (*packNextContext)(Packer pkr, const char* context/*classname*/);
+typedef void (*packNextContext)(Packer pkr, void* stru);
 
 plat_inline uint __packer_version(Packer pkr) {
     return call_f(pkr, packerVersion);
@@ -487,7 +487,7 @@ typedef uint8* (*unpackData)(Unpacker unpkr, const uint key, uint* p_len);
 typedef void* (*unpackObject)(Unpacker unpkr, const uint key);
 typedef uint (*unpackArray)(Unpacker unpkr, const uint key);
 typedef void* (*unpackArrayItem)(Unpacker unpkr, const uint key, const uint index);
-typedef void (*unpackNextContext)(Unpacker unpkr, const char* context/*classname*/);
+typedef void (*unpackNextContext)(Unpacker unpkr, void* stru);
 
 plat_inline uint __unpacker_version(Unpacker unpkr) {
     return call_f(unpkr, unpackerVersion);

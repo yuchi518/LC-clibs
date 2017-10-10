@@ -4,22 +4,6 @@
 
 #include "mmo_pack.h"
 
-typedef enum {
-    pkrdex_integer      = 0x1,  // type, index, variable sign integer
-    pkrdex_float        = 0x2,  // type, index, float
-    pkrdex_double       = 0x3,  // type, index, double
-
-    pkrdex_raw          = 0x7,  // type, index, size(variable unsigned integer), data
-    pkrdex_array        = 0x8,  // type, index, size(variable unsigned integer)
-
-    pkrdex_object_ref   = 0xa,  // type, index, object number(variable unsigned integer)
-    pkrdex_object       = 0xb,  // type, object number(variable unsigned integer), class name num, object data ....  -> Start
-                                // type, object number(variable unsigned integer)                                   -> End
-    pkrdex_namedb       = 0xc,  // type, scope, class name number (variable unsigned integer), class name string
-    pkrdex_function     = 0xf,  // type, index (function number)
-                                // type, 0: version, version number(variable unsigned integer)
-} pkrdex;
-
 /// ===== MMPacker =====
 
 static uint packerVersion_impl(Packer packer) {
@@ -84,40 +68,40 @@ static void packArray_impl(Packer pkr, const uint key, uint len) {
 
 static uint save_classname(MMPacker packer, const char* name) {
     PnI this_p2i;
-    HASH_FIND_STR(packer->class_names, name, this_p2i);
+    HASH_FIND_STR(packer->class_name_to_id, name, this_p2i);
     if (this_p2i) return (uint)this_p2i->i;
 
     this_p2i = mgn_mem_alloc(pool_of_mmobj(packer), sizeof(*this_p2i));
-    this_p2i->i = HASH_COUNT(packer->class_names);
+    this_p2i->i = HASH_COUNT(packer->class_name_to_id);
     this_p2i->p = (void*)name;
 
-    HASH_ADD_KEYPTR(hh, packer->class_names, this_p2i->p, plat_cstr_length(this_p2i->p), this_p2i);
+    HASH_ADD_KEYPTR(hh, packer->class_name_to_id, this_p2i->p, plat_cstr_length(this_p2i->p), this_p2i);
 
-    dyb_append_typdex(packer->dyb, pkrdex_namedb, 0/*class name scope*/);
+    dyb_append_typdex(packer->dyb, pkrdex_db, pkrdb_class_names);
     dyb_append_var_u64(packer->dyb, (uint64)this_p2i->i);
     dyb_append_cstring_with_var_len(packer->dyb, name);
     return (uint)this_p2i->i;
 }
 
-static void packObject_impl(Packer pkr, const uint key, void* stru);
+static void packObject_impl(Packer pkr, uint key, void* stru);
 static void _packObject_impl(MMPacker packer, const uint key, MMObject obj) {
     mgn_memory_pool* pool = pool_of_mmobj(obj);
     void* mem_addr = obj;
     PnI this_p2i, this_i2p;
 
-    HASH_FIND_PTR(packer->p2i, &mem_addr, this_p2i);
+    HASH_FIND_PTR(packer->obj_to_id, &mem_addr, this_p2i);
 
     if (this_p2i == null) {
         this_p2i = mgn_mem_alloc(pool, sizeof(*this_p2i));
-        size_t idx = HASH_COUNT(packer->p2i);
-        this_p2i->i = idx;
+        size_t idx = HASH_COUNT(packer->obj_to_id);
+        this_p2i->i = (int)idx;
         this_p2i->p = mem_addr;
-        HASH_ADD_PTR(packer->p2i, p, this_p2i);
+        HASH_ADD_PTR(packer->obj_to_id, p, this_p2i);
 
         this_i2p = mgn_mem_alloc(pool, sizeof(*this_i2p));
-        this_i2p->i = idx;
+        this_i2p->i = (int)idx;
         this_i2p->p = mem_addr;
-        HASH_ADD_INT(packer->i2p, i, this_i2p);
+        HASH_ADD_INT(packer->id_to_obj, i, this_i2p);
     }
 
     // output object reference
@@ -131,8 +115,9 @@ static void _packObject_impl(MMPacker packer, const uint key, MMObject obj) {
 
     int processing_i = 0;
 
-    while (HASH_COUNT(packer->i2p) > (uint)processing_i) {
-        HASH_FIND_INT(packer->i2p, &processing_i, this_i2p);
+    /// Packing objects into memory
+    while (HASH_COUNT(packer->id_to_obj) > (uint)processing_i) {
+        HASH_FIND_INT(packer->id_to_obj, &processing_i, this_i2p);
         if (this_i2p == null) {
             plat_io_printf_err("This is impossible\n");
             return;
@@ -172,9 +157,9 @@ static void packObject_impl(Packer pkr, const uint key, void* stru) {
     packer->level--;
 }
 
-void packNextContext_impl(Packer packer, const char* context/*classname*/)
+void packNextContext_impl(Packer packer, void* stru)
 {
-
+    // TODO: ~~
 }
 
 
@@ -193,7 +178,7 @@ MMPacker initMMPacker(MMPacker obj, Unpacker unpkr) {
     if (obj->dyb == null) return null;
 
     // Append a version number first.
-    dyb_append_typdex(obj->dyb, pkrdex_function, 0);
+    dyb_append_typdex(obj->dyb, pkrdex_function, pkrfn_version);
     dyb_append_var_u64(obj->dyb, PACKER_VERSION_V1);
     return obj;
 }
@@ -206,18 +191,18 @@ void destroyMMPacker(MMPacker obj) {
     PnI this_p2i, tmp_p2i, this_i2p, tmp_i2p;
     mgn_memory_pool* pool = pool_of_mmobj(obj);
     // release
-    HASH_ITER(hh, obj->p2i, this_p2i, tmp_p2i) {
-        HASH_DEL(obj->p2i, this_p2i);
+    HASH_ITER(hh, obj->obj_to_id, this_p2i, tmp_p2i) {
+        HASH_DEL(obj->obj_to_id, this_p2i);
         mgn_mem_release(pool, this_p2i);
     }
 
-    HASH_ITER(hh, obj->i2p, this_i2p, tmp_i2p) {
-        HASH_DEL(obj->i2p, this_i2p);
+    HASH_ITER(hh, obj->id_to_obj, this_i2p, tmp_i2p) {
+        HASH_DEL(obj->id_to_obj, this_i2p);
         mgn_mem_release(pool, this_i2p);
     }
 
-    HASH_ITER(hh, obj->class_names, this_p2i, tmp_p2i) {
-        HASH_DEL(obj->class_names, this_p2i);
+    HASH_ITER(hh, obj->class_name_to_id, this_p2i, tmp_p2i) {
+        HASH_DEL(obj->class_name_to_id, this_p2i);
         mgn_mem_release(pool, this_p2i);
     }
 }
@@ -322,7 +307,7 @@ static void* unpackArrayItem_impl(Unpacker unpkr, const uint key, const uint ind
     return null;
 }
 
-static void unpackNextContext_impl(Unpacker unpkr, const char* context/*classname*/)
+static void unpackNextContext_impl(Unpacker unpkr, void* stru)
 {
     MMUnpacker unpacker = toMMUnpacker(unpkr);
     if (unpacker == null) {
@@ -332,6 +317,7 @@ static void unpackNextContext_impl(Unpacker unpkr, const char* context/*classnam
         process(unpacker);
     }
 
+    // TODO: ~~~
 }
 
 bool process(MMUnpacker unpkr) {
@@ -343,6 +329,7 @@ bool process(MMUnpacker unpkr) {
 
     unpkr->roots = allocMMMap(pool_of_mmobj(unpkr));
 
+    /// Unpacking objects from memory in general form
     while (dyb_get_remainder(unpkr->dyb))
     {
         dyb_next_typdex(unpkr->dyb, &type, &index);
@@ -375,9 +362,13 @@ bool process(MMUnpacker unpkr) {
                 if (!current_obj) {
                     plat_io_printf_err("Incorrect status.");
                 }
-                uint size;
+                uint size=0;
                 uint8* data = dyb_next_data_with_var_len(unpkr->dyb, &size);
-                plat_io_printf_std("data(%d):%p, size:%u\n", index, (void*)data, size);
+                if (data[size-1] == '\0') {
+                    plat_io_printf_std("data(%d):%s, size:%u\n", index, (const char*)data, size);
+                } else {
+                    plat_io_printf_std("data(%d): size:%u\n", index, size);
+                }
                 break;
             }
             case pkrdex_array: {
@@ -401,10 +392,10 @@ bool process(MMUnpacker unpkr) {
                     // new one
                     current_obj = allocMMMap(pool);
                     current_obj_num = index;
-                    uint size;
-                    int classname_num = dyb_next_var_u64(unpkr->dyb);
+                    //uint size;
+                    int classname_num = (int)dyb_next_var_u64(unpkr->dyb);
                     PnI this_i2p;
-                    HASH_FIND_INT(unpkr->class_names, &classname_num, this_i2p);
+                    HASH_FIND_INT(unpkr->id_to_class_name, &classname_num, this_i2p);
                     if (this_i2p == null) {
                         plat_io_printf_err("Lost class name?(%d)\n", classname_num);
                         return false;
@@ -423,28 +414,38 @@ bool process(MMUnpacker unpkr) {
                 }
                 break;
             }
-            case pkrdex_namedb: {
-                if (index == 0) {
-                    // class name domain
-                    PnI this_i2p;
-                    int classname_num = (int)dyb_next_var_u64(unpkr->dyb);
-                    HASH_FIND_INT(unpkr->class_names, &classname_num, this_i2p);
-                    if (this_i2p) {
-                        plat_io_printf_err("Duplicate class name?(%d)\n", classname_num);
+            case pkrdex_db: {
+                switch((pkrdb)index)
+                {
+                    case pkrdb_class_names:
+                    {
+                        // class names db
+                        PnI this_i2p;
+                        int classname_num = (int)dyb_next_var_u64(unpkr->dyb);
+                        HASH_FIND_INT(unpkr->id_to_class_name, &classname_num, this_i2p);
+                        if (this_i2p) {
+                            plat_io_printf_err("Duplicate class name?(%d)\n", classname_num);
+                            return false;
+                        } else {
+                            uint size;
+                            this_i2p = mgn_mem_alloc(pool, sizeof(*this_i2p));
+                            this_i2p->i = classname_num;
+                            this_i2p->p = dyb_next_cstring_with_var_len(unpkr->dyb, &size);
+                            HASH_ADD_INT(unpkr->id_to_class_name, i, this_i2p);
+                        }
+                        break;
+                    }
+                    default:
+                    {
+                        plat_io_printf_err("Unsupported db.(%d)\n", index);
                         return false;
-                    } else {
-                        uint size;
-                        this_i2p = mgn_mem_alloc(pool, sizeof(*this_i2p));
-                        this_i2p->i = classname_num;
-                        this_i2p->p = dyb_next_cstring_with_var_len(unpkr->dyb, &size);
-                        HASH_ADD_INT(unpkr->class_names, i, this_i2p);
                     }
                 }
                 break;
             }
             case pkrdex_function: {
-                switch(index) {
-                    case 0:
+                switch((pkrfn)index) {
+                    case pkrfn_version:
                     {
                         uint64 version = dyb_next_var_u64(unpkr->dyb);
                         if (version == UNPACKER_VERSION_V1) {
@@ -487,17 +488,17 @@ MMUnpacker initMMUnpacker(MMUnpacker obj, Unpacker unpkr) {
 }
 
 void destroyMMUnpacker(MMUnpacker obj) {
-    release_mmobj(obj->objects);
-    release_mmobj(obj->roots);
+    mgn_memory_pool* pool = pool_of_mmobj(obj);
+    PnI this_i2p, tmp_i2p;
+    HASH_ITER(hh, obj->id_to_class_name, this_i2p, tmp_i2p) {
+        HASH_DEL(obj->id_to_class_name, this_i2p);
+        mgn_mem_release(pool, this_i2p);
+    }
     if (obj->dyb) {
         dyb_release(obj->dyb);
     }
-    PnI this_i2p, tmp_i2p;
-    mgn_memory_pool* pool = pool_of_mmobj(obj);
-    HASH_ITER(hh, obj->class_names, this_i2p, tmp_i2p) {
-        HASH_DEL(obj->class_names, this_i2p);
-        mgn_mem_release(pool, this_i2p);
-    }
+    release_mmobj(obj->objects);
+    release_mmobj(obj->roots);
 }
 
 MMUnpacker allocMMUnpackerWithData(mgn_memory_pool* pool, uint8* data, uint len) {
