@@ -99,8 +99,11 @@ plat_inline void* init_##stru_name(mgn_memory_pool* pool, void* p,              
     set_hash_for_mmobj(&ptr->iso, hash_##stru_name);                                            \
     ptr->isb.pack = pack_##stru_name;                                                           \
     struct stru_name* (*init_impl)(struct stru_name*, Unpacker) = fn_init;                      \
-    if (init_impl != null && init_impl(&ptr->iso, unpkr) == null) {                             \
-        return null;                                                                            \
+    if (init_impl != null) {                                                                    \
+        call_f(unpkr, unpackNextContext, name_##stru_name());                                   \
+        if (init_impl(&ptr->iso, unpkr) == null) {                                              \
+            return null;                                                                        \
+        }                                                                                       \
     }                                                                                           \
     return p;                                                                                   \
 }                                                                                               \
@@ -129,7 +132,10 @@ plat_inline struct stru_name* unpack##stru_name(mgn_memory_pool* pool,          
 plat_inline void pack_##stru_name(mmBase base, Packer pkr) {                                    \
     struct MM__##stru_name* ptr = ((void*)base) - (uint)&((struct MM__##stru_name*)0)->isb;     \
     void (*pack_impl)(struct stru_name*, Packer) = fn_pack;                                     \
-    if (pack_impl != null) pack_impl(&ptr->iso, pkr);                                           \
+    if (pack_impl != null) {                                                                    \
+        call_f(pkr, packNextContext, base->name());                                             \
+        pack_impl(&ptr->iso, pkr);                                                              \
+    }                                                                                           \
 }                                                                                               \
                                                                                                 \
 plat_inline struct stru_name* to##stru_name(void* stru) {                                       \
@@ -204,11 +210,14 @@ plat_inline void* init_##stru_name(mgn_memory_pool* pool, void* p,              
     ptr->isb.name = name_##stru_name;                                                           \
     ptr->isb.pack = pack_##stru_name;                                                           \
     struct stru_name* (*init_impl)(struct stru_name*, Unpacker) = fn_init;                      \
-    if (init_impl != null && init_impl(&ptr->iso, unpkr) == null) {                             \
-        /*Init fail, destroy super.*/                                                           \
-        void (*destroy_super_impl)(mmBase base) = ptr->isb.pre_base->destroy;                   \
-        destroy_super_impl(ptr->isb.pre_base);                                                  \
-        return null;                                                                            \
+    if (init_impl != null) {                                                                    \
+        call_f(unpkr, unpackNextContext, name_##stru_name());                                   \
+        if (init_impl(&ptr->iso, unpkr) == null) {                                              \
+            /*Init fail, destroy super.*/                                                       \
+            void (*destroy_super_impl)(mmBase base) = ptr->isb.pre_base->destroy;               \
+            destroy_super_impl(ptr->isb.pre_base);                                              \
+            return null;                                                                        \
+        }                                                                                       \
     }                                                                                           \
     return p;                                                                                   \
 }                                                                                               \
@@ -238,7 +247,10 @@ plat_inline void pack_##stru_name(mmBase base, Packer pkr) {                    
     struct MM__##stru_name* ptr = ((void*)base) - (uint)&((struct MM__##stru_name*)0)->isb;     \
     pack_##sup_name(ptr->isb.pre_base, pkr);                                                    \
     void (*pack_impl)(struct stru_name*, Packer) = fn_pack;                                     \
-    if (pack_impl != null) pack_impl(&ptr->iso, pkr);                                           \
+    if (pack_impl != null) {                                                                    \
+        call_f(pkr, packNextContext, base->name());                                             \
+        pack_impl(&ptr->iso, pkr);                                                              \
+    }                                                                                           \
 }                                                                                               \
                                                                                                 \
 plat_inline struct stru_name* to##stru_name(void* stru) {                                       \
@@ -262,6 +274,13 @@ plat_inline mmBase __base_of_mmobj(void* stru) {
     return (mmBase)((/*(void*)*/stru) - (((uint)&obj.c) - ((uint)&obj.b)));
 }
 #define base_of_mmobj(stru) __base_of_mmobj(stru)
+
+plat_inline void* __mem_addr_of_mmobj(void* stru) {
+    if (stru == null) return null;
+    mmBase base = base_of_mmobj(stru);
+    return base->find_obj(base);
+}
+#define mem_addr_of_mmobj(stru) __mem_addr_of_mmobj(stru)
 
 plat_inline mmBase __base_of_first_mmobj(void* stru) {
     if (stru == null) return null;
@@ -352,7 +371,7 @@ plat_inline void* __set_function_for_mmobj(void* stru, const char* fn_type_name,
     HASH_ADD_KEYPTR( hh, obj->_fns, fncb->name, plat_cstr_length(fncb->name), fncb );
     return pre_fn;
 }
-#define set_function_for_mmobj(stru, fn_type, fn)  (fn_type)__set_function_for_mmobj(stru, "" #fn_type, fn)
+#define set_function_for_mmobj(stru, fn_type, fn)  ((fn_type)__set_function_for_mmobj(stru, "" #fn_type, fn))
 
 plat_inline void* __get_function_for_mmobj(void* stru, const char* fn_type_name) {
     if (stru == null) return 0;
@@ -362,7 +381,9 @@ plat_inline void* __get_function_for_mmobj(void* stru, const char* fn_type_name)
     HASH_FIND_STR(obj->_fns, fn_type_name, fncb);
     return fncb?fncb->fn:null;
 }
-#define get_function_for_mmobj(stru, fn_type)  (fn_type)__get_function_for_mmobj(stru, "" #fn_type)
+#define get_function_for_mmobj(stru, fn_type) ((fn_type)__get_function_for_mmobj(stru, "" #fn_type))
+// call_f only supports the function which first argument is structure/obj itself.
+#define call_f(stru, fn_type, ...)  ({fn_type _f = get_function_for_mmobj(stru, fn_type); _f?_f(stru, ##__VA_ARGS__):0;})
 
 plat_inline const char* __name_of_mmobj(void* stru) {
     if (stru == null) return null;
@@ -394,8 +415,7 @@ plat_inline void __set_hash_for_mmobj(void* stru, mmobj_hash hash) {
 
 plat_inline void __hash_of_mmobj(void* stru, void** key, void* key_len) {
     if (stru == null || key == null || key_len == null) return;
-    mmobj_hash hash = get_function_for_mmobj(stru, mmobj_hash);
-    if (hash) hash(stru, key, key_len);
+    call_f(stru, mmobj_hash, key, key_len);
 }
 #define hash_of_mmobj(stru, key, key_len) __hash_of_mmobj(stru, key, key_len)
 
@@ -406,19 +426,109 @@ plat_inline bool __is_mmobj_kind_of_oid(void* stru, uint oid) {
 }
 #define is_mmobj_kind_of_oid(stru, oid) __is_mmobj_kind_of_oid(stru, oid)
 
-plat_inline void __pack_mmobj(void* stru, Packer pkr) {
-    if (stru == null) return;
-    mmBase base = base_of_first_mmobj(stru)->pre_base;       // use first one to find last one
-    base->pack(base, pkr);
-}
-#define pack_mmobj(stru, pkr) __pack_mmobj(stru, pkr)
+/**
+ *  Serialization, packer/unpacker, v1
+ *  Use uint as key, each object maintain key itself.
+ *  Key can be any number, but keep it smaller is better.
+ */
+#define PACKER_VERSION_V1       (0x01)
+typedef uint (*packerVersion)(Packer pkr);
+typedef void (*packVarInt64)(Packer pkr, const uint key, int64 value);
+typedef void (*packFloat)(Packer pkr, const uint key, float value);
+typedef void (*packDouble)(Packer pkr, const uint key, double value);
+typedef void (*packData)(Packer pkr, const uint key, uint8* value, uint len);
+typedef void (*packObject)(Packer pkr, const uint key, void* value);
+typedef void (*packArray)(Packer pkr, const uint key, uint len);
+typedef void (*packNextContext)(Packer pkr, const char* context/*classname*/);
 
-plat_inline void* __unpack_mmobj(Unpacker unpkr) {
-    //mgn_memory_pool* pool = pool_of_mmobj(unpkr);
-
-    return null;
+plat_inline uint __packer_version(Packer pkr) {
+    return call_f(pkr, packerVersion);
 }
-#define unpack_mmobj(unpkr) __unpack_mmobj(unpkr)
+#define packer_version(pkr) __packer_version(pkr)
+#define is_packer_v1(pkr) (packer_version(pkr)==PACKER_VERSION_V1)
+
+plat_inline void __pack_varint(int64 value, const uint key, Packer pkr) {
+    call_f(pkr, packVarInt64, key, value);
+}
+#define pack_varint(key, value, pkr) __pack_varint(value, key, pkr)
+
+plat_inline void __pack_float(float value, const uint key, Packer pkr) {
+    call_f(pkr, packFloat, key, value);
+}
+#define pack_float(key, value, pkr) __pack_float(value, key, pkr)
+
+plat_inline void __pack_double(double value, const uint key, Packer pkr) {
+    call_f(pkr, packDouble, key, value);
+}
+#define pack_double(key, value, pkr) __pack_double(value, key, pkr)
+
+plat_inline void __pack_data(void* value, uint len, const uint key, Packer pkr) {
+    call_f(pkr, packData, key, value, len);
+}
+#define pack_data(key, value, len, pkr) __pack_data(value, len, key, pkr)
+
+plat_inline void __pack_array(uint len, const uint key, Packer pkr) {
+    call_f(pkr, packArray, key, len);
+}
+#define pack_array(key, len, pkr) __pack_array(len, key, pkr)
+
+plat_inline void __pack_mmobj(void* stru, const uint key, Packer pkr) {
+    call_f(pkr, packObject, key, stru);
+}
+#define pack_mmobj(key, stru, pkr) __pack_mmobj(stru, key, pkr)
+
+
+#define UNPACKER_VERSION_V1       (PACKER_VERSION_V1)
+typedef uint (*unpackerVersion)(Unpacker unpkr);
+typedef int64 (*unpackVarInt64)(Unpacker unpkr, const uint key);
+typedef float (*unpackFloat)(Unpacker unpkr, const uint key);
+typedef double (*unpackDouble)(Unpacker unpkr, const uint key);
+typedef uint8* (*unpackData)(Unpacker unpkr, const uint key, uint* p_len);
+typedef void* (*unpackObject)(Unpacker unpkr, const uint key);
+typedef uint (*unpackArray)(Unpacker unpkr, const uint key);
+typedef void* (*unpackArrayItem)(Unpacker unpkr, const uint key, const uint index);
+typedef void (*unpackNextContext)(Unpacker unpkr, const char* context/*classname*/);
+
+plat_inline uint __unpacker_version(Unpacker unpkr) {
+    return call_f(unpkr, unpackerVersion);
+}
+#define unpacker_version(unpkr) __unpacker_version(unpkr)
+#define is_unpacker_v1(unpkr) (unpacker_version(unpkr)==UNPACKER_VERSION_V1)
+
+plat_inline int64 __unpack_varint(const uint key, Unpacker unpkr) {
+    return call_f(unpkr, unpackVarInt64, key);
+}
+#define unpack_varint(key, unpkr) __unpack_varint(key, unpkr)
+
+plat_inline float __unpack_float(const uint key, Unpacker unpkr) {
+    return call_f(unpkr, unpackFloat, key);
+}
+#define unpack_float(key, unpkr) __unpack_float(key, unpkr)
+
+plat_inline double __unpack_double(const uint key, Unpacker unpkr) {
+    return call_f(unpkr, unpackDouble, key);
+}
+#define unpack_double(key, unpkr) __unpack_double(key, unpkr)
+
+plat_inline uint8* __unpack_data(const uint key, uint* p_len, Unpacker unpkr) {
+    return call_f(unpkr, unpackData, key, p_len);
+}
+#define unpack_data(key, p_len, unpkr) __unpack_data(key, p_len, unpkr)
+
+plat_inline uint __unpack_array(const uint key, Unpacker unpkr) {
+    return call_f(unpkr, unpackArray, key);
+}
+#define unpack_array(key, unpkr) __unpack_array(key, unpkr)
+
+plat_inline void* __unpack_array_item(const uint key, const uint index, Unpacker unpkr) {
+    return call_f(unpkr, unpackArrayItem, key, index);
+}
+#define unpack_array_item(key, index, unpkr) __unpack_array_item(key, index, unpkr)
+
+plat_inline void* __unpack_mmobj(Unpacker unpkr, const uint key) {
+    return call_f(unpkr, unpackObject, key);
+}
+#define unpack_mmobj(key, unpkr) __unpack_mmobj(unpkr, key)
 
 /*
  * ============= Samples ================

@@ -35,29 +35,28 @@ typedef struct MMObject {
 
 }* MMObject;
 
-plat_inline MMObject initMMObject(MMObject obj, Unpacker unpkr) {
+/*plat_inline MMObject initMMObject(MMObject obj, Unpacker unpkr) {
     return obj;
 }
 
 plat_inline void destroyMMObject(MMObject obj) {
 
-}
+}*/
 
-MMRootObject(MMOBJ_OBJECT, MMObject, initMMObject, destroyMMObject, null);
+MMRootObject(MMOBJ_OBJECT, MMObject, null, null, null);
 
 /// ====== Primary type =====
 typedef struct MMPrimary {
 }*MMPrimary;
 
-plat_inline MMPrimary initMMPrimary(MMPrimary primary, Unpacker unpkr) {
+/*plat_inline MMPrimary initMMPrimary(MMPrimary primary, Unpacker unpkr) {
     return primary;
 }
 
 plat_inline void destroyMMPrimary(MMPrimary primary) {
+}*/
 
-}
-
-MMSubObject(MMOBJ_PRIMARY, MMPrimary, MMObject, initMMPrimary, destroyMMPrimary, null);
+MMSubObject(MMOBJ_PRIMARY, MMPrimary, MMObject, null, null, null);
 
 /// ====== Primary type - Int (32bits) =====
 typedef struct MMInt {
@@ -68,13 +67,22 @@ plat_inline void hash_of_MMInt(void*, void** key, uint* key_len);
 
 plat_inline MMInt initMMInt(MMInt obj, Unpacker unpkr) {
     set_hash_for_mmobj(obj, hash_of_MMInt);
+    if (is_unpacker_v1(unpkr)) {
+        obj->value = (int32)unpack_varint(0, unpkr);
+    }
     return obj;
 }
 
-plat_inline void destroyMMInt(MMInt obj) {
+/*plat_inline void destroyMMInt(MMInt obj) {
+
+}*/
+
+plat_inline void packMMInt(MMInt obj, Packer pkr) {
+    if (is_packer_v1(pkr))
+        pack_varint(0, obj->value, pkr);
 }
 
-MMSubObject(MMOBJ_INT, MMInt, MMPrimary, initMMInt, destroyMMInt, null);
+MMSubObject(MMOBJ_INT, MMInt, MMPrimary, initMMInt, null, packMMInt);
 
 plat_inline void hash_of_MMInt(void* stru, void** key, uint* key_len)
 {
@@ -100,14 +108,21 @@ plat_inline void hash_of_MMLong(void* stru, void** key, uint* key_len);
 
 plat_inline MMLong initMMLong(MMLong obj, Unpacker unpkr) {
     set_hash_for_mmobj(obj, hash_of_MMLong);
+    if (is_unpacker_v1(unpkr)) {
+        obj->value = unpack_varint(0, unpkr);
+    }
     return obj;
 }
 
-plat_inline void destroyMMLong(MMLong oint) {
+/*plat_inline void destroyMMLong(MMLong obj) {
+}*/
 
+plat_inline void packMMLong(MMLong obj, Packer pkr) {
+    if (is_packer_v1(pkr))
+        pack_varint(0, obj->value, pkr);
 }
 
-MMSubObject(MMOBJ_LONG, MMLong, MMPrimary, initMMLong, destroyMMLong, null);
+MMSubObject(MMOBJ_LONG, MMLong, MMPrimary, initMMLong, null, packMMLong);
 
 plat_inline void hash_of_MMLong(void* stru, void** key, uint* key_len)
 {
@@ -133,14 +148,21 @@ plat_inline void hash_of_MMFloat(void* stru, void** key, uint* key_len);
 
 plat_inline MMFloat initMMFloat(MMFloat obj, Unpacker unpkr) {
     set_hash_for_mmobj(obj, hash_of_MMFloat);
+    if (is_unpacker_v1(unpkr)) {
+        obj->value = unpack_float(0, unpkr);
+    }
     return obj;
 }
 
-plat_inline void destroyMMFloat(MMFloat obj) {
+/*plat_inline void destroyMMFloat(MMFloat obj) {
+}*/
 
+plat_inline void packMMFloat(MMFloat obj, Packer pkr) {
+    if (is_packer_v1(pkr))
+        pack_float(0, obj->value, pkr);
 }
 
-MMSubObject(MMOBJ_FLOAT, MMFloat, MMPrimary, initMMFloat, destroyMMFloat, null);
+MMSubObject(MMOBJ_FLOAT, MMFloat, MMPrimary, initMMFloat, null, packMMFloat);
 
 plat_inline void hash_of_MMFloat(void* stru, void** key, uint* key_len)
 {
@@ -167,14 +189,21 @@ plat_inline void hash_of_MMDouble(void* stru, void** key, uint* key_len);
 
 plat_inline MMDouble initMMDouble(MMDouble obj, Unpacker unpkr) {
     set_hash_for_mmobj(obj, hash_of_MMDouble);
+    if (is_unpacker_v1(unpkr)) {
+        obj->value = unpack_double(0, unpkr);
+    }
     return obj;
 }
 
-plat_inline void destroyMMDouble(MMDouble obj) {
+/*plat_inline void destroyMMDouble(MMDouble obj) {
+}*/
 
+plat_inline void packMMDouble(MMDouble obj, Packer pkr) {
+    if (is_packer_v1(pkr))
+        pack_double(0, obj->value, pkr);
 }
 
-MMSubObject(MMOBJ_DOUBLE, MMDouble, MMPrimary, initMMDouble, destroyMMDouble, null);
+MMSubObject(MMOBJ_DOUBLE, MMDouble, MMPrimary, initMMDouble, null, packMMDouble);
 
 plat_inline void hash_of_MMDouble(void* stru, void** key, uint* key_len)
 {
@@ -200,6 +229,17 @@ plat_inline void hash_of_MMString(void* stru, void** key, uint* key_len);
 
 plat_inline MMString initMMString(MMString obj, Unpacker unpkr) {
     set_hash_for_mmobj(obj, hash_of_MMString);
+    if (is_unpacker_v1(unpkr)) {
+        uint len;
+        uint8* data;
+        data = unpack_data(0, &len, unpkr);
+        if (data && len) {
+            mgn_memory_pool* pool = pool_of_mmobj(obj);
+            obj->value = mgn_mem_alloc(pool, len+1);
+            if (obj->value == null) return null;
+            plat_mem_copy(obj->value, data, len+1);
+        }
+    }
     return obj;
 }
 
@@ -211,7 +251,12 @@ plat_inline void destroyMMString(MMString obj) {
     }
 }
 
-MMSubObject(MMOBJ_STRING, MMString, MMPrimary, initMMString, destroyMMString, null);
+plat_inline void packMMString(MMString obj, Packer pkr) {
+    if (is_packer_v1(pkr))
+        pack_data(0, obj->value, plat_cstr_length(obj->value), pkr);
+}
+
+MMSubObject(MMOBJ_STRING, MMString, MMPrimary, initMMString, destroyMMString, packMMString);
 
 plat_inline void hash_of_MMString(void* stru, void** key, uint* key_len)
 {
@@ -245,6 +290,18 @@ typedef struct MMData {
 }*MMData;
 
 plat_inline MMData initMMData(MMData obj, Unpacker unpkr) {
+    if (is_unpacker_v1(unpkr)) {
+        uint len;
+        uint8* data;
+        data = unpack_data(0, &len, unpkr);
+        if (data && len) {
+            mgn_memory_pool* pool = pool_of_mmobj(obj);
+            obj->data = mgn_mem_alloc(pool, len);
+            if (obj->data == null) return null;
+            plat_mem_copy(obj->data, data, len);
+            obj->size = len;
+        }
+    }
     return obj;
 }
 
@@ -257,7 +314,8 @@ plat_inline void destroyMMData(MMData obj) {
 }
 
 plat_inline void packMMData(MMData obj, Packer pkr) {
-
+    if (is_packer_v1(pkr))
+        pack_data(0, obj->data, obj->size, pkr);
 }
 
 MMSubObject(MMOBJ_DATA, MMData, MMObject , initMMData, destroyMMData, packMMData);
@@ -298,15 +356,14 @@ typedef struct MMContainer {
 
 }*MMContainer;
 
-plat_inline MMContainer initMMContainer(MMContainer obj, Unpacker unpkr) {
+/*plat_inline MMContainer initMMContainer(MMContainer obj, Unpacker unpkr) {
     return obj;
 }
 
 plat_inline void destroyMMContainer(MMContainer obj) {
+}*/
 
-}
-
-MMSubObject(MMOBJ_CONTAINER, MMContainer, MMObject, initMMContainer, destroyMMContainer, null);
+MMSubObject(MMOBJ_CONTAINER, MMContainer, MMObject, null, null, null);
 
 /// ====== MapItem =====
 typedef struct MMMapItem {
@@ -315,18 +372,18 @@ typedef struct MMMapItem {
     UT_hash_handle hh;
 }*MMMapItem;
 
-plat_inline MMMapItem initMMMapItem(MMMapItem item, Unpacker unpkr) {
+/*plat_inline MMMapItem initMMMapItem(MMMapItem item, Unpacker unpkr) {
     item->key = null;
     item->value = null;
     return item;
-}
+}*/
 
 plat_inline void destroyMMMapItem(MMMapItem item) {
     if (item->key) release_mmobj(item->key);
     if (item->value) release_mmobj(item->value);
 }
 
-MMSubObject(MMOBJ_MAPITEM, MMMapItem, MMObject, initMMMapItem, destroyMMMapItem, null);
+MMSubObject(MMOBJ_MAPITEM, MMMapItem, MMObject, null, destroyMMMapItem, null);
 
 plat_inline MMMapItem allocMMMapItemWithKeyValue(mgn_memory_pool* pool, MMPrimary key, MMObject value) {
     if (key == null || value == null) return null;
@@ -357,8 +414,20 @@ typedef struct MMMap {
     MMMapItem rootItem;
 }*MMMap;
 
+plat_inline void addMMMapItem(MMMap map, MMPrimary key, MMObject value);
 plat_inline MMMap initMMMap(MMMap map, Unpacker unpkr) {
     map->rootItem = null;
+    if (is_unpacker_v1(unpkr)) {
+        uint len = unpack_array(0, unpkr);
+        uint i;
+        if ((len&0x01)) return null;
+        for (i=0; i<len; ) {
+            MMPrimary primary = toMMPrimary(unpack_array_item(0, i++, unpkr));
+            MMObject value = toMMObject(unpack_array_item(0, i++, unpkr));
+            if (primary==null || value==null) return null;
+            addMMMapItem(map, primary, value);
+        }
+    }
     return map;
 }
 
@@ -371,6 +440,24 @@ plat_inline void destroyMMMap(MMMap map) {
         HASH_DEL(map->rootItem, item);
         release_mmobj(item);
     }
+}
+
+plat_inline void packMMMap(MMMap map, Packer pkr) {
+    if (is_packer_v1(pkr)) {
+        uint len = (uint)HASH_COUNT(map->rootItem);
+        pack_array(0, len*2, pkr);
+        MMMapItem item, tmp;
+        HASH_ITER(hh, map->rootItem, item, tmp) {
+            pack_mmobj(0, item->key, pkr);
+            pack_mmobj(1, item->value, pkr);
+        }
+    }
+}
+
+MMSubObject(MMOBJ_MAP, MMMap, MMContainer, initMMMap, destroyMMMap, packMMMap);
+
+plat_inline uint sizeOfMMMap(MMMap map) {
+    return (uint)HASH_COUNT(map->rootItem);
 }
 
 plat_inline void addMMMapItem(MMMap map, MMPrimary key, MMObject value)
@@ -425,8 +512,6 @@ plat_inline void removeMMMapItem(MMMap map, MMPrimary key) {
     release_mmobj(item);
 }
 
-MMSubObject(MMOBJ_MAP, MMMap, MMContainer, initMMMap, destroyMMMap, null);
-
 /// ====== List =====
 typedef struct MMList {
     UT_array list;
@@ -454,6 +539,15 @@ plat_inline void ut_ast_del(void *ptr)
 plat_inline MMList initMMList(MMList obj, Unpacker unpkr) {
     static UT_icd ut_ast__icd = { sizeof(void*), /*ut_ast_init*/null, ut_ast_copy, ut_ast_del };
     utarray_init(&obj->list, &ut_ast__icd);
+    if (is_unpacker_v1(unpkr)) {
+        uint len = unpack_array(0, unpkr);
+        uint i;
+        for (i=0; i<len; i++) {
+            MMObject item = toMMObject(unpack_array_item(0, i, unpkr));
+            if (item == null) return null;
+            utarray_push_back(&obj->list, &item);
+        }
+    }
     return obj;
 }
 
@@ -461,7 +555,19 @@ plat_inline void destroyMMList(MMList obj) {
     utarray_done(&obj->list);
 }
 
-MMSubObject(MMOBJ_LIST, MMList, MMContainer, initMMList, destroyMMList, null);
+plat_inline void packMMList(MMList obj, Packer pkr) {
+    if (is_packer_v1(pkr)) {
+        uint len = utarray_len(&obj->list), i;
+        pack_array(0, len, pkr);
+
+        for (i=0; i<len; i++) {
+            MMObject p = *(MMObject*)utarray_eltptr(&obj->list, i);
+            pack_mmobj(0, p, pkr);
+        }
+    }
+}
+
+MMSubObject(MMOBJ_LIST, MMList, MMContainer, initMMList, destroyMMList, packMMList);
 
 plat_inline uint sizeOfMMList(MMList list) {
     return utarray_len(&list->list);
@@ -490,39 +596,6 @@ plat_inline void concatMMList(MMList dest_list, MMList a_list) {
     utarray_concat(&dest_list->list, &a_list->list);
 }
 
-/// ===== Packer =====
-typedef struct MMPacker {
-
-}*MMPacker;
-
-plat_inline MMPacker initMMPacker(MMPacker obj, Unpacker unpkr) {
-    return obj;
-}
-
-plat_inline void destroyMMPacker(MMPacker obj) {
-
-}
-
-MMSubObject(MMOBJ_PACKER, MMPacker, MMObject , initMMPacker, destroyMMPacker, null);
-
-/// ===== Unpacker =====
-typedef struct MMUnpacker {
-
-}*MMUnpacker;
-
-plat_inline MMUnpacker initMMUnpacker(MMUnpacker obj, Unpacker unpkr) {
-    return obj;
-}
-
-plat_inline void destroyMMUnpacker(MMUnpacker obj) {
-
-}
-
-plat_inline void packMMUnpacker(MMUnpacker obj, Packer pkr) {
-
-}
-
-MMSubObject(MMOBJ_UNPACKER, MMUnpacker, MMObject , initMMUnpacker, destroyMMUnpacker, packMMUnpacker);
 
 
 #endif //PROC_LA_MMOBJ_LIB_H
