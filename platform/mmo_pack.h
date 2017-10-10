@@ -21,6 +21,7 @@ typedef struct MMPacker {
     PnI i2p;
     int level;
     dybuf* dyb;
+    PnI class_names; // name -> id
 }*MMPacker;
 
 MMPacker initMMPacker(MMPacker obj, Unpacker unpkr);
@@ -34,6 +35,7 @@ typedef struct MMUnpacker {
     MMMap roots;
     MMMap objects;
     dybuf* dyb;
+    PnI class_names; // id -> name
 }*MMUnpacker;
 
 MMUnpacker initMMUnpacker(MMUnpacker obj, Unpacker unpkr);
