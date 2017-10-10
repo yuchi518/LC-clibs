@@ -89,4 +89,48 @@ plat_inline int plat_io_get_resource(const char* resource_name, void** content_m
 }
 
 
+#define PRINTF_HEXMEM(/*function pointer*/PrintF, /*output target*/target, /*memory addr(void*)*/addr, /*unsigned int*/ size, /*unsigned int*/ _seg_size) \
+do {                                                                                            \
+   unsigned int i;                                                                              \
+   unsigned char buff[17];                                                                      \
+   unsigned char *pc = (unsigned char*)addr;                                                    \
+                                                                                                \
+                                                                                                \
+   PrintF(target, " Address   0 1 2 3  4 5 6 7  8 9 a b  c d e f        Dump\n");               \
+   PrintF(target, "--------  -------- -------- -------- --------  ----------------\n");         \
+                                                                                                \
+   unsigned int seg_size = _seg_size;                                                           \
+   seg_size >>= 4;                                                                              \
+   seg_size <<= 4;                                                                              \
+                                                                                                \
+   for (i = 0; i < size; i++) {                                                                 \
+      if ((i % 16) == 0) {                                                                      \
+         if (i != 0) {                                                                          \
+            PrintF(target, "  %s\n", buff);                                                     \
+            if ((seg_size != 0) && (i % seg_size == 0)) PrintF(target, "\n");                   \
+         }                                                                                      \
+         PrintF(target, "%08X ", i);                                                            \
+      }                                                                                         \
+                                                                                                \
+      if ((i % 4) == 0) PrintF(target, " ");                                                    \
+      PrintF(target, "%02x", pc[i]);                                                            \
+                                                                                                \
+      if ((pc[i] < 0x20) || (pc[i] > 0x7e))                                                     \
+         buff[i % 16] = '.';                                                                    \
+      else                                                                                      \
+         buff[i % 16] = pc[i];                                                                  \
+                                                                                                \
+      buff[(i % 16) + 1] = '\0';                                                                \
+   }                                                                                            \
+                                                                                                \
+   while ((i % 16) != 0) {                                                                      \
+      if ((i % 4) == 0) PrintF(target, " ");                                                    \
+      PrintF(target, "  ");                                                                     \
+      i++;                                                                                      \
+   }                                                                                            \
+                                                                                                \
+   PrintF(target, "  %s\n", buff);                                                              \
+} while(0)
+
+
 #endif //_PLAT_C_IO_

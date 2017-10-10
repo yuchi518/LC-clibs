@@ -5,22 +5,25 @@
 #include "mmo_pack.h"
 
 typedef enum {
-    pkrdex_object       = 0x0,
-    pkrdex_integer      = 0x1,        // variable sign integer
-    pkrdex_float        = 0x2,
-    pkrdex_double       = 0x3,
+    pkrdex_integer      = 0x1,  // type, index, variable sign integer
+    pkrdex_float        = 0x2,  // type, index, float
+    pkrdex_double       = 0x3,  // type, index, double
 
-    pkrdex_raw          = 0x7,
+    pkrdex_raw          = 0x7,  // type, index, size(variable unsigned integer), data
+    pkrdex_array        = 0x8,  // type, index, size(variable unsigned integer)
 
-    pkrdex_array        = 0xa,
+    pkrdex_object_ref   = 0xa,  // type, index, object number(variable unsigned integer)
+    pkrdex_object       = 0xb,  // type, object number(variable unsigned integer), object name, object data ....    -> Start
+                                // type, object number(variable unsigned integer)                                   -> End
 
-    pkrdex_function     = 0xf,
+    pkrdex_function     = 0xf,  // type, index (function number)
+                                // type, 0: version, version number(variable unsigned integer)
 } pkrdex;
 
 /// ===== MMPacker =====
 
 static uint packerVersion_impl(Packer packer) {
-    return 0x01;
+    return PACKER_VERSION_V1;
 }
 
 static void packVarInt64_impl(Packer pkr, const uint key, int64 value) {
@@ -29,6 +32,9 @@ static void packVarInt64_impl(Packer pkr, const uint key, int64 value) {
         plat_io_printf_err("Who am I?(%s)\n", name_of_last_mmobj(pkr));
         return;
     }
+
+    dyb_append_typdex(packer->dyb, pkrdex_integer, key);
+    dyb_append_var_s64(packer->dyb, value);
 }
 
 static void packFloat_impl(Packer pkr, const uint key, float value) {
@@ -37,6 +43,9 @@ static void packFloat_impl(Packer pkr, const uint key, float value) {
         plat_io_printf_err("Who am I?(%s)\n", name_of_last_mmobj(pkr));
         return;
     }
+
+    dyb_append_typdex(packer->dyb, pkrdex_float, key);
+    dyb_append_float(packer->dyb, value);
 }
 
 static void packDouble_impl(Packer pkr, const uint key, double value) {
@@ -45,6 +54,9 @@ static void packDouble_impl(Packer pkr, const uint key, double value) {
         plat_io_printf_err("Who am I?(%s)\n", name_of_last_mmobj(pkr));
         return;
     }
+
+    dyb_append_typdex(packer->dyb, pkrdex_double, key);
+    dyb_append_double(packer->dyb, value);
 }
 
 static void packData_impl(Packer pkr, const uint key, uint8* value, uint len) {
@@ -53,6 +65,9 @@ static void packData_impl(Packer pkr, const uint key, uint8* value, uint len) {
         plat_io_printf_err("Who am I?(%s)\n", name_of_last_mmobj(pkr));
         return;
     }
+
+    dyb_append_typdex(packer->dyb, pkrdex_raw, key);
+    dyb_append_data_with_var_len(packer->dyb, value, len);
 }
 
 static void packArray_impl(Packer pkr, const uint key, uint len) {
@@ -61,6 +76,10 @@ static void packArray_impl(Packer pkr, const uint key, uint len) {
         plat_io_printf_err("Who am I?(%s)\n", name_of_last_mmobj(pkr));
         return;
     }
+
+    dyb_append_typdex(packer->dyb, pkrdex_array, key);
+    dyb_append_var_u64(packer->dyb, len);
+    plat_io_printf_std("Pack array\n");
 }
 
 static void packObject_impl(Packer pkr, const uint key, void* stru);
@@ -84,29 +103,36 @@ static void _packObject_impl(MMPacker packer, const uint key, MMObject obj) {
         HASH_ADD_INT(packer->i2p, i, this_i2p);
     }
 
+    // output object reference
+    dyb_append_typdex(packer->dyb, pkrdex_object_ref, key);
+    dyb_append_var_u64(packer->dyb, this_p2i->i);
+
     if (packer->level > 1) {
         // not root object
-        // TODO: output object index
         return;
     }
 
     int processing_i = 0;
-    const char* name = name_of_last_mmobj(obj);
     PnI tmp_p2i, tmp_i2p;
 
     while (HASH_COUNT(packer->i2p) > processing_i) {
-        HASH_FIND_INT(packer->i2p, processing_i, this_i2p);
+        HASH_FIND_INT(packer->i2p, &processing_i, this_i2p);
         if (this_i2p == null) {
             plat_io_printf_err("This is impossible\n");
             return;
         }
+        mem_addr = obj = this_i2p->p;
+        const char* name = name_of_last_mmobj(obj);
 
-        // TODO: save object name & index
+        // save object name & index
+        dyb_append_typdex(packer->dyb, pkrdex_object, processing_i);
+        dyb_append_cstring_with_var_len(packer->dyb, name);
 
         mmBase base = base_of_first_mmobj(obj)->pre_base;       // use first one to find last one
         base->pack(base, packer);
 
-        // TODO: end object
+        // End object
+        dyb_append_typdex(packer->dyb, pkrdex_object, processing_i);
 
         processing_i++;
     }
@@ -147,7 +173,6 @@ void packNextContext_impl(Packer packer, const char* context/*classname*/)
 
 
 MMPacker initMMPacker(MMPacker obj, Unpacker unpkr) {
-    //obj->level
     (void)unpkr;
     set_function_for_mmobj(obj, packerVersion, packerVersion_impl);
     set_function_for_mmobj(obj, packVarInt64, packVarInt64_impl);
@@ -157,57 +182,130 @@ MMPacker initMMPacker(MMPacker obj, Unpacker unpkr) {
     set_function_for_mmobj(obj, packObject, packObject_impl);
     set_function_for_mmobj(obj, packArray, packArray_impl);
     set_function_for_mmobj(obj, packNextContext, packNextContext_impl);
+
+    obj->dyb = dyb_create(null, 64);
+    if (obj->dyb == null) return null;
+    // Append a version number first.
+    dyb_append_typdex(obj->dyb, pkrdex_function, 0);
+    dyb_append_var_u64(obj->dyb, PACKER_VERSION_V1);
     return obj;
 }
 
 void destroyMMPacker(MMPacker obj) {
-
+    if (obj->dyb) {
+        dyb_release(obj->dyb);
+    }
 }
 
 
 /// ===== MMUnpacker  =====
+bool process(MMUnpacker unpkr);
+
 static uint unpackerVersion_impl(Unpacker unpkr)
 {
-    return 0;
+    return UNPACKER_VERSION_V1;
 }
 
 static int64 unpackVarInt64_impl(Unpacker unpkr, const uint key)
 {
+    MMUnpacker unpacker = toMMUnpacker(unpkr);
+    if (unpacker == null) {
+        return 0;
+    }
+    if (unpacker->roots==null) {
+        process(unpacker);
+    }
+
     return 0;
 }
 
 static float unpackFloat_impl(Unpacker unpkr, const uint key)
 {
+    MMUnpacker unpacker = toMMUnpacker(unpkr);
+    if (unpacker == null) {
+        return 0;
+    }
+    if (unpacker->roots==null) {
+        process(unpacker);
+    }
+
     return 0;
 }
 
 static double unpackDouble_impl(Unpacker unpkr, const uint key)
 {
+    MMUnpacker unpacker = toMMUnpacker(unpkr);
+    if (unpacker == null) {
+        return 0;
+    }
+    if (unpacker->roots==null) {
+        process(unpacker);
+    }
+
     return 0;
 }
 
 static uint8* unpackData_impl(Unpacker unpkr, const uint key, uint* p_len)
 {
-    return 0;
+    MMUnpacker unpacker = toMMUnpacker(unpkr);
+    if (unpacker == null) {
+        return null;
+    }
+    if (unpacker->roots==null) {
+        process(unpacker);
+    }
+
+    return null;
 }
 
 static void* unpackObject_impl(Unpacker unpkr, const uint key)
 {
+    MMUnpacker unpacker = toMMUnpacker(unpkr);
+    if (unpacker == null) {
+        return null;
+    }
+    if (unpacker->roots==null) {
+        process(unpacker);
+    }
+
     return null;
 }
 
 static uint unpackArray_impl(Unpacker unpkr, const uint key)
 {
+    MMUnpacker unpacker = toMMUnpacker(unpkr);
+    if (unpacker == null) {
+        return 0;
+    }
+    if (unpacker->roots==null) {
+        process(unpacker);
+    }
+
     return 0;
 }
 
 static void* unpackArrayItem_impl(Unpacker unpkr, const uint key, const uint index)
 {
-    return 0;
+    MMUnpacker unpacker = toMMUnpacker(unpkr);
+    if (unpacker == null) {
+        return null;
+    }
+    if (unpacker->roots==null) {
+        process(unpacker);
+    }
+
+    return null;
 }
 
 static void unpackNextContext_impl(Unpacker unpkr, const char* context/*classname*/)
 {
+    MMUnpacker unpacker = toMMUnpacker(unpkr);
+    if (unpacker == null) {
+        return;
+    }
+    if (unpacker->roots==null) {
+        process(unpacker);
+    }
 
 }
 
@@ -226,5 +324,133 @@ MMUnpacker initMMUnpacker(MMUnpacker obj, Unpacker unpkr) {
 }
 
 void destroyMMUnpacker(MMUnpacker obj) {
+    release_mmobj(obj->objects);
+    release_mmobj(obj->roots);
+    if (obj->dyb) {
+        dyb_release(obj->dyb);
+    }
+}
 
+MMUnpacker allocMMUnpackerWithData(mgn_memory_pool* pool, uint8* data, uint len) {
+    MMUnpacker unpacker = allocMMUnpacker(pool);
+    if (unpacker) {
+        unpacker->dyb = dyb_refer(null, data, len, false);
+        if (unpacker->dyb == null) {
+            release_mmobj(unpacker);
+            return null;
+        }
+    }
+    return unpacker;
+}
+
+bool process(MMUnpacker unpkr) {
+    uint8 type;
+    uint index;
+    MMMap current_obj = null;
+    uint current_obj_num = (uint)~0;
+    mgn_memory_pool* pool = pool_of_mmobj(unpkr);
+
+    unpkr->roots = allocMMMap(pool_of_mmobj(unpkr));
+
+    while (dyb_get_remainder(unpkr->dyb))
+    {
+        dyb_next_typdex(unpkr->dyb, &type, &index);
+        switch ((pkrdex)type) {
+            case pkrdex_integer: {
+                if (!current_obj) {
+                    plat_io_printf_err("Incorrect status.");
+                }
+                int64 value = dyb_next_var_s64(unpkr->dyb);
+                plat_io_printf_std("var int(%d):%lld\n", index, value);
+                break;
+            }
+            case pkrdex_float: {
+                if (!current_obj) {
+                    plat_io_printf_err("Incorrect status.");
+                }
+                float value = dyb_next_float(unpkr->dyb);
+                plat_io_printf_std("float(%d):%f\n", index, value);
+                break;
+            }
+            case pkrdex_double: {
+                if (!current_obj) {
+                    plat_io_printf_err("Incorrect status.");
+                }
+                double value = dyb_next_double(unpkr->dyb);
+                plat_io_printf_std("double(%d):%f\n", index, value);
+                break;
+            }
+            case pkrdex_raw: {
+                if (!current_obj) {
+                    plat_io_printf_err("Incorrect status.");
+                }
+                uint size;
+                uint8* data = dyb_next_data_with_var_len(unpkr->dyb, &size);
+                plat_io_printf_std("data(%d):%p, size:%u\n", index, (void*)data, size);
+                break;
+            }
+            case pkrdex_array: {
+                if (!current_obj) {
+                    plat_io_printf_err("Incorrect status.");
+                }
+                uint64 size = dyb_next_var_u64(unpkr->dyb);
+                plat_io_printf_std("array size(%d):%lld\n", index, size);
+                break;
+            }
+            case pkrdex_object_ref: {
+                //if (!current_obj) {
+                //    plat_io_printf_err("Incorrect status.");
+                //}
+                uint64 num = dyb_next_var_u64(unpkr->dyb);
+                plat_io_printf_std("object ref(%d):%lld\n", index, num);
+                break;
+            }
+            case pkrdex_object: {
+                if (current_obj == null) {
+                    // new one
+                    current_obj = allocMMMap(pool);
+                    current_obj_num = index;
+                    uint size;
+                    const char* string = dyb_next_cstring_with_var_len(unpkr->dyb, &size);
+                    plat_io_printf_std("New object: %s #%u\n", string, (unsigned int)current_obj_num);
+                } else {
+                    if (current_obj_num != index) {
+                        plat_io_printf_err("Missed object end. (%u!=%u)\n", (unsigned int)current_obj_num, (unsigned int)index);
+                        return false;
+                    }
+                    plat_io_printf_std("End object: #%u\n", (unsigned int)current_obj_num);
+                    current_obj_num = (uint)~0;
+                    release_mmobj(current_obj);
+                    current_obj = null;
+                }
+                break;
+            }
+            case pkrdex_function: {
+                switch(index) {
+                    case 0:
+                    {
+                        uint64 version = dyb_next_var_u64(unpkr->dyb);
+                        if (version == UNPACKER_VERSION_V1) {
+                            plat_io_printf_std("Using version 1 pack format\n");
+                        } else {
+                            plat_io_printf_err("Unsupported pack version.(%llu)\n", version);
+                        }
+                        break;
+                    }
+                    default:
+                    {
+                        plat_io_printf_err("Unsupported function.(%d)\n", index);
+                        return false;
+                    }
+                }
+                break;
+            }
+            default: {
+                plat_io_printf_err("Unsupported pack/unpack format.(%d)\n", type);
+                return false;
+            }
+        }
+    }
+
+    return true;
 }

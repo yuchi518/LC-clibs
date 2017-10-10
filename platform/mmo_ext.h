@@ -253,7 +253,7 @@ plat_inline void destroyMMString(MMString obj) {
 
 plat_inline void packMMString(MMString obj, Packer pkr) {
     if (is_packer_v1(pkr))
-        pack_data(0, obj->value, plat_cstr_length(obj->value), pkr);
+        pack_data(0, obj->value, plat_cstr_length(obj->value)+1, pkr);
 }
 
 MMSubObject(MMOBJ_STRING, MMString, MMPrimary, initMMString, destroyMMString, packMMString);

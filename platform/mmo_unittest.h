@@ -6,6 +6,7 @@
 #define PROC_LA_AST_OBJ_H
 
 #include "mmo_ext.h"
+#include "mmo_pack.h"
 
 /// ===== unit test =====
 

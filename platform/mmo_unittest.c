@@ -93,7 +93,22 @@ void unit_test_mmobj(void)
 
     pushMMListItem(list, toMMObject(hi9));
     pushMMListItem(list, toMMObject(v9));
+
+    MMPacker packer = allocMMPacker(&pool);
+
+    pack_mmobj(0, list, packer);
+
+    uint len;
+    uint8 *data = dyb_get_data_before_current_position(packer->dyb, &len);
+    PRINTF_HEXMEM(fprintf, stdout, data, len, 256);
+
+    MMUnpacker unpacker = allocMMUnpackerWithData(&pool, data, len);
+    MMObject cloned_list = unpack_mmobj(0, unpacker);
+
+    release_mmobj(unpacker);
+    release_mmobj(packer);
     release_mmobj(list);
+
     if (mgn_mem_count_of_mem(&pool) != 0)
     {
         plat_io_printf_err("Memory leak? (%zu)\n", mgn_mem_count_of_mem(&pool));
