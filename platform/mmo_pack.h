@@ -18,12 +18,15 @@ typedef enum {
     pkrdex_double       = 0x3,  // type, index, double
 
     pkrdex_raw          = 0x7,  // type, index, size(variable unsigned integer), data
-    pkrdex_array        = 0x8,  // type, index, size(variable unsigned integer)
+    pkrdex_array        = 0x8,  // type, index, size + 1 (variable unsigned integer)    --> Start
+                                // type, index, 0 (variable unsigned integer)           --> End
 
     pkrdex_object_ref   = 0xa,  // type, index, object number(variable unsigned integer)
     pkrdex_object       = 0xb,  // type, object number(variable unsigned integer), class name num, object data ....     -> Start
                                 // type, object number(variable unsigned integer)                                       -> End
-    pkrdex_db           = 0xc,  // type, index (Database category), ...
+    pkrdex_context      = 0xc,  // type, object number(variable unsigned integer)
+
+    pkrdex_db           = 0xe,  // type, index (Database category), ...
                                 // type, 0 (class name db), class name number (variable unsigned integer), class name string
     pkrdex_function     = 0xf,  // type, index (function number)
                                 // type, 0: version, version number(variable unsigned integer)
@@ -70,8 +73,10 @@ MMSubObject(MMOBJ_PACKER, MMPacker, MMObject , initMMPacker, destroyMMPacker, nu
 
 /// ===== Unpacker =====
 typedef struct MMUnpacker {
+    MMList stack;
     MMMap roots;
     MMMap objects;
+    MMMap allocators;
     PnI id_to_class_name; // id -> name
     dybuf* dyb;
 }*MMUnpacker;

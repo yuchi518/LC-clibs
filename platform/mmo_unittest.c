@@ -103,11 +103,15 @@ void unit_test_mmobj(void)
     PRINTF_HEXMEM(fprintf, stdout, data, len, 256);
 
     MMUnpacker unpacker = allocMMUnpackerWithData(&pool, data, len);
+    register_all_mmo_ext_to_unpacker(unpacker);
+
     MMObject cloned_list = unpack_mmobj(0, unpacker);
 
     release_mmobj(unpacker);
     release_mmobj(packer);
     release_mmobj(list);
+
+    mgn_mem_release_unused(&pool);
 
     if (mgn_mem_count_of_mem(&pool) != 0)
     {

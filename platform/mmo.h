@@ -147,6 +147,10 @@ plat_inline struct stru_name* to##stru_name(void* stru) {                       
 plat_inline struct stru_name* baseTo##stru_name(mmBase base) {                                  \
     return (struct stru_name*)(base->find(base, (oid), (oid)));                                 \
 }                                                                                               \
+                                                                                                \
+plat_inline void register##stru_name##ToUnpacker(Unpacker unpkr) {                              \
+    register_allocator(name_##stru_name(), (void*)&unpack##stru_name, unpkr);                   \
+}
 
 
 #define MMSubObject(oid, stru_name, sup_name, fn_init, fn_destroy, fn_pack)                     \
@@ -262,6 +266,12 @@ plat_inline struct stru_name* to##stru_name(void* stru) {                       
 plat_inline struct stru_name* baseTo##stru_name(mmBase base) {                                  \
     return (struct stru_name*)(base->find(base, (oid), (oid)));                                 \
 }                                                                                               \
+                                                                                                \
+plat_inline void register##stru_name##ToUnpacker(Unpacker unpkr) {                              \
+    register##sup_name##ToUnpacker(unpkr);                                                      \
+    register_allocator(name_##stru_name(), (void*)&unpack##stru_name, unpkr);                   \
+}
+
 
 plat_inline mmBase __base_of_mmobj(void* stru) {
     struct {
@@ -439,6 +449,7 @@ typedef void (*packDouble)(Packer pkr, const uint key, double value);
 typedef void (*packData)(Packer pkr, const uint key, uint8* value, uint len);
 typedef void (*packObject)(Packer pkr, const uint key, void* value);
 typedef void (*packArray)(Packer pkr, const uint key, uint len);
+typedef void (*packArrayEnd)(Packer pkr, const uint key);
 typedef void (*packNextContext)(Packer pkr, void* stru);
 
 plat_inline uint __packer_version(Packer pkr) {
@@ -472,6 +483,11 @@ plat_inline void __pack_array(uint len, const uint key, Packer pkr) {
 }
 #define pack_array(key, len, pkr) __pack_array(len, key, pkr)
 
+plat_inline void __pack_array_end(const uint key, Packer pkr) {
+    call_f(pkr, packArrayEnd, key);
+}
+#define pack_array_end(key, pkr) __pack_array_end(key, pkr)
+
 plat_inline void __pack_mmobj(void* stru, const uint key, Packer pkr) {
     call_f(pkr, packObject, key, stru);
 }
@@ -488,6 +504,7 @@ typedef void* (*unpackObject)(Unpacker unpkr, const uint key);
 typedef uint (*unpackArray)(Unpacker unpkr, const uint key);
 typedef void* (*unpackArrayItem)(Unpacker unpkr, const uint key, const uint index);
 typedef void (*unpackNextContext)(Unpacker unpkr, void* stru);
+typedef void (*registerAllocator)(Unpacker unpkr, const char* obj_name, void* fn);
 
 plat_inline uint __unpacker_version(Unpacker unpkr) {
     return call_f(unpkr, unpackerVersion);
@@ -529,6 +546,11 @@ plat_inline void* __unpack_mmobj(Unpacker unpkr, const uint key) {
     return call_f(unpkr, unpackObject, key);
 }
 #define unpack_mmobj(key, unpkr) __unpack_mmobj(unpkr, key)
+
+plat_inline void __register_allocator(Unpacker unpkr, const char* obj_name, void* fn) {
+    call_f(unpkr, registerAllocator, obj_name, fn);
+}
+#define register_allocator(obj_name, fn, unpkr) __register_allocator(unpkr, obj_name, fn)
 
 /*
  * ============= Samples ================

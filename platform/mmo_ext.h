@@ -18,6 +18,7 @@ enum {
     MMOBJ_FLOAT,
     MMOBJ_DOUBLE,
     MMOBJ_STRING,
+    MMOBJ_REFERENCE,
 
     MMOBJ_DATA          = 0xFFFF0081,
 
@@ -220,6 +221,44 @@ plat_inline MMDouble allocMMDoubleWithValue(mgn_memory_pool* pool, double value)
     return obj;
 }
 
+/// =====  =====
+
+typedef struct MMReference {
+    void* reference;
+}*MMReference;
+
+plat_inline void hash_of_MMReference(void* stru, void** key, uint* key_len);
+
+plat_inline MMReference initMMReference(MMReference obj, Unpacker unpkr) {
+    set_hash_for_mmobj(obj, hash_of_MMReference);
+    return obj;
+}
+
+plat_inline void destroyMMReference(MMReference obj) {
+
+}
+
+plat_inline void packMMReference(MMReference obj, Packer pkr) {
+
+}
+
+MMSubObject(MMOBJ_REFERENCE, MMReference, MMPrimary, initMMReference, destroyMMReference, packMMReference);
+
+plat_inline void hash_of_MMReference(void* stru, void** key, uint* key_len)
+{
+    MMReference obj = toMMReference(stru);
+    if (key) *key = &obj->reference;
+    if (key_len) *key_len = sizeof(obj->reference);
+}
+
+plat_inline MMReference allocMMReferenceWithReference(mgn_memory_pool* pool, void* reference) {
+    MMReference obj = allocMMReference(pool);
+    if (obj) {
+        obj->reference = reference;
+    }
+    return obj;
+}
+
 /// ====== Primary type - String =====
 typedef struct MMString {
     char* value;
@@ -266,7 +305,7 @@ plat_inline void hash_of_MMString(void* stru, void** key, uint* key_len)
     if (key_len) *key_len = plat_cstr_length(c);
 }
 
-plat_inline MMString allocMMStringWithCString(mgn_memory_pool* pool, char* string) {
+plat_inline MMString allocMMStringWithCString(mgn_memory_pool* pool, const char* string) {
     uint len = plat_cstr_length(string);
     char* new_string = mgn_mem_alloc(pool, len+1);
     if (new_string == null) return null;
@@ -339,6 +378,7 @@ plat_inline MMData allocMMDataWithData(mgn_memory_pool* pool, void* data, uint s
     return obj;
 }
 
+// NSData doesn't copy the memory, but own the memory.
 plat_inline MMData allocMMDataWithDataNoCopy(mgn_memory_pool* pool, void* data, uint size)
 {
     if (!((data!=null && size>0) || (data==null && size==0))) return null;
@@ -451,6 +491,7 @@ plat_inline void packMMMap(MMMap map, Packer pkr) {
             pack_mmobj(0, item->key, pkr);
             pack_mmobj(1, item->value, pkr);
         }
+        pack_array_end(0, pkr);
     }
 }
 
@@ -559,11 +600,11 @@ plat_inline void packMMList(MMList obj, Packer pkr) {
     if (is_packer_v1(pkr)) {
         uint len = utarray_len(&obj->list), i;
         pack_array(0, len, pkr);
-
         for (i=0; i<len; i++) {
             MMObject p = *(MMObject*)utarray_eltptr(&obj->list, i);
             pack_mmobj(0, p, pkr);
         }
+        pack_array_end(0, pkr);
     }
 }
 
@@ -584,6 +625,11 @@ plat_inline MMObject popMMListItem(MMList list) {
     return autorelease_mmobj(obj);
 }
 
+plat_inline MMObject getLastItemFromMMList(MMList list) {
+    MMObject obj = *(MMObject*)utarray_back(&list->list);
+    return obj;
+}
+
 plat_inline void insertMMListItem(MMList list, MMObject item, uint idx) {
     utarray_insert(&list->list, &item, idx);
 }
@@ -596,6 +642,17 @@ plat_inline void concatMMList(MMList dest_list, MMList a_list) {
     utarray_concat(&dest_list->list, &a_list->list);
 }
 
+/// ===== register all allocators to unpacker
+plat_inline void register_all_mmo_ext_to_unpacker(Unpacker unpkr) {
+    registerMMIntToUnpacker(unpkr);
+    registerMMLongToUnpacker(unpkr);
+    registerMMDataToUnpacker(unpkr);
+    registerMMStringToUnpacker(unpkr);
+    registerMMFloatToUnpacker(unpkr);
+    registerMMDoubleToUnpacker(unpkr);
+    registerMMMapItemToUnpacker(unpkr);
+    registerMMListToUnpacker(unpkr);
+}
 
 
 #endif //PROC_LA_MMOBJ_LIB_H
