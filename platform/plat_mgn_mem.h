@@ -280,6 +280,10 @@ static inline void mgn_mem_release_all(mgn_memory_pool* pool)
     {
         // do not call released cb, because of unordered objects' allocation
         HASH_DEL((*pool), mgn_m);
+        if (0) {
+            plat_io_printf_std("%p size:%lu\n", mgn_m->m, mgn_m->s);
+            PRINTF_HEXMEM(plat_io_printf_std, mgn_m->m, mgn_m->s, 256);
+        }
         plat_mem_release(mgn_m->m);
         print_mgn_mem_dbg("[MGN_MEM] Removed memory (%p), size:%zu, rc:%zu - %u left\n", mgn_m->m, mgn_m->s, mgn_m->r, HASH_COUNT(*pool));
         plat_mem_release(mgn_m);

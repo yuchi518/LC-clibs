@@ -3,6 +3,7 @@
 //
 
 #include "mmo_pack.h"
+static const bool is_dbg = false;
 
 /// ===== MMPacker =====
 
@@ -63,7 +64,7 @@ static void packArray_impl(Packer pkr, const uint key, uint len) {
 
     dyb_append_typdex(packer->dyb, pkrdex_array, key);
     dyb_append_var_u64(packer->dyb, len+1);
-    plat_io_printf_std("Pack array\n");
+    //plat_io_printf_std("Pack array\n");
 }
 
 static void packArrayEnd_impl(Packer pkr, const uint key) {
@@ -75,7 +76,7 @@ static void packArrayEnd_impl(Packer pkr, const uint key) {
 
     dyb_append_typdex(packer->dyb, pkrdex_array, key);
     dyb_append_var_u64(packer->dyb, 0);
-    plat_io_printf_std("Pack array End\n");
+    //plat_io_printf_std("Pack array End\n");
 }
 
 static uint db_save_object_name(MMPacker packer, const char* name) {
@@ -100,6 +101,8 @@ static void _packObject_impl(MMPacker packer, const uint key, MMObject obj) {
     mgn_memory_pool* pool = pool_of_mmobj(obj);
     void* mem_addr = obj;
     PnI this_p2i, this_i2p;
+    /// processing_i initialize in here is to avoid redundant serialization.
+    int processing_i = HASH_COUNT(packer->obj_to_id);
 
     // save object reference
     HASH_FIND_PTR(packer->obj_to_id, &mem_addr, this_p2i);
@@ -125,8 +128,6 @@ static void _packObject_impl(MMPacker packer, const uint key, MMObject obj) {
         // not root object
         return;
     }
-
-    int processing_i = 0;
 
     /// Packing objects into memory
     while (HASH_COUNT(packer->id_to_obj) > (uint)processing_i) {
@@ -262,58 +263,79 @@ static int64 unpackVarInt64_impl(Unpacker unpkr, const uint key)
 {
     MMUnpacker unpacker = toMMUnpacker(unpkr);
     if (unpacker == null) {
+        plat_io_printf_err("Unsupported unpacker.(%s)\n", name_of_last_mmobj(unpkr));
         return 0;
     }
     if (unpacker->roots==null) {
         process(unpacker);
     }
 
-    return 0;
+    MMObject obj = getByIntFromStack(unpacker, key);
+    MMLong val = toMMLong(obj);
+
+    if (val==null) {
+        plat_io_printf_err("Incorrect object@%u.(%s)\n", key, name_of_last_mmobj(obj));
+        return 0;
+    }
+
+    if (is_dbg) plat_io_printf_dbg("Unpacker var int:%lld\n", val->value);
+
+    return val->value;
 }
 
 static float unpackFloat_impl(Unpacker unpkr, const uint key)
 {
     MMUnpacker unpacker = toMMUnpacker(unpkr);
     if (unpacker == null) {
+        plat_io_printf_err("Unsupported unpacker.(%s)\n", name_of_last_mmobj(unpkr));
         return 0;
     }
     if (unpacker->roots==null) {
         process(unpacker);
     }
 
-    return 0;
+    MMObject obj = getByIntFromStack(unpacker, key);
+    MMFloat val = toMMFloat(obj);
+
+    if (val==null) {
+        plat_io_printf_err("Incorrect object@%u.(%s)\n", key, name_of_last_mmobj(obj));
+        return 0;
+    }
+
+    if (is_dbg) plat_io_printf_dbg("Unpacker var int:%f\n", val->value);
+
+    return val->value;
 }
 
 static double unpackDouble_impl(Unpacker unpkr, const uint key)
 {
     MMUnpacker unpacker = toMMUnpacker(unpkr);
     if (unpacker == null) {
+        plat_io_printf_err("Unsupported unpacker.(%s)\n", name_of_last_mmobj(unpkr));
         return 0;
     }
     if (unpacker->roots==null) {
         process(unpacker);
     }
 
-    return 0;
+    MMObject obj = getByIntFromStack(unpacker, key);
+    MMDouble val = toMMDouble(obj);
+
+    if (val==null) {
+        plat_io_printf_err("Incorrect object@%u.(%s)\n", key, name_of_last_mmobj(obj));
+        return 0;
+    }
+
+    if (is_dbg) plat_io_printf_dbg("Unpacker var int:%f\n", val->value);
+
+    return val->value;
 }
 
 static uint8* unpackData_impl(Unpacker unpkr, const uint key, uint* p_len)
 {
     MMUnpacker unpacker = toMMUnpacker(unpkr);
     if (unpacker == null) {
-        return null;
-    }
-    if (unpacker->roots==null) {
-        process(unpacker);
-    }
-
-    return null;
-}
-
-static void* unpackObject_impl(Unpacker unpkr, const uint key)
-{
-    MMUnpacker unpacker = toMMUnpacker(unpkr);
-    if (unpacker == null) {
+        plat_io_printf_err("Unsupported unpacker.(%s)\n", name_of_last_mmobj(unpkr));
         return null;
     }
     if (unpacker->roots==null) {
@@ -321,58 +343,173 @@ static void* unpackObject_impl(Unpacker unpkr, const uint key)
     }
 
     MMObject obj = getByIntFromStack(unpacker, key);
-    MMInt ref = toMMInt(obj);
+    MMData dat = toMMData(obj);
 
-    obj = getMMMapItemValue(unpacker->objects, toMMPrimary(ref));
-    MMMap map = toMMMap(obj);
+    if (dat==null) {
+        plat_io_printf_err("Incorrect object@%u.(%s)\n", key, name_of_last_mmobj(obj));
+        return null;
+    }
 
-    obj = getMMMapItemValue(map, toMMPrimary(autorelease_mmobj(allocMMStringWithCString(pool_of_mmobj(unpacker), CLASS_NAME))));
-    MMString obj_name = toMMString(obj);
+    if (p_len) *p_len = dat->size;
 
-    plat_io_printf_std("Object name:%s\n", obj_name->value);
+    if (dat->size!=0 && ((uint8*)dat->data)[dat->size-1]=='\0') {
+        if (is_dbg) plat_io_printf_dbg("Unpacked string:%s\n", (char*)dat->data);
+    } else {
+        if (is_dbg) plat_io_printf_dbg("Unpacked data: size:%u\n", dat->size);
+    }
 
-    // TODO: unpack now...
-
-    return null;
+    return dat->data;
 }
 
-static uint unpackArray_impl(Unpacker unpkr, const uint key)
+static void* unpackObject_impl(Unpacker unpkr, const uint key)
 {
     MMUnpacker unpacker = toMMUnpacker(unpkr);
     if (unpacker == null) {
-        return 0;
-    }
-    if (unpacker->roots==null) {
-        process(unpacker);
-    }
-
-    return 0;
-}
-
-static void* unpackArrayItem_impl(Unpacker unpkr, const uint key, const uint index)
-{
-    MMUnpacker unpacker = toMMUnpacker(unpkr);
-    if (unpacker == null) {
+        plat_io_printf_err("Unsupported unpacker.(%s)\n", name_of_last_mmobj(unpkr));
         return null;
     }
     if (unpacker->roots==null) {
         process(unpacker);
     }
 
-    return null;
+    mgn_memory_pool* pool = pool_of_mmobj(unpacker);
+
+    MMObject obj = getByIntFromStack(unpacker, key);
+    MMInt num = toMMInt(obj);
+
+    obj = getMMMapItemValue(unpacker->objects, toMMPrimary(num));
+    // if object is referred before, this is a strong reference.
+    MMReference reference = toMMReference(obj);
+    if (reference) {
+        //if (is_dbg) plat_io_printf_dbg("Reference(%s): %p\n", name_of_mmobj(reference->reference), reference->reference);
+        void* p = last_mmobj(reference->reference);
+        if (is_dbg) plat_io_printf_dbg("Reference: %p (%s)\n", p, name_of_last_mmobj(p));
+        return p;
+    }
+    MMMap map = toMMMap(obj);
+
+    obj = getMMMapItemValue(map, toMMPrimary(autorelease_mmobj(allocMMStringWithCString(pool, CLASS_NAME))));
+    MMString obj_name = toMMString(obj);
+
+    if (obj_name == null) {
+        plat_io_printf_err("Why can't find object@%u name.\n", key);
+        return null;
+    }
+
+    if (is_dbg) plat_io_printf_dbg("Unpacking object: %s\n", obj_name->value);
+    // push object's properties to stack
+    pushMMListItem(unpacker->stack, toMMObject(map));
+
+    obj = getMMMapItemValue(unpacker->allocators, toMMPrimary(obj_name));
+    MMReference fnref = toMMReference(obj);
+    if (fnref == null) {
+        plat_io_printf_err("Not support unpack?(%s)\n", obj_name->value);
+        return null;
+    }
+    void*(*alloc)(mgn_memory_pool*,Unpacker) = fnref->reference;
+
+    unpacker->last_object_num = retain_mmobj(num);
+    void* ooo = alloc(pool, unpacker);
+
+    if (ooo == null) {
+        plat_io_printf_err("Can't not unpack object.(%s)\n", obj_name->value);
+    }
+
+    if (unpacker->last_object_num) {
+        // this mean the object is a non-initialization instance.
+        // replace the real object into objects.
+        if (ooo) {
+            reference = autorelease_mmobj(allocMMReferenceWithStrongReference(pool, toMMObject(ooo)));
+            addMMMapItem(unpacker->objects, toMMPrimary(unpacker->last_object_num), toMMObject(reference));
+        }
+        release_mmobj(unpacker->last_object_num);
+        unpacker->last_object_num = null;
+    } else {
+        // pop last context
+        popMMListItem(unpacker->stack);
+    }
+
+    // pop object's properties
+    popMMListItem(unpacker->stack);
+    if (is_dbg) plat_io_printf_dbg("Unpacked object: %s (%p)\n", obj_name->value, mem_addr_of_mmobj(ooo));
+
+    return autorelease_mmobj(ooo);
 }
 
-static void unpackNextContext_impl(Unpacker unpkr, void* stru)
+static uint unpackArray_impl(Unpacker unpkr, const uint key)
 {
     MMUnpacker unpacker = toMMUnpacker(unpkr);
     if (unpacker == null) {
+        plat_io_printf_err("Unsupported unpacker.(%s)\n", name_of_last_mmobj(unpkr));
+        return 0;
+    }
+    if (unpacker->roots==null) {
+        process(unpacker);
+    }
+
+    MMObject obj = getByIntFromStack(unpacker, key);
+    MMList list = toMMList(obj);
+
+    if (list) {
+        pushMMListItem(unpacker->stack, obj);
+        if (is_dbg) plat_io_printf_dbg("Unpacked array: count:%u\n", sizeOfMMList(list));
+        return sizeOfMMList(list);
+    } else {
+        plat_io_printf_err("Why is not array?(%s)\n", name_of_last_mmobj(obj));
+        return 0;
+    }
+}
+
+static void unpackArrayEnd_impl(Unpacker unpkr, const uint key)
+{
+    MMUnpacker unpacker = toMMUnpacker(unpkr);
+    if (unpacker == null) {
+        plat_io_printf_err("Unsupported unpacker.(%s)\n", name_of_last_mmobj(unpkr));
         return;
     }
     if (unpacker->roots==null) {
         process(unpacker);
     }
 
-    // TODO: ~~~
+    popMMListItem(unpacker->stack);
+}
+
+static void unpackNextContext_impl(Unpacker unpkr, void* stru)
+{
+    MMUnpacker unpacker = toMMUnpacker(unpkr);
+    if (unpacker == null) {
+        plat_io_printf_err("Unsupported unpacker.(%s)\n", name_of_last_mmobj(unpkr));
+        return;
+    }
+    if (unpacker->roots==null) {
+        process(unpacker);
+    }
+
+    if (unpacker->last_object_num) {
+        // replace the real object into objects.
+        mgn_memory_pool* pool = pool_of_mmobj(unpacker);
+        MMObject obj = toMMObject(stru);
+        if (is_dbg) plat_io_printf_dbg("Add to ref(%s): %p\n", name_of_mmobj(obj), obj);
+        MMReference reference = autorelease_mmobj(allocMMReferenceWithStrongReference(pool, obj));
+        addMMMapItem(unpacker->objects, toMMPrimary(unpacker->last_object_num), toMMObject(reference));
+        release_mmobj(unpacker->last_object_num);
+        unpacker->last_object_num = null;
+    } else {
+        // if not first context, need to pop last context
+        popMMListItem(unpacker->stack);
+    }
+
+    const char* name = name_of_mmobj(stru);
+    MMObject obj = getByStringFromStack(unpacker, name);
+    MMMap map = toMMMap(obj);
+
+    if (map) {
+        if (is_dbg) plat_io_printf_dbg("- Switch to context:%s\n", name);
+        pushMMListItem(unpacker->stack, obj);
+    } else {
+        plat_io_printf_err("Why is not a map?(%s)\n", name_of_last_mmobj(obj));
+    }
+
 }
 
 static void registerAllocator_impl(Unpacker unpkr, const char* obj_name, void* fn)
@@ -437,29 +574,29 @@ bool process(MMUnpacker unpkr) {
         switch ((pkrdex)type) {
             case pkrdex_integer: {
                 int64 value = dyb_next_var_s64(unpkr->dyb);
-                plat_io_printf_std("%sVar int@%d: %lld\n", (current_obj?"- ":""), index, value);
+                if (is_dbg) plat_io_printf_dbg("%sVar int@%d: %lld\n", (current_obj?"- ":""), index, value);
                 pushIntoStack(unpkr, index, toMMObject(autorelease_mmobj(allocMMLongWithValue(pool, value))));
                 break;
             }
             case pkrdex_float: {
                 float value = dyb_next_float(unpkr->dyb);
-                plat_io_printf_std("%sFloat@%d: %f\n", (current_obj?"- ":""), index, value);
+                if (is_dbg) plat_io_printf_dbg("%sFloat@%d: %f\n", (current_obj?"- ":""), index, value);
                 pushIntoStack(unpkr, index, toMMObject(autorelease_mmobj(allocMMFloatWithValue(pool, value))));
                 break;
             }
             case pkrdex_double: {
                 double value = dyb_next_double(unpkr->dyb);
-                plat_io_printf_std("%sDouble@%d: %f\n", (current_obj?"- ":""), index, value);
+                if (is_dbg) plat_io_printf_dbg("%sDouble@%d: %f\n", (current_obj?"- ":""), index, value);
                 pushIntoStack(unpkr, index, toMMObject(autorelease_mmobj(allocMMDoubleWithValue(pool, value))));
                 break;
             }
             case pkrdex_raw: {
                 uint size=0;
                 uint8* data = dyb_next_data_with_var_len(unpkr->dyb, &size);
-                if (data[size-1] == '\0') {
-                    plat_io_printf_std("%sData@%d: %s, size: %u\n", (current_obj?"- ":""), index, (const char*)data, size);
+                if (size!=0 && data[size-1]=='\0') {
+                    if (is_dbg) plat_io_printf_dbg("%sData@%d: %s, size: %u\n", (current_obj?"- ":""), index, (const char*)data, size);
                 } else {
-                    plat_io_printf_std("%sData@%d: size: %u\n", (current_obj?"- ":""), index, size);
+                    if (is_dbg) plat_io_printf_dbg("%sData@%d: size: %u\n", (current_obj?"- ":""), index, size);
                 }
                 pushIntoStack(unpkr, index, toMMObject(autorelease_mmobj(allocMMDataWithData(pool, data, size))));
                 break;
@@ -467,12 +604,12 @@ bool process(MMUnpacker unpkr) {
             case pkrdex_array: {
                 uint64 size = dyb_next_var_u64(unpkr->dyb);
                 if (size > 0) {
-                    plat_io_printf_std("%sArray@%d Start, size: %lld\n", (current_obj?"- ":""), index, size-1);
+                    if (is_dbg) plat_io_printf_dbg("%sArray@%d Start, size: %lld\n", (current_obj?"- ":""), index, size-1);
                     MMObject list = toMMObject(autorelease_mmobj(allocMMList(pool)));
                     pushIntoStack(unpkr, index, list);
                     pushMMListItem(unpkr->stack, list);
                 } else {
-                    plat_io_printf_std("%sArray@%d End.\n", (current_obj?"- ":""), index);
+                    if (is_dbg) plat_io_printf_dbg("%sArray@%d End.\n", (current_obj?"- ":""), index);
                     // TODO: check index is matched.
                     popMMListItem(unpkr->stack);
                 }
@@ -480,7 +617,7 @@ bool process(MMUnpacker unpkr) {
             }
             case pkrdex_object_ref: {
                 uint64 num = dyb_next_var_u64(unpkr->dyb);
-                plat_io_printf_std("%sObject ref@%d: #%lld\n", (current_obj?"- ":""), index, num);
+                if (is_dbg) plat_io_printf_dbg("%sObject ref@%d: #%lld\n", (current_obj?"- ":""), index, num);
                 // we push a number as obj reference.
                 pushIntoStack(unpkr, index, toMMObject(autorelease_mmobj(allocMMIntWithValue(pool, (int)num))));
                 break;
@@ -498,7 +635,7 @@ bool process(MMUnpacker unpkr) {
                         plat_io_printf_err("Lost class name?(%d)\n", classname_num);
                         return false;
                     } else {
-                        plat_io_printf_std("New object#%u: %s\n", (unsigned int)current_obj_num, (const char*)this_i2p->p);
+                        if (is_dbg) plat_io_printf_dbg("New object#%u: %s\n", (unsigned int)current_obj_num, (const char*)this_i2p->p);
                     }
                     pushMMListItem(unpkr->stack, current_obj);
                     addMMMapItem(unpkr->objects, toMMPrimary(autorelease_mmobj(allocMMIntWithValue(pool, current_obj_num))), current_obj);
@@ -508,7 +645,7 @@ bool process(MMUnpacker unpkr) {
                         plat_io_printf_err("Missed object end. (#%u!=#%u)\n", (unsigned int)current_obj_num, (unsigned int)index);
                         return false;
                     }
-                    plat_io_printf_std("End object#%u\n", (unsigned int)current_obj_num);
+                    if (is_dbg) plat_io_printf_dbg("End object#%u\n", (unsigned int)current_obj_num);
                     while (getLastItemFromMMList(unpkr->stack) != current_obj) {
                         // context is always in object.
                         popMMListItem(unpkr->stack);
@@ -531,7 +668,7 @@ bool process(MMUnpacker unpkr) {
                     plat_io_printf_err("Lost class name?(%d)\n", classname_num);
                     return false;
                 } else {
-                    plat_io_printf_std("- Next context: %s\n", (const char*)this_i2p->p);
+                    if (is_dbg) plat_io_printf_dbg("- Next context: %s\n", (const char*)this_i2p->p);
                 }
 
                 while (getLastItemFromMMList(unpkr->stack) != current_obj) {
@@ -562,7 +699,7 @@ bool process(MMUnpacker unpkr) {
                             this_i2p->i = classname_num;
                             this_i2p->p = dyb_next_cstring_with_var_len(unpkr->dyb, &size);
                             HASH_ADD_INT(unpkr->id_to_class_name, i, this_i2p);
-                            plat_io_printf_std("$DB$, class name #%d: %s\n", classname_num, (const char*)this_i2p->p);
+                            if (is_dbg) plat_io_printf_dbg("$DB$, class name #%d: %s\n", classname_num, (const char*)this_i2p->p);
                         }
                         break;
                     }
@@ -580,7 +717,7 @@ bool process(MMUnpacker unpkr) {
                     {
                         uint64 version = dyb_next_var_u64(unpkr->dyb);
                         if (version == UNPACKER_VERSION_V1) {
-                            plat_io_printf_std("Using version 1 pack format\n");
+                            if (is_dbg) plat_io_printf_dbg("Using version 1 pack format\n");
                         } else {
                             plat_io_printf_err("Unsupported pack version.(%llu)\n", version);
                         }
@@ -601,10 +738,10 @@ bool process(MMUnpacker unpkr) {
         }
     }
 
-    plat_io_printf_std("Depth of stack:%u\n", sizeOfMMList(unpkr->stack));
+    if (is_dbg) plat_io_printf_dbg("Depth of stack:%u\n", sizeOfMMList(unpkr->stack));
     uint i;
     for (i=0; i<sizeOfMMList(unpkr->stack); i++) {
-        plat_io_printf_std("%s\n", name_of_last_mmobj(getMMListItem(unpkr->stack, i)));
+        if (is_dbg) plat_io_printf_dbg("%s\n", name_of_last_mmobj(getMMListItem(unpkr->stack, i)));
     }
     return true;
 }
@@ -618,7 +755,7 @@ MMUnpacker initMMUnpacker(MMUnpacker obj, Unpacker unpkr) {
     set_function_for_mmobj(obj, unpackData, unpackData_impl);
     set_function_for_mmobj(obj, unpackObject, unpackObject_impl);
     set_function_for_mmobj(obj, unpackArray, unpackArray_impl);
-    set_function_for_mmobj(obj, unpackArrayItem, unpackArrayItem_impl);
+    set_function_for_mmobj(obj, unpackArrayEnd, unpackArrayEnd_impl);
     set_function_for_mmobj(obj, unpackNextContext, unpackNextContext_impl);
     set_function_for_mmobj(obj, registerAllocator, registerAllocator_impl);
     return obj;
@@ -638,6 +775,7 @@ void destroyMMUnpacker(MMUnpacker obj) {
     release_mmobj(obj->roots);
     release_mmobj(obj->stack);
     release_mmobj(obj->allocators);
+    release_mmobj(obj->last_object_num);
 }
 
 MMUnpacker allocMMUnpackerWithData(mgn_memory_pool* pool, uint8* data, uint len) {

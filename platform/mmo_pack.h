@@ -77,6 +77,7 @@ typedef struct MMUnpacker {
     MMMap roots;
     MMMap objects;
     MMMap allocators;
+    MMInt last_object_num;
     PnI id_to_class_name; // id -> name
     dybuf* dyb;
 }*MMUnpacker;

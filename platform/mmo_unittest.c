@@ -80,11 +80,11 @@ void unit_test_mmobj(void)
         plat_io_printf_dbg("Got it!! (%s)\n", toMMString(obj)->value);
     }
 
-    release_mmobj(map);
+    /*release_mmobj(map);
     if (mgn_mem_count_of_mem(&pool) != 0)
     {
         plat_io_printf_err("Memory leak? (%zu)\n", mgn_mem_count_of_mem(&pool));
-    }
+    }*/
 
     MMList list = allocMMList(&pool);
     MMString hi9 = autorelease_mmobj(allocMMStringWithCString(&pool, "hi9"));
@@ -93,20 +93,40 @@ void unit_test_mmobj(void)
 
     pushMMListItem(list, toMMObject(hi9));
     pushMMListItem(list, toMMObject(v9));
+    pushMMListItem(list, toMMObject(autorelease_mmobj(map)));
+    pushMMListItem(list, toMMObject(hi8));
+    pushMMListItem(list, toMMObject(v7));
 
     MMPacker packer = allocMMPacker(&pool);
 
     pack_mmobj(0, list, packer);
+    pack_mmobj(1, list, packer);
+    pack_varint(2, 99, packer);
 
     uint len;
     uint8 *data = dyb_get_data_before_current_position(packer->dyb, &len);
-    PRINTF_HEXMEM(fprintf, stdout, data, len, 256);
+    PRINTF_HEXMEM_TO_TARGET(fprintf, stdout, data, len, 256);
 
     MMUnpacker unpacker = allocMMUnpackerWithData(&pool, data, len);
     register_all_mmo_ext_to_unpacker(unpacker);
 
-    MMObject cloned_list = unpack_mmobj(0, unpacker);
+    MMList cloned_list = unpack_mmobj(0, unpacker);     // auto release
+    MMList cloned_list2 = unpack_mmobj(1, unpacker);     // auto release
 
+    if (sizeOfMMList(list) != sizeOfMMList(cloned_list)) {
+        plat_io_printf_err("Why are they different?(%u!=%u)\n", sizeOfMMList(list), sizeOfMMList(cloned_list));
+    }
+
+    if (cloned_list != cloned_list2) {
+        plat_io_printf_err("Why are they different?(%p!=%p)\n", cloned_list, cloned_list2);
+    }
+
+    int64 vari = unpack_varint(2, unpacker);
+    if (vari != 99) {
+        plat_io_printf_err("What is this?(%lld != %d)\n", vari, 99);
+    }
+
+    //release_mmobj(cloned_list);
     release_mmobj(unpacker);
     release_mmobj(packer);
     release_mmobj(list);
@@ -118,6 +138,7 @@ void unit_test_mmobj(void)
         plat_io_printf_err("Memory leak? (%zu)\n", mgn_mem_count_of_mem(&pool));
     }
 
+    mgn_mem_release_all(&pool);
 
     plat_io_printf_dbg("===== unit_test_mmobj - END =====\n");
 }

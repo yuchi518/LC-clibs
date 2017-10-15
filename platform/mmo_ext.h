@@ -221,25 +221,30 @@ plat_inline MMDouble allocMMDoubleWithValue(mgn_memory_pool* pool, double value)
     return obj;
 }
 
-/// =====  =====
+/// ===== Reference =====
 
 typedef struct MMReference {
     void* reference;
+    bool strong_reference;
 }*MMReference;
 
 plat_inline void hash_of_MMReference(void* stru, void** key, uint* key_len);
 
 plat_inline MMReference initMMReference(MMReference obj, Unpacker unpkr) {
+    (void)unpkr;
     set_hash_for_mmobj(obj, hash_of_MMReference);
     return obj;
 }
 
 plat_inline void destroyMMReference(MMReference obj) {
-
+    if (obj->strong_reference) {
+        release_mmobj(obj->reference);
+    }
 }
 
 plat_inline void packMMReference(MMReference obj, Packer pkr) {
-
+    (void)obj;
+    (void)pkr;
 }
 
 MMSubObject(MMOBJ_REFERENCE, MMReference, MMPrimary, initMMReference, destroyMMReference, packMMReference);
@@ -255,6 +260,16 @@ plat_inline MMReference allocMMReferenceWithReference(mgn_memory_pool* pool, voi
     MMReference obj = allocMMReference(pool);
     if (obj) {
         obj->reference = reference;
+        obj->strong_reference = false;
+    }
+    return obj;
+}
+
+plat_inline MMReference allocMMReferenceWithStrongReference(mgn_memory_pool* pool, MMObject object) {
+    MMReference obj = allocMMReference(pool);
+    if (obj) {
+        obj->reference = retain_mmobj(object);
+        obj->strong_reference = true;
     }
     return obj;
 }
@@ -274,9 +289,9 @@ plat_inline MMString initMMString(MMString obj, Unpacker unpkr) {
         data = unpack_data(0, &len, unpkr);
         if (data && len) {
             mgn_memory_pool* pool = pool_of_mmobj(obj);
-            obj->value = mgn_mem_alloc(pool, len+1);
+            obj->value = mgn_mem_alloc(pool, len);
             if (obj->value == null) return null;
-            plat_mem_copy(obj->value, data, len+1);
+            plat_mem_copy(obj->value, data, len);
         }
     }
     return obj;
@@ -462,11 +477,12 @@ plat_inline MMMap initMMMap(MMMap map, Unpacker unpkr) {
         uint i;
         if ((len&0x01)) return null;
         for (i=0; i<len; ) {
-            MMPrimary primary = toMMPrimary(unpack_array_item(0, i++, unpkr));
-            MMObject value = toMMObject(unpack_array_item(0, i++, unpkr));
+            MMPrimary primary = toMMPrimary(unpack_mmobj(i++, unpkr));
+            MMObject value = toMMObject(unpack_mmobj(i++, unpkr));
             if (primary==null || value==null) return null;
             addMMMapItem(map, primary, value);
         }
+        unpack_array_end(0, unpkr);
     }
     return map;
 }
@@ -583,11 +599,16 @@ plat_inline MMList initMMList(MMList obj, Unpacker unpkr) {
     if (is_unpacker_v1(unpkr)) {
         uint len = unpack_array(0, unpkr);
         uint i;
-        for (i=0; i<len; i++) {
-            MMObject item = toMMObject(unpack_array_item(0, i, unpkr));
-            if (item == null) return null;
+        for (i=0; i<len;) {
+            void* stru = unpack_mmobj(i++, unpkr);
+            MMObject item = toMMObject(stru);
+            if (item == null) {
+                plat_io_printf_err("Why is null?(%p)(%s)\n", stru, name_of_last_mmobj(stru));
+                return null;
+            }
             utarray_push_back(&obj->list, &item);
         }
+        unpack_array_end(0, unpkr);
     }
     return obj;
 }
@@ -651,6 +672,7 @@ plat_inline void register_all_mmo_ext_to_unpacker(Unpacker unpkr) {
     registerMMFloatToUnpacker(unpkr);
     registerMMDoubleToUnpacker(unpkr);
     registerMMMapItemToUnpacker(unpkr);
+    registerMMMapToUnpacker(unpkr);
     registerMMListToUnpacker(unpkr);
 }
 

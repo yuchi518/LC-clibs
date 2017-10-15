@@ -2,8 +2,8 @@
 <project version="4">
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true" buildAllGenerated="true">
     <generated>
-      <config projectName="proc_la" targetName="proc_la" />
       <config projectName="proc_la" targetName="RunGenerator" />
+      <config projectName="proc_la" targetName="proc_la" />
     </generated>
   </component>
   <component name="CMakeSettings" AUTO_RELOAD="true">
@@ -19,6 +19,8 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/platform/mmo_pack.c" afterPath="$PROJECT_DIR$/platform/mmo_pack.c" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/platform/mmo_pack.h" afterPath="$PROJECT_DIR$/platform/mmo_pack.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/platform/mmo_unittest.c" afterPath="$PROJECT_DIR$/platform/mmo_unittest.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/platform/plat_io.h" afterPath="$PROJECT_DIR$/platform/plat_io.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/platform/plat_mgn_mem.h" afterPath="$PROJECT_DIR$/platform/plat_mgn_mem.h" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -33,8 +35,8 @@
       <file leaf-file-name="mmo.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/platform/mmo.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="514">
-              <caret line="506" column="81" lean-forward="false" selection-start-line="506" selection-start-column="8" selection-end-line="506" selection-end-column="81" />
+            <state relative-caret-position="8715">
+              <caret line="581" column="12" lean-forward="false" selection-start-line="581" selection-start-column="12" selection-end-line="581" selection-end-column="12" />
               <folding>
                 <element signature="e#101#123#0" expanded="true" />
               </folding>
@@ -45,8 +47,8 @@
       <file leaf-file-name="mmo_pack.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/platform/mmo_pack.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="726">
-              <caret line="78" column="21" lean-forward="false" selection-start-line="78" selection-start-column="21" selection-end-line="78" selection-end-column="21" />
+            <state relative-caret-position="570">
+              <caret line="38" column="14" lean-forward="false" selection-start-line="38" selection-start-column="14" selection-end-line="38" selection-end-column="14" />
               <folding>
                 <element signature="e#101#117#0" expanded="true" />
               </folding>
@@ -54,11 +56,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mmo_pack.c" pinned="false" current-in-tab="true">
+      <file leaf-file-name="mmo_pack.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/platform/mmo_pack.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="643">
-              <caret line="333" column="26" lean-forward="false" selection-start-line="333" selection-start-column="26" selection-end-line="333" selection-end-column="26" />
+            <state relative-caret-position="1605">
+              <caret line="107" column="58" lean-forward="false" selection-start-line="107" selection-start-column="58" selection-end-line="107" selection-end-column="58" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="mmo_unittest.c" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/platform/mmo_unittest.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="608">
+              <caret line="120" column="54" lean-forward="false" selection-start-line="120" selection-start-column="54" selection-end-line="120" selection-end-column="54" />
               <folding />
             </state>
           </provider>
@@ -67,18 +79,8 @@
       <file leaf-file-name="mmo_ext.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/platform/mmo_ext.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="615">
-              <caret line="100" column="1" lean-forward="false" selection-start-line="100" selection-start-column="1" selection-end-line="100" selection-end-column="1" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="mmo_unittest.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/platform/mmo_unittest.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="902">
-              <caret line="113" column="28" lean-forward="false" selection-start-line="113" selection-start-column="28" selection-end-line="113" selection-end-column="28" />
+            <state relative-caret-position="9015">
+              <caret line="601" column="27" lean-forward="false" selection-start-line="601" selection-start-column="27" selection-end-line="601" selection-end-column="27" />
               <folding />
             </state>
           </provider>
@@ -87,8 +89,20 @@
       <file leaf-file-name="plat_mgn_mem.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/platform/plat_mgn_mem.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1035">
-              <caret line="69" column="62" lean-forward="false" selection-start-line="69" selection-start-column="62" selection-end-line="69" selection-end-column="62" />
+            <state relative-caret-position="2865">
+              <caret line="191" column="0" lean-forward="false" selection-start-line="191" selection-start-column="0" selection-end-line="191" selection-end-column="0" />
+              <folding>
+                <element signature="e#2154#2279#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="plat_io.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/platform/plat_io.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1365">
+              <caret line="91" column="21" lean-forward="false" selection-start-line="91" selection-start-column="8" selection-end-line="91" selection-end-column="21" />
               <folding />
             </state>
           </provider>
@@ -98,41 +112,38 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>unpackNextContext</find>
-      <find>save_classname</find>
-      <find>pool</find>
-      <find>mgn_memory_pool</find>
-      <find>db_save_classname</find>
-      <find>db_save_object_name</find>
-      <find>packer</find>
-      <find>index</find>
-      <find>roots</find>
-      <find>mgn_memory_pool*</find>
-      <find>pkrdex_array</find>
-      <find>packArray_impl</find>
-      <find>pack_array</find>
-      <find>pool_of_mmobj</find>
-      <find>current_obj_num</find>
-      <find>current_obj</find>
-      <find>CLASS_NAME</find>
-      <find>pkrdex_context</find>
-      <find>registerAllocator</find>
-      <find>register_allocator</find>
-      <find>name_##stru_name()</find>
-      <find>name_</find>
-      <find>unpack</find>
-      <find>unpkr-&gt;stack</find>
-      <find>registerAllocator_impl</find>
-      <find>MMInt</find>
-      <find>MMLong</find>
+      <find>base_of_first_mmobj</find>
+      <find>last_object_num</find>
+      <find>reference</find>
+      <find>alloc</find>
+      <find>allocators</find>
+      <find>PRINTF_HEXMEM</find>
+      <find>target</find>
+      <find>retain_mmobj</find>
+      <find>repl</find>
+      <find>uint</find>
+      <find>ooo</find>
       <find>objects</find>
-      <find>MMDouble</find>
-      <find>getByIntFromStack</find>
+      <find>Add to ref</find>
+      <find>unpack</find>
+      <find>pre_base</find>
+      <find>unpack_mmobj</find>
+      <find>call_f</find>
+      <find>return</find>
+      <find>unpackObject</find>
+      <find>struct mmBase b</find>
+      <find>struct mmObj a</find>
+      <find>struct mmBase</find>
+      <find>Pack array</find>
+      <find>__unpack_mmobj</find>
+      <find>plat_io_printf_std</find>
+      <find>Reference</find>
+      <find>if (1)</find>
+      <find>stru:</find>
+      <find>idx</find>
+      <find>last_mmobj</find>
     </findStrings>
     <replaceStrings>
-      <replace>AST_UNARY_OP</replace>
-      <replace>AST_BINARY_OP</replace>
-      <replace>AST_TERNARY_OP</replace>
       <replace>AstBlockStmt</replace>
       <replace>AstIsExpr</replace>
       <replace>AstJumpStmt</replace>
@@ -160,6 +171,9 @@
       <replace>mgn_mem_pool</replace>
       <replace>db_save_object_name</replace>
       <replace>register_allocator</replace>
+      <replace>array_end</replace>
+      <replace>num</replace>
+      <replace>if (is_dbg) plat_io_printf_dbg</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -212,13 +226,13 @@
         <option value="$PROJECT_DIR$/README.MD" />
         <option value="$PROJECT_DIR$/platform/mmo_unittest.h" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/platform/mmo_pack.h" />
         <option value="$PROJECT_DIR$/platform/plat_io.h" />
         <option value="$PROJECT_DIR$/platform/plat_mgn_mem.h" />
         <option value="$PROJECT_DIR$/platform/mmo.h" />
-        <option value="$PROJECT_DIR$/platform/mmo_pack.h" />
-        <option value="$PROJECT_DIR$/platform/mmo_unittest.c" />
         <option value="$PROJECT_DIR$/platform/mmo_ext.h" />
         <option value="$PROJECT_DIR$/platform/mmo_pack.c" />
+        <option value="$PROJECT_DIR$/platform/mmo_unittest.c" />
       </list>
     </option>
   </component>
@@ -483,6 +497,11 @@
       <workItem from="1507634573827" duration="3610000" />
       <workItem from="1507945130269" duration="8500000" />
       <workItem from="1507962722311" duration="11979000" />
+      <workItem from="1507987860522" duration="5556000" />
+      <workItem from="1508027825620" duration="1254000" />
+      <workItem from="1508029631829" duration="6040000" />
+      <workItem from="1508036418872" duration="7382000" />
+      <workItem from="1508044423670" duration="12000" />
     </task>
     <task id="LOCAL-00001" summary="More implementations">
       <created>1507348208948</created>
@@ -495,7 +514,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="485971000" />
+    <option name="totallyTimeSpent" value="506215000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -507,22 +526,22 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-3" y="26" width="1920" height="1110" extended-state="6" />
+    <frame x="0" y="23" width="1920" height="1108" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32956523" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Tool Output" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5327553" sideWeight="0.6713542" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19208494" sideWeight="0.6713542" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32782608" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29576108" sideWeight="0.32864583" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25478262" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.54608697" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32869565" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32850242" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19739583" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="LuaJ" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="ANTLR Preview" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6512524" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4642857" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -619,7 +638,7 @@
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="36" />
+      <option name="time" value="39" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -729,7 +748,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1">
           <caret line="23" column="17" lean-forward="false" selection-start-line="23" selection-start-column="4" selection-end-line="23" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -752,9 +770,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1140">
           <caret line="76" column="20" lean-forward="false" selection-start-line="76" selection-start-column="20" selection-end-line="76" selection-end-column="20" />
-          <folding>
-            <element signature="e#109#130#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -816,7 +831,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-9">
           <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -865,7 +879,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="715">
           <caret line="51" column="8" lean-forward="false" selection-start-line="51" selection-start-column="8" selection-end-line="51" selection-end-column="8" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -873,14 +886,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="510">
           <caret line="34" column="33" lean-forward="false" selection-start-line="34" selection-start-column="17" selection-end-line="34" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/platform/plat_io.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="87" column="6" lean-forward="true" selection-start-line="87" selection-start-column="6" selection-end-line="87" selection-end-column="6" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -895,7 +900,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="405">
           <caret line="27" column="17" lean-forward="false" selection-start-line="27" selection-start-column="4" selection-end-line="27" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -903,7 +907,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="16095">
           <caret line="1073" column="17" lean-forward="false" selection-start-line="1073" selection-start-column="17" selection-end-line="1073" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -911,7 +914,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="900">
           <caret line="60" column="0" lean-forward="false" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -930,54 +932,64 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/platform/plat_mgn_mem.h">
+    <entry file="file://$PROJECT_DIR$/platform/plat_io.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1035">
-          <caret line="69" column="62" lean-forward="false" selection-start-line="69" selection-start-column="62" selection-end-line="69" selection-end-column="62" />
+        <state relative-caret-position="1365">
+          <caret line="91" column="21" lean-forward="false" selection-start-line="91" selection-start-column="8" selection-end-line="91" selection-end-column="21" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/platform/mmo.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="514">
-          <caret line="506" column="81" lean-forward="false" selection-start-line="506" selection-start-column="8" selection-end-line="506" selection-end-column="81" />
+        <state relative-caret-position="8715">
+          <caret line="581" column="12" lean-forward="false" selection-start-line="581" selection-start-column="12" selection-end-line="581" selection-end-column="12" />
           <folding>
             <element signature="e#101#123#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/platform/plat_mgn_mem.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2865">
+          <caret line="191" column="0" lean-forward="false" selection-start-line="191" selection-start-column="0" selection-end-line="191" selection-end-column="0" />
+          <folding>
+            <element signature="e#2154#2279#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/platform/mmo_pack.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1605">
+          <caret line="107" column="58" lean-forward="false" selection-start-line="107" selection-start-column="58" selection-end-line="107" selection-end-column="58" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/platform/mmo_pack.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="726">
-          <caret line="78" column="21" lean-forward="false" selection-start-line="78" selection-start-column="21" selection-end-line="78" selection-end-column="21" />
+        <state relative-caret-position="570">
+          <caret line="38" column="14" lean-forward="false" selection-start-line="38" selection-start-column="14" selection-end-line="38" selection-end-column="14" />
           <folding>
             <element signature="e#101#117#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/platform/mmo_unittest.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="902">
-          <caret line="113" column="28" lean-forward="false" selection-start-line="113" selection-start-column="28" selection-end-line="113" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/platform/mmo_ext.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="615">
-          <caret line="100" column="1" lean-forward="false" selection-start-line="100" selection-start-column="1" selection-end-line="100" selection-end-column="1" />
+        <state relative-caret-position="9015">
+          <caret line="601" column="27" lean-forward="false" selection-start-line="601" selection-start-column="27" selection-end-line="601" selection-end-column="27" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/platform/mmo_pack.c">
+    <entry file="file://$PROJECT_DIR$/platform/mmo_unittest.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="643">
-          <caret line="333" column="26" lean-forward="false" selection-start-line="333" selection-start-column="26" selection-end-line="333" selection-end-column="26" />
+        <state relative-caret-position="608">
+          <caret line="120" column="54" lean-forward="false" selection-start-line="120" selection-start-column="54" selection-end-line="120" selection-end-column="54" />
           <folding />
         </state>
       </provider>
