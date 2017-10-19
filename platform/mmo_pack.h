@@ -68,7 +68,7 @@ typedef struct MMPacker {
 MMPacker initMMPacker(MMPacker obj, Unpacker unpkr);
 void destroyMMPacker(MMPacker obj);
 
-MMSubObject(MMOBJ_PACKER, MMPacker, MMObject , initMMPacker, destroyMMPacker, null);
+MMSubObject(MMPacker, MMObject , initMMPacker, destroyMMPacker, null);
 
 
 /// ===== Unpacker =====
@@ -85,7 +85,7 @@ typedef struct MMUnpacker {
 MMUnpacker initMMUnpacker(MMUnpacker obj, Unpacker unpkr);
 void destroyMMUnpacker(MMUnpacker obj);
 
-MMSubObject(MMOBJ_UNPACKER, MMUnpacker, MMObject , initMMUnpacker, destroyMMUnpacker, null);
+MMSubObject(MMUnpacker, MMObject , initMMUnpacker, destroyMMUnpacker, null);
 
 MMUnpacker allocMMUnpackerWithData(mgn_memory_pool* pool, uint8* data, uint len);
 
