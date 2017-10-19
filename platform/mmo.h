@@ -35,18 +35,19 @@ typedef struct mmBase {
 } *mmBase;
 
 plat_inline uint32 stru_name_to_oid(const char* name) {
-    // TODO:
-    uint32 hash = 0; //*(uint32*)name;
-    while((*name) != '\0')
+    uint32 hash = 0;
+    const char* c = name;
+    while((*c) != '\0')
     {
-        hash += (*name);
+        hash += (*c);
         hash += (hash << 10);
         hash ^= (hash >> 6);
-        name++;
+        c++;
     }
     hash += (hash << 3);
     hash ^= (hash >> 11);
     hash += (hash << 15);
+    //plat_io_printf_std("%08X: %s\n", hash, name);
     return hash;
 }
 
@@ -64,7 +65,8 @@ plat_inline struct stru_name* pos_o_##stru_name(void* ptr) {                    
                return (struct stru_name*) &((struct MM__##stru_name*)ptr)->iso;  }              \
 plat_inline uint32 oid_of_##stru_name(void) {                                                   \
     static const char* _name = "" #stru_name;                                                   \
-    return stru_name_to_oid(_name);                                                             \
+    static uint32 oid = 0;                                                                      \
+    return oid?oid:(oid=stru_name_to_oid(_name));                                               \
 }                                                                                               \
                                                                                                 \
 plat_inline void* find_##stru_name(mmBase base, uint mmid, uint untilid) {                      \
@@ -190,7 +192,8 @@ plat_inline struct stru_name* pos_o_##stru_name(void* ptr) {                    
                return (struct stru_name*) &((struct MM__##stru_name*)ptr)->iso;  }              \
 plat_inline uint32 oid_of_##stru_name(void) {                                                   \
     static const char* _name = "" #stru_name;                                                   \
-    return stru_name_to_oid(_name);                                                             \
+    static uint32 oid = 0;                                                                      \
+    return oid?oid:(oid=stru_name_to_oid(_name));                                               \
 }                                                                                               \
                                                                                                 \
 plat_inline void* find_##stru_name(mmBase base, uint mmid, uint untilid) {                      \
