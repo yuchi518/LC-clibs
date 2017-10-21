@@ -38,6 +38,12 @@ plat_inline uint plat_cstr_length(const char* string)
     return len;
 }
 
+plat_inline int plat_cstr_compare(const char* string1, const char* string2)
+{
+    return strcmp(string1, string2);
+}
+
+
 
 
 #endif //DYBUF_C_PLAT_STRING_H_H

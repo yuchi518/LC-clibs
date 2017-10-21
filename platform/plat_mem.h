@@ -99,6 +99,16 @@ plat_inline void plat_mem_set(void* dest, char value, uint size)
 #endif
 }
 
+plat_inline int plat_mem_compare(void* m1, const void* m2, uint size)
+{
+#if !_NO_STD_INC_
+#ifdef __KERNEL__
+    // TO-DO: implement
+#else
+    return memcmp(m1, m2, size);
+#endif
+#endif
+}
 
 #endif //_PLAT_C_MEM_
 

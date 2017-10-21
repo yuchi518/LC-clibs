@@ -339,14 +339,15 @@ plat_inline int compare_for_MMString(void* this_stru, void* that_stru)
 {
     const char* this_c = toMMString(this_stru)->value;
     const char* that_c = toMMString(that_stru)->value;
-    if (this_c == that_c) return 0;
+    if (this_c == that_c) return 0; // null
     if (this_c == null) return -1;
     if (that_c == null) return 1;
-    while((*this_c) == (*that_c) && (*this_c)!='\0' && (*that_c)!='\0') {
+    /*while((*this_c) == (*that_c) && (*this_c)!='\0' && (*that_c)!='\0') {
         this_c++;
         that_c++;
     }
-    return (*this_c) - (*that_c);
+    return (*this_c) - (*that_c);*/
+    return plat_cstr_compare(this_c, that_c);
 }
 
 plat_inline MMString allocMMStringWithCString(mgn_memory_pool* pool, const char* string) {
@@ -372,7 +373,9 @@ typedef struct MMData {
     uint size;
 }*MMData;
 
+plat_inline int compare_for_MMData(void*, void*);
 plat_inline MMData initMMData(MMData obj, Unpacker unpkr) {
+    set_compare_for_mmobj(obj, compare_for_MMData);
     if (is_unpacker_v1(unpkr)) {
         uint len;
         uint8* data;
@@ -402,6 +405,23 @@ plat_inline void packMMData(MMData obj, Packer pkr) {
 }
 
 MMSubObject(MMData, MMObject , initMMData, destroyMMData, packMMData);
+
+plat_inline int compare_for_MMData(void* this_stru, void* that_stru)
+{
+    MMData this_data = toMMData(this_stru);
+    MMData that_data = toMMData(that_stru);
+    void* this_d = this_data->data;
+    void* that_d = that_data->data;
+    uint this_s = this_data->size;
+    uint that_s = that_data->size;
+    if (this_d == that_d) return 0; // null
+    if (this_d == null) return -1;
+    if (that_d == null) return 1;
+    // if data is a c string, the result should be the same.
+    uint size = this_s < that_s ? this_s : that_s;
+    int diff = plat_mem_compare(this_d, that_d, size);
+    return (diff != 0) ? diff : (int)(this_s - that_s);
+}
 
 plat_inline MMData allocMMDataWithData(mgn_memory_pool* pool, void* data, uint size)
 {

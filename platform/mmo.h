@@ -499,19 +499,26 @@ plat_inline bool __is_mmobj_kind_of_oid(void* stru, uint oid) {
 
 /**
  * Implementation notice:
- * mmobj_compare(a, b) should be equal to -mmobj_compare(b, a) in runtime.
- * For a mmobj supported serialization should have same result
- * after object unpacked.
+ * 1. mmobj_compare(a, b) should be equal to -mmobj_compare(b, a) in runtime.
+ * 2. this_stru and that_stru are always the same object type.
+ * 3. For a mmobj supported serialization should have same result
+ *    after object unpacked.
  */
 typedef int (*mmobj_compare)(void* this_stru, void* that_stru);
 plat_inline int compare_mmobj_this_with_that(void* this_stru, void* that_stru) {
     return (int)this_stru-(int)that_stru;
+}
+plat_inline int single_instance_comparison(void* this_stru, void* that_stru) {
+    (void)this_stru;
+    (void)that_stru;
+    return 0;
 }
 plat_inline void __set_compare_for_mmobj(void* stru, mmobj_compare cmp) {
     if (stru == null) return;
     set_function_for_mmobj(stru, mmobj_compare, cmp);
 }
 #define set_compare_for_mmobj(stru, cmp) __set_compare_for_mmobj(stru, cmp)
+#define set_single_instance_comparison_for_mmobj(stru) __set_compare_for_mmobj(stru, single_instance_comparison)
 
 plat_inline int __compare_mmobjs(void* this_stru, void* that_stru) {
     if (this_stru == that_stru) return 0;
@@ -563,6 +570,7 @@ plat_inline void __pack_varint(int64 value, const uint key, Packer pkr) {
     call_f(pkr, packVarInt64, key, value);
 }
 #define pack_varint(key, value, pkr) __pack_varint(value, key, pkr)
+#define pack_bool(key, value, pkr) __pack_varint((value)?1:0, key, pkr)
 
 plat_inline void __pack_float(float value, const uint key, Packer pkr) {
     call_f(pkr, packFloat, key, value);
@@ -617,6 +625,7 @@ plat_inline int64 __unpack_varint(const uint key, Unpacker unpkr) {
     return call_f(unpkr, unpackVarInt64, key);
 }
 #define unpack_varint(key, unpkr) __unpack_varint(key, unpkr)
+#define unpack_bool(key, unpkr) (__unpack_varint(key, unpkr)?true:false)
 
 plat_inline float __unpack_float(const uint key, Unpacker unpkr) {
     return call_f(unpkr, unpackFloat, key);
