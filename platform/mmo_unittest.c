@@ -117,8 +117,16 @@ void unit_test_mmobj(void)
         plat_io_printf_err("Why are they different?(%u!=%u)\n", sizeOfMMList(list), sizeOfMMList(cloned_list));
     }
 
+    if (compare_mmobjs(list, cloned_list) != 0) {
+        plat_io_printf_err("Why are they different?\n");
+    }
+
     if (cloned_list != cloned_list2) {
         plat_io_printf_err("Why are they different?(%p!=%p)\n", cloned_list, cloned_list2);
+    }
+
+    if (!are_equal_mmobjs(cloned_list, cloned_list2)) {
+        plat_io_printf_err("Why are they different?\n");
     }
 
     int64 vari = unpack_varint(2, unpacker);

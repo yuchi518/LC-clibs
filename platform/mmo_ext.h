@@ -44,9 +44,10 @@ typedef struct MMInt {
 }*MMInt;
 
 plat_inline void hash_of_MMInt(void*, void** key, uint* key_len);
-
+plat_inline int compare_for_MMInt(void*, void*);
 plat_inline MMInt initMMInt(MMInt obj, Unpacker unpkr) {
     set_hash_for_mmobj(obj, hash_of_MMInt);
+    set_compare_for_mmobj(obj, compare_for_MMInt);
     if (is_unpacker_v1(unpkr)) {
         obj->value = (int32)unpack_varint(0, unpkr);
     }
@@ -71,6 +72,13 @@ plat_inline void hash_of_MMInt(void* stru, void** key, uint* key_len)
     if (key_len) *key_len = sizeof(obj->value);
 }
 
+plat_inline int compare_for_MMInt(void* this_stru, void* that_stru)
+{
+    MMInt this_o = toMMInt(this_stru);
+    MMInt that_o = toMMInt(that_stru);
+    return this_o->value - that_o->value;
+}
+
 plat_inline MMInt allocMMIntWithValue(mgn_memory_pool* pool, int32 value) {
     MMInt obj = allocMMInt(pool);
     if (obj) {
@@ -85,9 +93,10 @@ typedef struct MMLong {
 }*MMLong;
 
 plat_inline void hash_of_MMLong(void* stru, void** key, uint* key_len);
-
+plat_inline int compare_for_MMLong(void*, void*);
 plat_inline MMLong initMMLong(MMLong obj, Unpacker unpkr) {
     set_hash_for_mmobj(obj, hash_of_MMLong);
+    set_compare_for_mmobj(obj, compare_for_MMLong);
     if (is_unpacker_v1(unpkr)) {
         obj->value = unpack_varint(0, unpkr);
     }
@@ -111,6 +120,14 @@ plat_inline void hash_of_MMLong(void* stru, void** key, uint* key_len)
     if (key_len) *key_len = sizeof(obj->value);
 }
 
+plat_inline int compare_for_MMLong(void* this_stru, void* that_stru)
+{
+    MMLong this_o = toMMLong(this_stru);
+    MMLong that_o = toMMLong(that_stru);
+    int64 diff = this_o->value - that_o->value;
+    return diff>0?1:diff<0?-1:0;
+}
+
 plat_inline MMLong allocMMLongWithValue(mgn_memory_pool* pool, int64 value) {
     MMLong obj = allocMMLong(pool);
     if (obj) {
@@ -125,9 +142,10 @@ typedef struct MMFloat {
 }*MMFloat;
 
 plat_inline void hash_of_MMFloat(void* stru, void** key, uint* key_len);
-
+plat_inline int compare_for_MMFloat(void*, void*);
 plat_inline MMFloat initMMFloat(MMFloat obj, Unpacker unpkr) {
     set_hash_for_mmobj(obj, hash_of_MMFloat);
+    set_compare_for_mmobj(obj, compare_for_MMFloat);
     if (is_unpacker_v1(unpkr)) {
         obj->value = unpack_float(0, unpkr);
     }
@@ -151,6 +169,14 @@ plat_inline void hash_of_MMFloat(void* stru, void** key, uint* key_len)
     if (key_len) *key_len = sizeof(obj->value);
 }
 
+plat_inline int compare_for_MMFloat(void* this_stru, void* that_stru)
+{
+    MMFloat this_o = toMMFloat(this_stru);
+    MMFloat that_o = toMMFloat(that_stru);
+    float diff = this_o->value - that_o->value;
+    return diff>0?1:diff<0?-1:0;
+}
+
 plat_inline MMFloat allocMMFloatWithValue(mgn_memory_pool* pool, float value) {
     MMFloat obj = allocMMFloat(pool);
     if (obj) {
@@ -166,9 +192,10 @@ typedef struct MMDouble {
 }*MMDouble;
 
 plat_inline void hash_of_MMDouble(void* stru, void** key, uint* key_len);
-
+plat_inline int compare_for_MMDouble(void*, void*);
 plat_inline MMDouble initMMDouble(MMDouble obj, Unpacker unpkr) {
     set_hash_for_mmobj(obj, hash_of_MMDouble);
+    set_compare_for_mmobj(obj, compare_for_MMDouble);
     if (is_unpacker_v1(unpkr)) {
         obj->value = unpack_double(0, unpkr);
     }
@@ -190,6 +217,14 @@ plat_inline void hash_of_MMDouble(void* stru, void** key, uint* key_len)
     MMDouble obj = toMMDouble(stru);
     if (key) *key = &obj->value;
     if (key_len) *key_len = sizeof(obj->value);
+}
+
+plat_inline int compare_for_MMDouble(void* this_stru, void* that_stru)
+{
+    MMDouble this_o = toMMDouble(this_stru);
+    MMDouble that_o = toMMDouble(that_stru);
+    double diff = this_o->value - that_o->value;
+    return diff>0?1:diff<0?-1:0;
 }
 
 plat_inline MMDouble allocMMDoubleWithValue(mgn_memory_pool* pool, double value) {
@@ -259,9 +294,10 @@ typedef struct MMString {
 }*MMString;
 
 plat_inline void hash_of_MMString(void* stru, void** key, uint* key_len);
-
+plat_inline int compare_for_MMString(void*, void*);
 plat_inline MMString initMMString(MMString obj, Unpacker unpkr) {
     set_hash_for_mmobj(obj, hash_of_MMString);
+    set_compare_for_mmobj(obj, compare_for_MMString);
     if (is_unpacker_v1(unpkr)) {
         uint len;
         uint8* data;
@@ -297,6 +333,20 @@ plat_inline void hash_of_MMString(void* stru, void** key, uint* key_len)
     char* c = string->value;
     if (key) *key = c;
     if (key_len) *key_len = plat_cstr_length(c);
+}
+
+plat_inline int compare_for_MMString(void* this_stru, void* that_stru)
+{
+    const char* this_c = toMMString(this_stru)->value;
+    const char* that_c = toMMString(that_stru)->value;
+    if (this_c == that_c) return 0;
+    if (this_c == null) return -1;
+    if (that_c == null) return 1;
+    while((*this_c) == (*that_c) && (*this_c)!='\0' && (*that_c)!='\0') {
+        this_c++;
+        that_c++;
+    }
+    return (*this_c) - (*that_c);
 }
 
 plat_inline MMString allocMMStringWithCString(mgn_memory_pool* pool, const char* string) {
@@ -406,18 +456,20 @@ typedef struct MMMapItem {
     UT_hash_handle hh;
 }*MMMapItem;
 
-/*plat_inline MMMapItem initMMMapItem(MMMapItem item, Unpacker unpkr) {
-    item->key = null;
-    item->value = null;
+plat_inline int compare_for_MMMapItem(void*, void*);
+plat_inline MMMapItem initMMMapItem(MMMapItem item, Unpacker unpkr) {
+    //item->key = null;
+    //item->value = null;
+    set_compare_for_mmobj(item, compare_for_MMMapItem);
     return item;
-}*/
+}
 
 plat_inline void destroyMMMapItem(MMMapItem item) {
     if (item->key) release_mmobj(item->key);
     if (item->value) release_mmobj(item->value);
 }
 
-MMSubObject(MMMapItem, MMObject, null, destroyMMMapItem, null);
+MMSubObject(MMMapItem, MMObject, initMMMapItem, destroyMMMapItem, null);
 
 plat_inline MMMapItem allocMMMapItemWithKeyValue(mgn_memory_pool* pool, MMPrimary key, MMObject value) {
     if (key == null || value == null) return null;
@@ -438,6 +490,14 @@ plat_inline MMMapItem replaceMMMapItemKeyValue(MMMapItem item, MMPrimary key, MM
     return item;
 }
 
+plat_inline int compare_for_MMMapItem(void* this_stru, void* that_stru) {
+    MMMapItem this_mi = toMMMapItem(this_stru);
+    MMMapItem that_mi = toMMMapItem(that_stru);
+    int diff = compare_mmobjs(this_mi->key, that_mi->key);
+    if (diff != 0) return diff;
+    return compare_mmobjs(this_mi->value, that_mi->value);
+}
+
 /// ====== Map =====
 /**
  * Only support primary type (Subclass of MMPrimary) as key.
@@ -445,14 +505,18 @@ plat_inline MMMapItem replaceMMMapItemKeyValue(MMMapItem item, MMPrimary key, MM
  * And oly support one primary type as key in a map.
  */
 typedef struct MMMap {
+    bool sorted;
     MMMapItem rootItem;
 }*MMMap;
 
 plat_inline void addMMMapItem(MMMap map, MMPrimary key, MMObject value);
+plat_inline int compare_for_MMMap(void*, void*);
 plat_inline MMMap initMMMap(MMMap map, Unpacker unpkr) {
     map->rootItem = null;
+    set_compare_for_mmobj(map, compare_for_MMMap);
     if (is_unpacker_v1(unpkr)) {
-        uint len = unpack_array(0, unpkr);
+        map->sorted = unpack_varint(0, unpkr)?true:false;
+        uint len = unpack_array(1, unpkr);
         uint i;
         if ((len&0x01)) return null;
         for (i=0; i<len; ) {
@@ -461,7 +525,7 @@ plat_inline MMMap initMMMap(MMMap map, Unpacker unpkr) {
             if (primary==null || value==null) return null;
             addMMMapItem(map, primary, value);
         }
-        unpack_array_end(0, unpkr);
+        unpack_array_end(1, unpkr);
     }
     return map;
 }
@@ -479,18 +543,27 @@ plat_inline void destroyMMMap(MMMap map) {
 
 plat_inline void packMMMap(MMMap map, Packer pkr) {
     if (is_packer_v1(pkr)) {
+        pack_varint(0, map->sorted?1:0, pkr);
         uint len = (uint)HASH_COUNT(map->rootItem);
-        pack_array(0, len*2, pkr);
+        pack_array(1, len*2, pkr);
         MMMapItem item, tmp;
         HASH_ITER(hh, map->rootItem, item, tmp) {
             pack_mmobj(0, item->key, pkr);
             pack_mmobj(1, item->value, pkr);
         }
-        pack_array_end(0, pkr);
+        pack_array_end(1, pkr);
     }
 }
 
 MMSubObject(MMMap, MMContainer, initMMMap, destroyMMMap, packMMMap);
+
+plat_inline MMMap allocMMMapSorted(mgn_memory_pool* pool) {
+    MMMap map = allocMMMap(pool);
+    if (map) {
+        map->sorted = true;
+    }
+    return map;
+}
 
 plat_inline uint sizeOfMMMap(MMMap map) {
     return (uint)HASH_COUNT(map->rootItem);
@@ -515,8 +588,13 @@ plat_inline void addMMMapItem(MMMap map, MMPrimary key, MMObject value)
     {
         item = allocMMMapItemWithKeyValue(pool, key, value);
     }
-    HASH_ADD_KEYPTR(hh, map->rootItem, hash_key, hash_key_len, item);
-
+    if (map->sorted) {
+        // Use ordered insertion for consistent comparison result.
+        HASH_ADD_KEYPTR_INORDER(hh, map->rootItem, hash_key, hash_key_len, item, compare_mmobjs);
+    } else {
+        // Comparison result depends on insert insertion order
+        HASH_ADD_KEYPTR(hh, map->rootItem, hash_key, hash_key_len, item);
+    }
 }
 
 plat_inline MMObject getMMMapItemValue(MMMap map, MMPrimary key) {
@@ -548,6 +626,32 @@ plat_inline void removeMMMapItem(MMMap map, MMPrimary key) {
     release_mmobj(item);
 }
 
+plat_inline int compare_for_MMMap(void* this_stru, void* that_stru) {
+    MMMap this_map = toMMMap(this_stru);
+    MMMap that_map = toMMMap(that_stru);
+    uint this_size = sizeOfMMMap(this_map);
+    uint that_size = sizeOfMMMap(that_map);
+    if (this_size != that_size) return this_size - that_size;
+
+    // This comparison only works on ordered hash list.
+    MMMapItem this_item = this_map->rootItem;
+    MMMapItem that_item = that_map->rootItem;
+
+    while (this_item != null && that_item != null) {
+        int diff_key = compare_mmobjs(this_item->key, that_item->key);
+        if (diff_key != 0) return diff_key;
+        int diff_value = compare_mmobjs(this_item->value, that_item->value);
+        if (diff_value != 0) return diff_value;
+        this_item = this_item->hh.next;
+        that_item = that_item->hh.next;
+    }
+
+    if (this_item != null) return 1;
+    if (that_item != null) return -1;
+    return 0;
+}
+
+
 /// ====== List =====
 typedef struct MMList {
     UT_array list;
@@ -571,10 +675,11 @@ plat_inline void ut_ast_del(void *ptr)
     release_mmobj(*(MMObject*)ptr);
 }
 
-
+plat_inline int compare_for_MMList(void*, void*);
 plat_inline MMList initMMList(MMList obj, Unpacker unpkr) {
     static UT_icd ut_ast__icd = { sizeof(void*), /*ut_ast_init*/null, ut_ast_copy, ut_ast_del };
     utarray_init(&obj->list, &ut_ast__icd);
+    set_compare_for_mmobj(obj, compare_for_MMList);
     if (is_unpacker_v1(unpkr)) {
         uint len = unpack_array(0, unpkr);
         uint i;
@@ -641,6 +746,23 @@ plat_inline MMObject getMMListItem(MMList list, uint idx) {
 plat_inline void concatMMList(MMList dest_list, MMList a_list) {
     utarray_concat(&dest_list->list, &a_list->list);
 }
+
+plat_inline int compare_for_MMList(void* this_stru, void* that_stru) {
+    MMList this_list = toMMList(this_stru);
+    MMList that_list = toMMList(that_stru);
+    uint this_size = sizeOfMMList(this_list);
+    uint that_size = sizeOfMMList(that_list);
+    if (this_size != that_size) return this_size - that_size;
+    uint i;
+    for (i=0; i<this_size; i++) {
+        MMObject this_obj = getMMListItem(this_list, i);
+        MMObject that_obj = getMMListItem(that_list, i);
+        int diff = compare_mmobjs(this_obj, that_obj);
+        if (diff != 0) return diff;
+    }
+    return 0;
+}
+
 
 /// ===== register all allocators to unpacker
 plat_inline void register_all_mmo_ext_to_unpacker(Unpacker unpkr) {

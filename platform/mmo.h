@@ -24,9 +24,10 @@ typedef struct mmObj {
 typedef void* Unpacker;
 typedef void* Packer;
 
+typedef uint32 oidtyp;
 struct mmBase;
 typedef struct mmClass {
-    uint32 oid;
+    oidtyp oid;
     const char* (*name)(void);
     void* (*find)(struct mmBase* base, uint mmid, uint utilid);             // for cast
     mmObj (*find_obj)(struct mmBase* base);                                 // mmobj address is used for memory management.
@@ -39,8 +40,8 @@ typedef struct mmBase {
     void (*pack)(struct mmBase* base, Packer pkr);
 } *mmBase;
 
-plat_inline uint32 stru_name_to_oid(const char* name) {
-    uint32 hash = 0;
+plat_inline oidtyp stru_name_to_oid(const char* name) {
+    oidtyp hash = 0;
     const char* c = name;
     while((*c) != '\0')
     {
@@ -73,8 +74,8 @@ plat_inline const char* name_##stru_name(void) {                                
     return "" #stru_name;                                                                       \
 }                                                                                               \
                                                                                                 \
-plat_inline uint32 oid_of_##stru_name(void) {                                                   \
-    static uint32 oid = 0;                                                                      \
+plat_inline oidtyp oid_of_##stru_name(void) {                                                   \
+    static oidtyp oid = 0;                                                                      \
     return oid?oid:(oid=stru_name_to_oid(name_##stru_name()));                                  \
 }                                                                                               \
                                                                                                 \
@@ -130,8 +131,9 @@ plat_inline void* init_##stru_name(mgn_memory_pool* pool, void* p,              
     ptr->isb.cls = get_##stru_name##_class();                                                   \
     ptr->isb.pre_base = last_child_base;                                                        \
     ptr->isb.destroy = destroy_##stru_name;                                                     \
-    set_hash_for_mmobj(&ptr->iso, hash_##stru_name);                                            \
     ptr->isb.pack = pack_##stru_name;                                                           \
+    set_hash_for_mmobj(&ptr->iso, hash_##stru_name);                                            \
+    set_compare_for_mmobj(&ptr->iso, compare_mmobj_this_with_that);                             \
     struct stru_name* (*init_impl)(struct stru_name*, Unpacker) = fn_init;                      \
     if (init_impl != null) {                                                                    \
         call_f(unpkr, unpackNextContext, &ptr->iso);                                            \
@@ -175,12 +177,12 @@ plat_inline void pack_##stru_name(mmBase base, Packer pkr) {                    
 plat_inline struct stru_name* to##stru_name(void* stru) {                                       \
     if (stru == null) return null;                                                              \
     mmBase base = base_of_mmobj(stru);                                                          \
-    uint32 oid = oid_of_##stru_name();                                                          \
+    oidtyp oid = oid_of_##stru_name();                                                          \
     return (struct stru_name*)(base->cls->find(base, oid, oid));                                \
 }                                                                                               \
                                                                                                 \
 plat_inline struct stru_name* baseTo##stru_name(mmBase base) {                                  \
-    uint32 oid = oid_of_##stru_name();                                                          \
+    oidtyp oid = oid_of_##stru_name();                                                          \
     return (struct stru_name*)(base->cls->find(base, oid, oid));                                \
 }                                                                                               \
                                                                                                 \
@@ -206,8 +208,8 @@ plat_inline const char* name_##stru_name(void) {                                
     return "" #stru_name;                                                                       \
 }                                                                                               \
                                                                                                 \
-plat_inline uint32 oid_of_##stru_name(void) {                                                   \
-    static uint32 oid = 0;                                                                      \
+plat_inline oidtyp oid_of_##stru_name(void) {                                                   \
+    static oidtyp oid = 0;                                                                      \
     return oid?oid:(oid=stru_name_to_oid(name_##stru_name()));                                  \
 }                                                                                               \
                                                                                                 \
@@ -307,12 +309,12 @@ plat_inline void pack_##stru_name(mmBase base, Packer pkr) {                    
 plat_inline struct stru_name* to##stru_name(void* stru) {                                       \
     if (stru == null) return null;                                                              \
     mmBase base = base_of_mmobj(stru);                                                          \
-    uint32 oid = oid_of_##stru_name();                                                          \
+    oidtyp oid = oid_of_##stru_name();                                                          \
     return (struct stru_name*)(base->cls->find(base, oid, oid));                                \
 }                                                                                               \
                                                                                                 \
 plat_inline struct stru_name* baseTo##stru_name(mmBase base) {                                  \
-    uint32 oid = oid_of_##stru_name();                                                          \
+    oidtyp oid = oid_of_##stru_name();                                                          \
     return (struct stru_name*)(base->cls->find(base, oid, oid));                                \
 }                                                                                               \
                                                                                                 \
@@ -396,7 +398,6 @@ plat_inline void __trigger_release_mmobj(void* mem) {
         mgn_mem_release(ptr->isa._pool, fncb);
     }
     ptr->isb.pre_base->destroy(ptr->isb.pre_base);      /*call last child destroy*/
-
 }
 
 plat_inline void __release_mmobj(void* stru) {
@@ -495,6 +496,46 @@ plat_inline bool __is_mmobj_kind_of_oid(void* stru, uint oid) {
     return base->cls->find(base, oid, oid)==null?true:false;
 }
 #define is_mmobj_kind_of_oid(stru, oid) __is_mmobj_kind_of_oid(stru, oid)
+
+/**
+ * Implementation notice:
+ * mmobj_compare(a, b) should be equal to -mmobj_compare(b, a) in runtime.
+ * For a mmobj supported serialization should have same result
+ * after object unpacked.
+ */
+typedef int (*mmobj_compare)(void* this_stru, void* that_stru);
+plat_inline int compare_mmobj_this_with_that(void* this_stru, void* that_stru) {
+    return (int)this_stru-(int)that_stru;
+}
+plat_inline void __set_compare_for_mmobj(void* stru, mmobj_compare cmp) {
+    if (stru == null) return;
+    set_function_for_mmobj(stru, mmobj_compare, cmp);
+}
+#define set_compare_for_mmobj(stru, cmp) __set_compare_for_mmobj(stru, cmp)
+
+plat_inline int __compare_mmobjs(void* this_stru, void* that_stru) {
+    if (this_stru == that_stru) return 0;
+    if (this_stru == null) return -1;
+    if (that_stru == null) return 1;
+    if (oid_of_last_mmobj(this_stru) != oid_of_last_mmobj(that_stru)) {
+        const char* this_name = name_of_last_mmobj(this_stru);
+        const char* that_name = name_of_last_mmobj(that_stru);
+        while((*this_name) == (*that_name)) {
+            this_name++;
+            that_name++;
+        }
+        return (*this_name) - (*that_name);
+    }
+    // only call if two mmobjs are same type
+    int diff = call_f(this_stru, mmobj_compare, that_stru);
+    if (diff) {
+        //plat_io_printf_err("%s != %s\n", name_of_last_mmobj(this_stru), name_of_last_mmobj(that_stru));
+    }
+    return diff;
+}
+#define compare_mmobjs(this_stru, that_stru) __compare_mmobjs(this_stru, that_stru)
+#define are_equal_mmobjs(this_stru, that_stru) (__compare_mmobjs(this_stru, that_stru) == 0?true:false)
+
 
 /**
  *  Serialization, packer/unpacker, v1
