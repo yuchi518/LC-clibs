@@ -527,11 +527,12 @@ plat_inline int __compare_mmobjs(void* this_stru, void* that_stru) {
     if (oid_of_last_mmobj(this_stru) != oid_of_last_mmobj(that_stru)) {
         const char* this_name = name_of_last_mmobj(this_stru);
         const char* that_name = name_of_last_mmobj(that_stru);
-        while((*this_name) == (*that_name)) {
+        return plat_cstr_compare(this_name, that_name);
+        /*while((*this_name) == (*that_name)) {
             this_name++;
             that_name++;
         }
-        return (*this_name) - (*that_name);
+        return (*this_name) - (*that_name);*/
     }
     // only call if two mmobjs are same type
     int diff = call_f(this_stru, mmobj_compare, that_stru);
@@ -542,8 +543,9 @@ plat_inline int __compare_mmobjs(void* this_stru, void* that_stru) {
 }
 #define compare_mmobjs(this_stru, that_stru) __compare_mmobjs(this_stru, that_stru)
 #define are_equal_mmobjs(this_stru, that_stru) (__compare_mmobjs(this_stru, that_stru) == 0?true:false)
-
-
+#define FIRST_Of_2RESULTS(result1, result2) ({int result = (result1); result?result:(result2);})
+#define FIRST_Of_3RESULTS(result1, result2, result3) ({int result = (result1); result?result:(result = (result2))?result: (result3);})
+#define FIRST_Of_4RESULTS(result1, result2, result3, result4) ({int result = (result1); result?result:(result = (result2))?result: (result = (result3))?result: (result4);})
 /**
  *  Serialization, packer/unpacker, v1
  *  Use uint as key, each object maintain key itself.
@@ -656,6 +658,8 @@ plat_inline void* __unpack_mmobj(Unpacker unpkr, const uint key) {
     return call_f(unpkr, unpackObject, key);
 }
 #define unpack_mmobj(key, unpkr) __unpack_mmobj(unpkr, key)
+
+#define unpack_mmobj_retained(key, unpkr) retain_mmobj(__unpack_mmobj(unpkr, key))
 
 plat_inline void __register_allocator(Unpacker unpkr, const char* obj_name, void* fn) {
     call_f(unpkr, registerAllocator, obj_name, fn);
