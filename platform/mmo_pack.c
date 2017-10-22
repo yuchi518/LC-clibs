@@ -156,6 +156,9 @@ static void _packObject_impl(MMPacker packer, const uint key, MMObject obj) {
 }
 
 static void packObject_impl(Packer pkr, const uint key, void* stru) {
+    if (stru == null) {
+        return;
+    }
     MMObject obj = toMMObject(stru);
     if (obj == null) {
         plat_io_printf_err("This is not support object.\n");
@@ -395,6 +398,9 @@ static void* unpackObject_impl(Unpacker unpkr, const uint key)
     mgn_memory_pool* pool = pool_of_mmobj(unpacker);
 
     MMObject obj = getByIntFromStack(unpacker, key);
+    if (obj == null) {
+        return null;
+    }
     MMInt num = toMMInt(obj);
 
     obj = getMMMapItemValue(unpacker->objects, toMMPrimary(num));

@@ -110,8 +110,8 @@ void unit_test_mmobj(void)
     MMUnpacker unpacker = allocMMUnpackerWithData(&pool, data, len);
     register_all_mmo_ext_to_unpacker(unpacker);
 
-    MMList cloned_list = unpack_mmobj(0, unpacker);     // auto release
-    MMList cloned_list2 = unpack_mmobj(1, unpacker);     // auto release
+    MMList cloned_list = toMMList(unpack_mmobj(0, unpacker));     // auto release
+    MMList cloned_list2 = toMMList(unpack_mmobj(1, unpacker));     // auto release
 
     if (sizeOfMMList(list) != sizeOfMMList(cloned_list)) {
         plat_io_printf_err("Why are they different?(%u!=%u)\n", sizeOfMMList(list), sizeOfMMList(cloned_list));
