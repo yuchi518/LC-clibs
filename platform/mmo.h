@@ -181,6 +181,11 @@ plat_inline struct stru_name* to##stru_name(void* stru) {                       
     return (struct stru_name*)(base->cls->find(base, oid, oid));                                \
 }                                                                                               \
                                                                                                 \
+plat_inline bool is##stru_name(void* stru) {                                                    \
+    if (stru == null) return false;                                                             \
+    return to##stru_name(stru)==null?false:true;                                                \
+}                                                                                               \
+                                                                                                \
 plat_inline struct stru_name* baseTo##stru_name(mmBase base) {                                  \
     oidtyp oid = oid_of_##stru_name();                                                          \
     return (struct stru_name*)(base->cls->find(base, oid, oid));                                \
@@ -311,6 +316,11 @@ plat_inline struct stru_name* to##stru_name(void* stru) {                       
     mmBase base = base_of_mmobj(stru);                                                          \
     oidtyp oid = oid_of_##stru_name();                                                          \
     return (struct stru_name*)(base->cls->find(base, oid, oid));                                \
+}                                                                                               \
+                                                                                                \
+plat_inline bool is##stru_name(void* stru) {                                                    \
+    if (stru == null) return false;                                                             \
+    return to##stru_name(stru)==null?false:true;                                                \
 }                                                                                               \
                                                                                                 \
 plat_inline struct stru_name* baseTo##stru_name(mmBase base) {                                  \
