@@ -429,7 +429,7 @@ static void* unpackObject_impl(Unpacker unpkr, const uint key)
     obj = getMMMapItemValue(unpacker->allocators, toMMPrimary(obj_name));
     MMReference fnref = toMMReference(obj);
     if (fnref == null) {
-        plat_io_printf_err("Not support unpack?(%s)\n", obj_name->value);
+        plat_io_printf_err("Not support unpack? Do you register (%s) to unpacker?\n", obj_name->value);
         return null;
     }
     void*(*alloc)(mgn_memory_pool*,Unpacker) = fnref->reference;
@@ -534,7 +534,8 @@ static void unpackNextContext_impl(Unpacker unpkr, void* stru)
         if (is_unpkr_dbg) plat_io_printf_dbg("- Switch to context:%s\n", name);
         pushMMListItem(unpacker->stack, obj);
     } else {
-        plat_io_printf_err("Why is not a map?(%s)\n", name_of_last_mmobj(obj));
+        // this is possible if init & pack are not pair, just implement an empty one.
+        plat_io_printf_err("Why is not a map? Does object (%s:%s) implement init & pack at same time?\n", name, name_of_last_mmobj(obj));
     }
 
 }

@@ -47,6 +47,7 @@
 #define plat_io_printf_dbg(format, args...) fprintf(stdout, "%s[%s:%d] " format, __TIME__, __FILE__, __LINE__, ##args)
 #define plat_io_printf_err(format, args...) fprintf(stderr, "%s[%s:%d] " format, __TIME__, __FILE__, __LINE__, ##args)
 #define plat_io_flush_std() fflush(stdout)
+#define plat_io_sprintf sprintf
 #endif
 #endif
 
