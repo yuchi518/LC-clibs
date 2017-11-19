@@ -521,7 +521,7 @@ plat_inline int compare_mmobj_this_with_that(void* this_stru, void* that_stru) {
 plat_inline int single_instance_comparison(void* this_stru, void* that_stru) {
     (void)this_stru;
     (void)that_stru;
-    return 0;
+    return 0;           // they are always equal.
 }
 plat_inline void __set_compare_for_mmobj(void* stru, mmobj_compare cmp) {
     if (stru == null) return;
