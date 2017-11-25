@@ -30,6 +30,7 @@
 // TO-DO: add header
 #else
 #include <string.h>
+#include <stdarg.h>
 #endif
 
 plat_inline uint plat_cstr_length(const char* string)
@@ -43,6 +44,14 @@ plat_inline int plat_cstr_compare(const char* string1, const char* string2)
     return strcmp(string1, string2);
 }
 
+plat_inline int plat_cstr_printf(char* buffer, size_t size, char *format, ...) {
+    va_list arg;
+    int ret;
+    va_start(arg, format);
+    ret = vsnprintf(buffer, size, format, arg);
+    va_end(arg);
+    return (ret);
+}
 
 
 

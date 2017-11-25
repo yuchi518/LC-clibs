@@ -365,6 +365,44 @@ plat_inline MMString allocMMStringWithCString(mgn_memory_pool* pool, const char*
     return obj;
 }
 
+plat_inline MMString allocMMStringWithFormat(mgn_memory_pool* pool, const char* format, ...)
+{
+    va_list arg, arg_count;
+    int len;
+    va_start(arg, format);
+    va_copy(arg_count, arg);
+
+    len = vsnprintf(null, 0, format, arg_count);
+    va_end(arg_count);
+
+    if (len < 0) {
+        va_end(arg);
+        return null;
+    }
+
+    char* new_string = mgn_mem_alloc(pool, (size_t )len+1);
+    if (new_string == null) {
+        va_end(arg);
+        return null;
+    }
+
+    if (len != vsnprintf(new_string, len+1, format, arg)) {
+        plat_io_printf_err("What problem? It is impossible.\n");
+    }
+    va_end(arg);
+
+    MMString obj = allocMMString(pool);
+    if (obj == null) {
+        mgn_mem_release(pool, new_string);
+        return null;
+    }
+
+    obj->value = new_string;
+
+    return obj;
+}
+
+#define mmstring(pool, format, ...)   autorelease_mmobj(allocMMStringWithFormat(pool, format, ##__VA_ARGS__))
 
 /// ===== MMData =====
 

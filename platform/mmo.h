@@ -440,7 +440,7 @@ plat_inline void* __set_function_for_mmobj(void* stru, const char* fn_type_name,
     mmBase base = base_of_mmobj(stru);
     mmObj obj = base->cls->find_obj(base);
     mgn_memory_pool* pool = pool_of_mmobj(stru);
-    mmObj_fn fncb = null;
+    mmObj_fn fncb;
     void* pre_fn = null;
     HASH_FIND_STR(obj->_fns, fn_type_name, fncb);
     if (fncb) {
@@ -488,9 +488,9 @@ plat_inline uint __oid_of_last_mmobj(void* stru) {
 #define oid_of_last_mmobj(stru) __oid_of_last_mmobj(stru)
 
 typedef void (*mmobj_hash)(void* /*base*/, void** /*key*/, uint* /*key_len*/);
-plat_inline void __set_hash_for_mmobj(void* stru, mmobj_hash hash) {
-    if (stru == null) return;
-    set_function_for_mmobj(stru, mmobj_hash, hash);
+plat_inline void* __set_hash_for_mmobj(void* stru, mmobj_hash hash) {
+    if (stru == null) return null;
+    return set_function_for_mmobj(stru, mmobj_hash, hash);
 }
 #define set_hash_for_mmobj(stru, hash) __set_hash_for_mmobj(stru, hash)
 
@@ -523,9 +523,9 @@ plat_inline int single_instance_comparison(void* this_stru, void* that_stru) {
     (void)that_stru;
     return 0;           // they are always equal.
 }
-plat_inline void __set_compare_for_mmobj(void* stru, mmobj_compare cmp) {
-    if (stru == null) return;
-    set_function_for_mmobj(stru, mmobj_compare, cmp);
+plat_inline void* __set_compare_for_mmobj(void* stru, mmobj_compare cmp) {
+    if (stru == null) return null;
+    return set_function_for_mmobj(stru, mmobj_compare, cmp);
 }
 #define set_compare_for_mmobj(stru, cmp) __set_compare_for_mmobj(stru, cmp)
 #define set_single_instance_comparison_for_mmobj(stru) __set_compare_for_mmobj(stru, single_instance_comparison)
@@ -556,6 +556,8 @@ plat_inline int __compare_mmobjs(void* this_stru, void* that_stru) {
 #define FIRST_Of_2RESULTS(result1, result2) ({int result = (result1); result?result:(result2);})
 #define FIRST_Of_3RESULTS(result1, result2, result3) ({int result = (result1); result?result:(result = (result2))?result: (result3);})
 #define FIRST_Of_4RESULTS(result1, result2, result3, result4) ({int result = (result1); result?result:(result = (result2))?result: (result = (result3))?result: (result4);})
+#define FIRST_Of_5RESULTS(result1, result2, result3, result4, result5) ({int result = (result1); result?result:(result = (result2))?result: (result = (result3))?result: (result = (result4))?result: (result5);})
+
 /**
  *  Serialization, packer/unpacker, v1
  *  Use uint as key, each object maintain key itself.
@@ -583,6 +585,8 @@ plat_inline void __pack_varint(int64 value, const uint key, Packer pkr) {
 }
 #define pack_varint(key, value, pkr) __pack_varint(value, key, pkr)
 #define pack_bool(key, value, pkr) __pack_varint((value)?1:0, key, pkr)
+#define pack_uint(key, value, pkr) __pack_varint((int64)value, key, pkr)
+#define pack_int(key, value, pkr) __pack_varint((int64)value, key, pkr)
 
 plat_inline void __pack_float(float value, const uint key, Packer pkr) {
     call_f(pkr, packFloat, key, value);
@@ -638,6 +642,8 @@ plat_inline int64 __unpack_varint(const uint key, Unpacker unpkr) {
 }
 #define unpack_varint(key, unpkr) __unpack_varint(key, unpkr)
 #define unpack_bool(key, unpkr) (__unpack_varint(key, unpkr)?true:false)
+#define unpack_uint(key, unpkr) ((uint)__unpack_varint(key, unpkr))
+#define unpack_int(key, unpkr) ((int)__unpack_varint(key, unpkr))
 
 plat_inline float __unpack_float(const uint key, Unpacker unpkr) {
     return call_f(unpkr, unpackFloat, key);
