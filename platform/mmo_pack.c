@@ -145,7 +145,7 @@ static void _packObject_impl(MMPacker packer, const uint key, MMObject obj) {
         dyb_append_typdex(packer->dyb, pkrdex_object, (uint)processing_i);
         dyb_append_var_u64(packer->dyb, classname_num);
 
-        mmBase base = base_of_first_mmobj(obj)->pre_base;       // use first one to find last one
+        mmStruBase base = base_of_first_mmobj(obj)->pre_base;       // use first one to find last one
         base->pack(base, packer);
 
         // End object
