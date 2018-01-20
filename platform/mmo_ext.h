@@ -38,6 +38,129 @@ plat_inline void destroyMMPrimary(MMPrimary primary) {
 
 MMSubObject(MMPrimary, MMObject, null, null, null);
 
+/// ====== Primary type - String =====
+typedef struct MMString {
+    char* value;
+}*MMString;
+
+plat_inline void hash_of_MMString(void* stru, void** key, uint* key_len);
+plat_inline int compareForMMString(void*, void*);
+plat_inline MMString stringizeMMString(void*);
+plat_inline MMString initMMString(MMString obj, Unpacker unpkr) {
+    set_hash_for_mmobj(obj, hash_of_MMString);
+    set_compare_for_mmobj(obj, compareForMMString);
+    set_stringize_for_mmobj(obj, stringizeMMString);
+    if (is_unpacker_v1(unpkr)) {
+        uint len;
+        uint8* data;
+        data = unpack_data(0, &len, unpkr);
+        if (data && len) {
+            mgn_memory_pool* pool = pool_of_mmobj(obj);
+            obj->value = mgn_mem_alloc(pool, len);
+            if (obj->value == null) return null;
+            plat_mem_copy(obj->value, data, len);
+        }
+    }
+    return obj;
+}
+
+plat_inline void destroyMMString(MMString obj) {
+    if (obj->value) {
+        mgn_memory_pool* pool = pool_of_mmobj(obj);
+        mgn_mem_release(pool, obj->value);
+        obj->value = null;
+    }
+}
+
+plat_inline void packMMString(MMString obj, Packer pkr) {
+    if (is_packer_v1(pkr))
+        pack_data(0, obj->value, plat_cstr_length(obj->value)+1, pkr);
+}
+
+MMSubObject(MMString, MMPrimary, initMMString, destroyMMString, packMMString);
+
+plat_inline void hash_of_MMString(void* stru, void** key, uint* key_len)
+{
+    MMString string = toMMString(stru);
+    char* c = string->value;
+    if (key) *key = c;
+    if (key_len) *key_len = plat_cstr_length(c);
+}
+
+plat_inline int compareForMMString(void* this_stru, void* that_stru)
+{
+    const char* this_c = toMMString(this_stru)->value;
+    const char* that_c = toMMString(that_stru)->value;
+    if (this_c == that_c) return 0; // null
+    if (this_c == null) return -1;
+    if (that_c == null) return 1;
+    /*while((*this_c) == (*that_c) && (*this_c)!='\0' && (*that_c)!='\0') {
+        this_c++;
+        that_c++;
+    }
+    return (*this_c) - (*that_c);*/
+    return plat_cstr_compare(this_c, that_c);
+}
+
+plat_inline MMString stringizeMMString(void* stru) {
+    MMString obj = toMMString(stru);
+    return obj;
+}
+
+plat_inline MMString allocMMStringWithCString(mgn_memory_pool* pool, const char* string) {
+    uint len = plat_cstr_length(string);
+    char* new_string = mgn_mem_alloc(pool, len+1);
+    if (new_string == null) return null;
+    plat_mem_copy(new_string, string, len+1);
+    MMString obj = allocMMString(pool);
+    if (obj == null) {
+        mgn_mem_release(pool, new_string);
+        return null;
+    }
+    obj->value = new_string;
+
+    return obj;
+}
+
+plat_inline MMString allocMMStringWithFormat(mgn_memory_pool* pool, const char* format, ...)
+{
+    va_list arg, arg_count;
+    int len;
+    va_start(arg, format);
+    va_copy(arg_count, arg);
+
+    len = vsnprintf(null, 0, format, arg_count);
+    va_end(arg_count);
+
+    if (len < 0) {
+        va_end(arg);
+        return null;
+    }
+
+    char* new_string = mgn_mem_alloc(pool, (size_t )len+1);
+    if (new_string == null) {
+        va_end(arg);
+        return null;
+    }
+
+    if (len != vsnprintf(new_string, len+1, format, arg)) {
+        plat_io_printf_err("What problem? It is impossible.\n");
+    }
+    va_end(arg);
+
+    MMString obj = allocMMString(pool);
+    if (obj == null) {
+        mgn_mem_release(pool, new_string);
+        return null;
+    }
+
+    obj->value = new_string;
+
+    return obj;
+}
+
+#define mmstring(pool, format, ...)   autorelease_mmobj(allocMMStringWithFormat(pool, format, ##__VA_ARGS__))
+
 /// ====== Primary type - Int (32bits) =====
 typedef struct MMInt {
     int32 value;
@@ -45,9 +168,11 @@ typedef struct MMInt {
 
 plat_inline void hash_of_MMInt(void*, void** key, uint* key_len);
 plat_inline int compareForMMInt(void*, void*);
+plat_inline MMString stringizeMMInt(void*);
 plat_inline MMInt initMMInt(MMInt obj, Unpacker unpkr) {
     set_hash_for_mmobj(obj, hash_of_MMInt);
     set_compare_for_mmobj(obj, compareForMMInt);
+    set_stringize_for_mmobj(obj, stringizeMMInt);
     if (is_unpacker_v1(unpkr)) {
         obj->value = (int32)unpack_varint(0, unpkr);
     }
@@ -79,6 +204,11 @@ plat_inline int compareForMMInt(void* this_stru, void* that_stru)
     return this_o->value - that_o->value;
 }
 
+plat_inline MMString stringizeMMInt(void* stru) {
+    MMInt obj = toMMInt(stru);
+    return mmstring(pool_of_mmobj(obj), "%d", obj->value);
+}
+
 plat_inline MMInt allocMMIntWithValue(mgn_memory_pool* pool, int32 value) {
     MMInt obj = allocMMInt(pool);
     if (obj) {
@@ -94,9 +224,11 @@ typedef struct MMLong {
 
 plat_inline void hash_of_MMLong(void* stru, void** key, uint* key_len);
 plat_inline int compareForMMLong(void*, void*);
+plat_inline MMString stringizeMMLong(void*);
 plat_inline MMLong initMMLong(MMLong obj, Unpacker unpkr) {
     set_hash_for_mmobj(obj, hash_of_MMLong);
     set_compare_for_mmobj(obj, compareForMMLong);
+    set_stringize_for_mmobj(obj, stringizeMMLong);
     if (is_unpacker_v1(unpkr)) {
         obj->value = unpack_varint(0, unpkr);
     }
@@ -128,6 +260,11 @@ plat_inline int compareForMMLong(void* this_stru, void* that_stru)
     return diff>0?1:diff<0?-1:0;
 }
 
+plat_inline MMString stringizeMMLong(void* stru) {
+    MMLong obj = toMMLong(stru);
+    return mmstring(pool_of_mmobj(obj), "%ld", obj->value);
+}
+
 plat_inline MMLong allocMMLongWithValue(mgn_memory_pool* pool, int64 value) {
     MMLong obj = allocMMLong(pool);
     if (obj) {
@@ -143,9 +280,11 @@ typedef struct MMFloat {
 
 plat_inline void hash_of_MMFloat(void* stru, void** key, uint* key_len);
 plat_inline int compareForMMFloat(void*, void*);
+plat_inline MMString stringizeMMFloat(void*);
 plat_inline MMFloat initMMFloat(MMFloat obj, Unpacker unpkr) {
     set_hash_for_mmobj(obj, hash_of_MMFloat);
     set_compare_for_mmobj(obj, compareForMMFloat);
+    set_stringize_for_mmobj(obj, stringizeMMFloat);
     if (is_unpacker_v1(unpkr)) {
         obj->value = unpack_float(0, unpkr);
     }
@@ -177,6 +316,11 @@ plat_inline int compareForMMFloat(void* this_stru, void* that_stru)
     return diff>0?1:diff<0?-1:0;
 }
 
+plat_inline MMString stringizeMMFloat(void* stru) {
+    MMFloat obj = toMMFloat(stru);
+    return mmstring(pool_of_mmobj(obj), "%f", obj->value);
+}
+
 plat_inline MMFloat allocMMFloatWithValue(mgn_memory_pool* pool, float value) {
     MMFloat obj = allocMMFloat(pool);
     if (obj) {
@@ -193,9 +337,11 @@ typedef struct MMDouble {
 
 plat_inline void hash_of_MMDouble(void* stru, void** key, uint* key_len);
 plat_inline int compareForMMDouble(void*, void*);
+plat_inline MMString stringizeMMDouble(void*);
 plat_inline MMDouble initMMDouble(MMDouble obj, Unpacker unpkr) {
     set_hash_for_mmobj(obj, hash_of_MMDouble);
     set_compare_for_mmobj(obj, compareForMMDouble);
+    set_stringize_for_mmobj(obj, stringizeMMDouble);
     if (is_unpacker_v1(unpkr)) {
         obj->value = unpack_double(0, unpkr);
     }
@@ -225,6 +371,11 @@ plat_inline int compareForMMDouble(void* this_stru, void* that_stru)
     MMDouble that_o = toMMDouble(that_stru);
     double diff = this_o->value - that_o->value;
     return diff>0?1:diff<0?-1:0;
+}
+
+plat_inline MMString stringizeMMDouble(void* stru) {
+    MMDouble obj = toMMDouble(stru);
+    return mmstring(pool_of_mmobj(obj), "%f", obj->value);
 }
 
 plat_inline MMDouble allocMMDoubleWithValue(mgn_memory_pool* pool, double value) {
@@ -287,122 +438,6 @@ plat_inline MMReference allocMMReferenceWithStrongReference(mgn_memory_pool* poo
     }
     return obj;
 }
-
-/// ====== Primary type - String =====
-typedef struct MMString {
-    char* value;
-}*MMString;
-
-plat_inline void hash_of_MMString(void* stru, void** key, uint* key_len);
-plat_inline int compareForMMString(void*, void*);
-plat_inline MMString initMMString(MMString obj, Unpacker unpkr) {
-    set_hash_for_mmobj(obj, hash_of_MMString);
-    set_compare_for_mmobj(obj, compareForMMString);
-    if (is_unpacker_v1(unpkr)) {
-        uint len;
-        uint8* data;
-        data = unpack_data(0, &len, unpkr);
-        if (data && len) {
-            mgn_memory_pool* pool = pool_of_mmobj(obj);
-            obj->value = mgn_mem_alloc(pool, len);
-            if (obj->value == null) return null;
-            plat_mem_copy(obj->value, data, len);
-        }
-    }
-    return obj;
-}
-
-plat_inline void destroyMMString(MMString obj) {
-    if (obj->value) {
-        mgn_memory_pool* pool = pool_of_mmobj(obj);
-        mgn_mem_release(pool, obj->value);
-        obj->value = null;
-    }
-}
-
-plat_inline void packMMString(MMString obj, Packer pkr) {
-    if (is_packer_v1(pkr))
-        pack_data(0, obj->value, plat_cstr_length(obj->value)+1, pkr);
-}
-
-MMSubObject(MMString, MMPrimary, initMMString, destroyMMString, packMMString);
-
-plat_inline void hash_of_MMString(void* stru, void** key, uint* key_len)
-{
-    MMString string = toMMString(stru);
-    char* c = string->value;
-    if (key) *key = c;
-    if (key_len) *key_len = plat_cstr_length(c);
-}
-
-plat_inline int compareForMMString(void* this_stru, void* that_stru)
-{
-    const char* this_c = toMMString(this_stru)->value;
-    const char* that_c = toMMString(that_stru)->value;
-    if (this_c == that_c) return 0; // null
-    if (this_c == null) return -1;
-    if (that_c == null) return 1;
-    /*while((*this_c) == (*that_c) && (*this_c)!='\0' && (*that_c)!='\0') {
-        this_c++;
-        that_c++;
-    }
-    return (*this_c) - (*that_c);*/
-    return plat_cstr_compare(this_c, that_c);
-}
-
-plat_inline MMString allocMMStringWithCString(mgn_memory_pool* pool, const char* string) {
-    uint len = plat_cstr_length(string);
-    char* new_string = mgn_mem_alloc(pool, len+1);
-    if (new_string == null) return null;
-    plat_mem_copy(new_string, string, len+1);
-    MMString obj = allocMMString(pool);
-    if (obj == null) {
-        mgn_mem_release(pool, new_string);
-        return null;
-    }
-    obj->value = new_string;
-
-    return obj;
-}
-
-plat_inline MMString allocMMStringWithFormat(mgn_memory_pool* pool, const char* format, ...)
-{
-    va_list arg, arg_count;
-    int len;
-    va_start(arg, format);
-    va_copy(arg_count, arg);
-
-    len = vsnprintf(null, 0, format, arg_count);
-    va_end(arg_count);
-
-    if (len < 0) {
-        va_end(arg);
-        return null;
-    }
-
-    char* new_string = mgn_mem_alloc(pool, (size_t )len+1);
-    if (new_string == null) {
-        va_end(arg);
-        return null;
-    }
-
-    if (len != vsnprintf(new_string, len+1, format, arg)) {
-        plat_io_printf_err("What problem? It is impossible.\n");
-    }
-    va_end(arg);
-
-    MMString obj = allocMMString(pool);
-    if (obj == null) {
-        mgn_mem_release(pool, new_string);
-        return null;
-    }
-
-    obj->value = new_string;
-
-    return obj;
-}
-
-#define mmstring(pool, format, ...)   autorelease_mmobj(allocMMStringWithFormat(pool, format, ##__VA_ARGS__))
 
 /// ===== MMData =====
 

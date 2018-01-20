@@ -14,15 +14,8 @@
   <component name="ChangeListManager">
     <list default="true" id="ed24e029-8e0c-475c-992c-b71aae6fdff9" name="Default" comment="More AST implementations">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/ast_obj/ast_container.h" afterPath="$PROJECT_DIR$/ast_obj/ast_container.h" />
-      <change beforePath="$PROJECT_DIR$/ast_obj/ast_expr.h" afterPath="$PROJECT_DIR$/ast_obj/ast_expr.h" />
-      <change beforePath="$PROJECT_DIR$/ast_obj/ast_la.h" afterPath="$PROJECT_DIR$/ast_obj/ast_la.h" />
-      <change beforePath="$PROJECT_DIR$/ast_obj/ast_node.h" afterPath="$PROJECT_DIR$/ast_obj/ast_node.h" />
-      <change beforePath="$PROJECT_DIR$/ast_obj/ast_runtime.h" afterPath="$PROJECT_DIR$/ast_obj/ast_runtime.h" />
-      <change beforePath="$PROJECT_DIR$/ast_obj/ast_stmt.h" afterPath="$PROJECT_DIR$/ast_obj/ast_stmt.h" />
-      <change beforePath="$PROJECT_DIR$/ast_obj/ast_type.h" afterPath="$PROJECT_DIR$/ast_obj/ast_type.h" />
-      <change beforePath="$PROJECT_DIR$/ast_obj/ast_variable.h" afterPath="$PROJECT_DIR$/ast_obj/ast_variable.h" />
       <change beforePath="$PROJECT_DIR$/platform/mmo.h" afterPath="$PROJECT_DIR$/platform/mmo.h" />
+      <change beforePath="$PROJECT_DIR$/platform/mmo_ext.h" afterPath="$PROJECT_DIR$/platform/mmo_ext.h" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -35,21 +28,21 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="mmo.h" pinned="false" current-in-tab="true">
+      <file leaf-file-name="mmo.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/platform/mmo.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="14" column="66" lean-forward="false" selection-start-line="14" selection-start-column="66" selection-end-line="14" selection-end-column="66" />
+            <state relative-caret-position="296">
+              <caret line="615" column="31" lean-forward="false" selection-start-line="615" selection-start-column="8" selection-end-line="615" selection-end-column="31" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ast_container.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ast_obj/ast_container.h">
+      <file leaf-file-name="mmo_ext.h" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/platform/mmo_ext.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="191">
-              <caret line="147" column="26" lean-forward="false" selection-start-line="147" selection-start-column="16" selection-end-line="147" selection-end-column="26" />
+            <state relative-caret-position="-4418">
+              <caret line="376" column="36" lean-forward="false" selection-start-line="376" selection-start-column="36" selection-end-line="376" selection-end-column="36" />
               <folding />
             </state>
           </provider>
@@ -58,7 +51,7 @@
       <file leaf-file-name="ast_node.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ast_obj/ast_node.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="191">
+            <state relative-caret-position="4095">
               <caret line="273" column="29" lean-forward="false" selection-start-line="273" selection-start-column="16" selection-end-line="273" selection-end-column="29" />
               <folding />
             </state>
@@ -68,7 +61,7 @@
       <file leaf-file-name="ast_la.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ast_obj/ast_la.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="191">
+            <state relative-caret-position="1245">
               <caret line="83" column="44" lean-forward="false" selection-start-line="83" selection-start-column="31" selection-end-line="83" selection-end-column="44" />
               <folding />
             </state>
@@ -78,7 +71,7 @@
       <file leaf-file-name="ast_runtime.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ast_obj/ast_runtime.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="161">
+            <state relative-caret-position="2790">
               <caret line="186" column="1" lean-forward="false" selection-start-line="186" selection-start-column="1" selection-end-line="186" selection-end-column="1" />
               <folding />
             </state>
@@ -88,7 +81,7 @@
       <file leaf-file-name="ast_stmt.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ast_obj/ast_stmt.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="669">
+            <state relative-caret-position="8580">
               <caret line="572" column="27" lean-forward="false" selection-start-line="572" selection-start-column="27" selection-end-line="572" selection-end-column="27" />
               <folding />
             </state>
@@ -98,7 +91,7 @@
       <file leaf-file-name="ast_variable.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ast_obj/ast_variable.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="245">
+            <state relative-caret-position="2430">
               <caret line="162" column="27" lean-forward="false" selection-start-line="162" selection-start-column="27" selection-end-line="162" selection-end-column="27" />
               <folding />
             </state>
@@ -108,7 +101,7 @@
       <file leaf-file-name="ast_expr.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ast_obj/ast_expr.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="317">
+            <state relative-caret-position="5190">
               <caret line="346" column="27" lean-forward="false" selection-start-line="346" selection-start-column="27" selection-end-line="346" selection-end-column="27" />
               <folding />
             </state>
@@ -118,7 +111,7 @@
       <file leaf-file-name="ast_type.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ast_obj/ast_type.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="200">
+            <state relative-caret-position="330">
               <caret line="22" column="44" lean-forward="false" selection-start-line="22" selection-start-column="31" selection-end-line="22" selection-end-column="44" />
               <folding />
             </state>
@@ -128,7 +121,7 @@
       <file leaf-file-name="ast_ctrl.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ast_obj/ast_ctrl.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="318">
+            <state relative-caret-position="345">
               <caret line="23" column="1" lean-forward="false" selection-start-line="23" selection-start-column="1" selection-end-line="23" selection-end-column="1" />
               <folding />
             </state>
@@ -139,13 +132,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>block_statement</find>
-      <find>yy</find>
-      <find>ast_create_error_recovery_ex</find>
-      <find>ast_create_err</find>
-      <find>block</find>
-      <find>verify_and_optimize_ast</find>
-      <find>statement</find>
       <find>\n</find>
       <find>create_ast</find>
       <find>WS</find>
@@ -164,16 +150,20 @@
       <find>hash_of</find>
       <find>optimize_</find>
       <find>compare_</find>
-      <find>call_f</find>
       <find>compare</find>
       <find>compareFor</find>
       <find>compare_pare</find>
       <find>compareForAst</find>
+      <find>comparable</find>
+      <find>mmobj_compare</find>
+      <find>hashable</find>
+      <find>mmobj_hash</find>
+      <find>compare_parent</find>
+      <find>call_parent_f</find>
+      <find>call_f</find>
+      <find>stringize_MMString</find>
     </findStrings>
     <replaceStrings>
-      <replace>AstContainerExpr</replace>
-      <replace>containerExpr</replace>
-      <replace>AST_PAIR_EXPR</replace>
       <replace>AstPairExpr</replace>
       <replace>MMPacker</replace>
       <replace>packData</replace>
@@ -201,6 +191,9 @@
       <replace>parent_node</replace>
       <replace>node</replace>
       <replace>mmStruBase</replace>
+      <replace />
+      <replace>comparable</replace>
+      <replace>hashable</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -243,7 +236,6 @@
         <option value="$PROJECT_DIR$/ast_obj/ast_runtime.c" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/platform/plat_string.h" />
-        <option value="$PROJECT_DIR$/platform/mmo_ext.h" />
         <option value="$PROJECT_DIR$/ast_obj/ast_optimization.c" />
         <option value="$PROJECT_DIR$/ast.h" />
         <option value="$PROJECT_DIR$/main.c" />
@@ -251,7 +243,6 @@
         <option value="$PROJECT_DIR$/ast.c" />
         <option value="$PROJECT_DIR$/samples/expr.la" />
         <option value="$PROJECT_DIR$/proc.la.y" />
-        <option value="$PROJECT_DIR$/platform/mmo.h" />
         <option value="$PROJECT_DIR$/ast_obj/ast_container.h" />
         <option value="$PROJECT_DIR$/ast_obj/ast_runtime.h" />
         <option value="$PROJECT_DIR$/ast_obj/ast_stmt.h" />
@@ -260,6 +251,8 @@
         <option value="$PROJECT_DIR$/ast_obj/ast_type.h" />
         <option value="$PROJECT_DIR$/ast_obj/ast_node.h" />
         <option value="$PROJECT_DIR$/ast_obj/ast_la.h" />
+        <option value="$PROJECT_DIR$/platform/mmo.h" />
+        <option value="$PROJECT_DIR$/platform/mmo_ext.h" />
       </list>
     </option>
   </component>
@@ -280,7 +273,7 @@
   <component name="ProjectFrameBounds">
     <option name="y" value="23" />
     <option name="width" value="1920" />
-    <option name="height" value="1108" />
+    <option name="height" value="1110" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -350,7 +343,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="settings.editor.selected.configurable" value="pyconsole" />
+    <property name="settings.editor.selected.configurable" value="editing.templates" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="nodejs_interpreter_path" value="/usr/local/bin/node" />
     <property name="nodejs.protractor.protractor_package" value="" />
@@ -558,6 +551,9 @@
       <workItem from="1511662248046" duration="5432000" />
       <workItem from="1512184770714" duration="569000" />
       <workItem from="1512263530704" duration="8031000" />
+      <workItem from="1512787370144" duration="764000" />
+      <workItem from="1515894048137" duration="2056000" />
+      <workItem from="1516418831250" duration="2709000" />
     </task>
     <task id="LOCAL-00001" summary="More implementations">
       <created>1507348208948</created>
@@ -570,7 +566,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="648646000" />
+    <option name="totallyTimeSpent" value="654175000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -582,23 +578,24 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1920" height="1108" extended-state="6" />
+    <frame x="0" y="23" width="1920" height="1110" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32956523" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Tool Output" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39478764" sideWeight="0.6713542" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39402696" sideWeight="0.6713542" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32782608" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2954764" sideWeight="0.32864583" order="9" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24903475" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.54608697" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24830918" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32850242" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19739583" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="LuaJ" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3262548" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="ANTLR Preview" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36872587" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3680154" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -821,9 +818,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1425">
           <caret line="95" column="36" lean-forward="false" selection-start-line="95" selection-start-column="8" selection-end-line="95" selection-end-column="36" />
-          <folding>
-            <element signature="e#95#114#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -870,7 +864,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="480">
           <caret line="32" column="6" lean-forward="false" selection-start-line="32" selection-start-column="6" selection-end-line="32" selection-end-column="6" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -878,7 +871,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="600">
           <caret line="40" column="12" lean-forward="false" selection-start-line="40" selection-start-column="4" selection-end-line="40" selection-end-column="12" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -886,7 +878,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
           <caret line="22" column="0" lean-forward="false" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -914,17 +905,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/platform/mmo_ext.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="236">
-          <caret line="49" column="17" lean-forward="false" selection-start-line="49" selection-start-column="4" selection-end-line="49" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ast_obj/ast_container.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="191">
+        <state relative-caret-position="2205">
           <caret line="147" column="26" lean-forward="false" selection-start-line="147" selection-start-column="16" selection-end-line="147" selection-end-column="26" />
           <folding />
         </state>
@@ -932,7 +915,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ast_obj/ast_runtime.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
+        <state relative-caret-position="2790">
           <caret line="186" column="1" lean-forward="false" selection-start-line="186" selection-start-column="1" selection-end-line="186" selection-end-column="1" />
           <folding />
         </state>
@@ -940,7 +923,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ast_obj/ast_stmt.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="669">
+        <state relative-caret-position="8580">
           <caret line="572" column="27" lean-forward="false" selection-start-line="572" selection-start-column="27" selection-end-line="572" selection-end-column="27" />
           <folding />
         </state>
@@ -948,7 +931,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ast_obj/ast_variable.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="245">
+        <state relative-caret-position="2430">
           <caret line="162" column="27" lean-forward="false" selection-start-line="162" selection-start-column="27" selection-end-line="162" selection-end-column="27" />
           <folding />
         </state>
@@ -956,7 +939,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ast_obj/ast_expr.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="317">
+        <state relative-caret-position="5190">
           <caret line="346" column="27" lean-forward="false" selection-start-line="346" selection-start-column="27" selection-end-line="346" selection-end-column="27" />
           <folding />
         </state>
@@ -964,7 +947,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ast_obj/ast_type.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
+        <state relative-caret-position="330">
           <caret line="22" column="44" lean-forward="false" selection-start-line="22" selection-start-column="31" selection-end-line="22" selection-end-column="44" />
           <folding />
         </state>
@@ -972,7 +955,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ast_obj/ast_ctrl.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="318">
+        <state relative-caret-position="345">
           <caret line="23" column="1" lean-forward="false" selection-start-line="23" selection-start-column="1" selection-end-line="23" selection-end-column="1" />
           <folding />
         </state>
@@ -980,7 +963,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ast_obj/ast_node.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="191">
+        <state relative-caret-position="4095">
           <caret line="273" column="29" lean-forward="false" selection-start-line="273" selection-start-column="16" selection-end-line="273" selection-end-column="29" />
           <folding />
         </state>
@@ -988,7 +971,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ast_obj/ast_la.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="191">
+        <state relative-caret-position="1245">
           <caret line="83" column="44" lean-forward="false" selection-start-line="83" selection-start-column="31" selection-end-line="83" selection-end-column="44" />
           <folding />
         </state>
@@ -996,8 +979,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/platform/mmo.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="14" column="66" lean-forward="false" selection-start-line="14" selection-start-column="66" selection-end-line="14" selection-end-column="66" />
+        <state relative-caret-position="296">
+          <caret line="615" column="31" lean-forward="false" selection-start-line="615" selection-start-column="8" selection-end-line="615" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/platform/mmo_ext.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4418">
+          <caret line="376" column="36" lean-forward="false" selection-start-line="376" selection-start-column="36" selection-end-line="376" selection-end-column="36" />
           <folding />
         </state>
       </provider>

@@ -516,6 +516,16 @@ plat_inline uint __oid_of_last_mmobj(void* stru) {
 }
 #define oid_of_last_mmobj(stru) __oid_of_last_mmobj(stru)
 
+plat_inline bool __is_mmobj_kind_of_oid(void* stru, uint oid) {
+    if (stru == null) return null;
+    mmStruBase base = base_of_mmobj(stru);
+    return base->cls->find(base, oid, oid)==null?true:false;
+}
+#define is_mmobj_kind_of_oid(stru, oid) __is_mmobj_kind_of_oid(stru, oid)
+
+/**
+ * Hashable interface
+ */
 typedef void (*mmobj_hash)(void* /*base*/, void** /*key*/, uint* /*key_len*/);
 plat_inline void* __set_hash_for_mmobj(void* stru, mmobj_hash hash) {
     if (stru == null) return null;
@@ -534,14 +544,8 @@ plat_inline void __hash_of_parent_mmobj(void* stru, void** key, void* key_len) {
 }
 #define hash_of_parent_mmobj(stru, key, key_len) __hash_of_parent_mmobj(stru, key, key_len)
 
-plat_inline bool __is_mmobj_kind_of_oid(void* stru, uint oid) {
-    if (stru == null) return null;
-    mmStruBase base = base_of_mmobj(stru);
-    return base->cls->find(base, oid, oid)==null?true:false;
-}
-#define is_mmobj_kind_of_oid(stru, oid) __is_mmobj_kind_of_oid(stru, oid)
-
 /**
+ * Comparable interface
  * Implementation notice:
  * 1. mmobj_compare(a, b) should be equal to -mmobj_compare(b, a) in runtime.
  * 2. this_stru and that_stru are always the same object type.
@@ -599,6 +603,24 @@ plat_inline int __compare_parent_mmobjs(void* this_stru, void* that_stru) {
 #define FIRST_Of_3RESULTS(result1, result2, result3) ({int result = (result1); result?result:(result = (result2))?result: (result3);})
 #define FIRST_Of_4RESULTS(result1, result2, result3, result4) ({int result = (result1); result?result:(result = (result2))?result: (result = (result3))?result: (result4);})
 #define FIRST_Of_5RESULTS(result1, result2, result3, result4, result5) ({int result = (result1); result?result:(result = (result2))?result: (result = (result3))?result: (result = (result4))?result: (result5);})
+
+/**
+ * Stringization
+ */
+struct MMString;
+typedef struct MMString* (*mmobj_stringize)(void* stru);
+plat_inline void* __set_stringize_for_mmobj(void* stru, mmobj_stringize stringize) {
+    if (stru == null) return null;
+    return set_function_for_mmobj(stru, mmobj_stringize, stringize);
+}
+#define set_stringize_for_mmobj(stru, stringize) __set_stringize_for_mmobj(stru, stringize)
+
+plat_inline struct MMString* stringize_mmobj(void* stru) {
+    struct MMString* string;
+    if (stru == null) return null;
+    string = call_f(stru, mmobj_stringize);
+    return string;
+}
 
 /**
  *  Serialization, packer/unpacker, v1
