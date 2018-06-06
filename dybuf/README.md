@@ -1,42 +1,19 @@
 # dybuf, dypkt - C library
-This is C library of dybuf and dypkt.
+Provide a simple way to serialize variable, structure, etc.
 
 ### Version
 0.0.1
 
 ### Tech
-C lib version uses a number of open source projects to generate json parser, if you just use dybuf or dypkt lib, you don't care about it.
+* [platform](../platform/README.md)
 
-* [bison] - A parser generator. (https://www.gnu.org/software/bison/)
-* [flex] - The Fast Lexical Analyzer. (http://flex.sourceforge.net)
-
-
-### System Requirements
-
-If you want to run the test code, your system should meet the following requirements.
-- CMake (https://cmake.org)
-- Mac OS, Linux, etc.
-
-### Run test code
-
-Build test code:
-```sh
-# cd /path/to/dybuf/c
-# cmake .
-# make install
-```
-Run test code:
-```sh
-# ./dybuf_c
-```
+### Differences between dybuf and dypkt
+`dybuf` helps to read/write primary type variables (ex: int, float, etc.) in/out memory space.
+`dypkt` provides high layer wrappers(functions) to serialize composite data (ex: object, network protocol, etc.). 
 
 ### Integrate dypkt with your project
-1. Copy following files to your project's include path.
-   * dybuf.h
-   * dypkt.h
-   * platform/plat_type.h
-   * platform/plat_mem.h
-   * platform/plat_string.h
+1. All functions are implemented in macros or static inline functions, you should set `platform` and `dybuf` folders as
+   include directories.
 
 2. Include the header file
 
@@ -117,7 +94,8 @@ Run test code:
 
 
 ### ToDo
-- JSON and binary JSON converter
+- Binary json translation
+- Document
 
 License
 ---

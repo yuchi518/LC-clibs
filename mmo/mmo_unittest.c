@@ -1,3 +1,22 @@
+/*
+ * LC-clibs, lets.cool c libraries
+ * Copyright (C) 2015-2018 Yuchi Chen (yuchi518@gmail.com)
+
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation. For the terms of this
+ * license, see <http://www.gnu.org/licenses>.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 //
 // Created by Yuchi Chen on 2017/8/27.
 //
@@ -26,12 +45,10 @@ void unit_test_mmobj(void)
     }
 
     MMString hi5 = autorelease_mmobj(allocMMStringWithCString(&pool, "hi5"));
-    MMInt v5 = autorelease_mmobj(allocMMInt(&pool));
-    v5->value = 5;
+    MMInt v5 = autorelease_mmobj(allocMMIntWithValue(&pool, 5));
 
     MMString hi6 = autorelease_mmobj(allocMMStringWithCString(&pool, "hi6"));
-    MMDouble v6 = autorelease_mmobj(allocMMDouble(&pool));
-    v6->value = 6.0;
+    MMDouble v6 = autorelease_mmobj(allocMMDoubleWithValue(&pool, 6.0));
 
     MMMap map = allocMMMap(&pool);
 
@@ -61,12 +78,10 @@ void unit_test_mmobj(void)
     map = allocMMMap(&pool);
 
     MMString hi7 = autorelease_mmobj(allocMMStringWithCString(&pool, "hi7"));
-    MMLong v7 = autorelease_mmobj(allocMMLong(&pool));
-    v7->value = 7;
+    MMLong v7 = autorelease_mmobj(allocMMLongWithValue(&pool, 7));
 
     MMString hi8 = autorelease_mmobj(allocMMStringWithCString(&pool, "hi8"));
-    MMLong v8 = autorelease_mmobj(allocMMLong(&pool));
-    v8->value = 8;
+    MMLong v8 = autorelease_mmobj(allocMMLongWithValue(&pool, 8));
 
     void* hash_key = null;
     uint hash_key_len = 0;
@@ -88,8 +103,7 @@ void unit_test_mmobj(void)
 
     MMList list = allocMMList(&pool);
     MMString hi9 = autorelease_mmobj(allocMMStringWithCString(&pool, "hi9"));
-    MMFloat v9 = autorelease_mmobj(allocMMFloat(&pool));
-    v9->value = 9;
+    MMFloat v9 = autorelease_mmobj(allocMMFloatWithValue(&pool, 9));
 
     pushMMListItem(list, toMMObject(hi9));
     pushMMListItem(list, toMMObject(v9));

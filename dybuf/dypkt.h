@@ -1,6 +1,6 @@
 /*
- * dybuf, dynamic buffer library
- * Copyright (C) 2015-2016 Yuchi (yuchi518@gmail.com)
+ * LC-clibs, lets.cool c libraries
+ * Copyright (C) 2015-2018 Yuchi Chen (yuchi518@gmail.com)
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -16,6 +16,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
+
 //
 // Created by Yuchi on 2016/3/17.
 //

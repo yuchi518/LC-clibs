@@ -23,3 +23,7 @@ add_library(LC_clibs
         platform/plat_type.h
         platform/utarray.h
         platform/uthash.h)
+
+set(TEST_SOURCES test.c mmo/mmo_pack.c mmo/mmo_unittest.c)
+add_executable(unit_test ${TEST_SOURCES})
+target_compile_options(unit_test PRIVATE -DUNIT_TEST=1)
