@@ -1,19 +1,16 @@
 # LC-clibs
-C libraries include platform, dybuf, mmo, etc.
+C libraries include **platform**, **dybuf**, **mmo**, etc.
 
 ### Version
 0.0.1
 
 ### Libraries Descriptions
 
-* [platform](./platform/README.md)
-  Provide reusable and cross platform functions, include type definitions, string manipulation, memory management,
-  simple input/output manipulation.
-* [dybuf](./dybuf/README.md)
-  Provide a simple way to serialize variable, structure, etc.
-* [mmo](./mmo/README.md)
-  Provide an C object architecture, the architecture includes many features: life cycle management, 
-  serialization, inheritance, etc.
+* [platform](./platform/README.md) library provides reusable and cross platform functions, include type definitions,
+  string manipulation, memory management, simple input/output manipulation.
+* [dybuf](./dybuf/README.md) library provides a simple way to serialize variable, structure, etc.
+* [mmo](./mmo/README.md) library provides an objective architecture, this architecture includes many features:
+  life cycle management, serialization, inheritance, virtual function, runtime type casting, etc.
  
  
 ### System Requirements

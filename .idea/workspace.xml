@@ -13,27 +13,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2b49c721-ec01-4264-a6ba-26fdda9636c3" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mmo/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/platform/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mmo/GUIDES.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/LICENSE" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dybuf/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/dybuf/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dybuf/dybuf.h" beforeDir="false" afterPath="$PROJECT_DIR$/dybuf/dybuf.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dybuf/dypkt.h" beforeDir="false" afterPath="$PROJECT_DIR$/dybuf/dypkt.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mmo/mmo.h" beforeDir="false" afterPath="$PROJECT_DIR$/mmo/mmo.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mmo/mmo_ext.h" beforeDir="false" afterPath="$PROJECT_DIR$/mmo/mmo_ext.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mmo/mmo_pack.c" beforeDir="false" afterPath="$PROJECT_DIR$/mmo/mmo_pack.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mmo/mmo_pack.h" beforeDir="false" afterPath="$PROJECT_DIR$/mmo/mmo_pack.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mmo/mmo_unittest.c" beforeDir="false" afterPath="$PROJECT_DIR$/mmo/mmo_unittest.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mmo/mmo_unittest.h" beforeDir="false" afterPath="$PROJECT_DIR$/mmo/mmo_unittest.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/plat_io.h" beforeDir="false" afterPath="$PROJECT_DIR$/platform/plat_io.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/plat_mem.h" beforeDir="false" afterPath="$PROJECT_DIR$/platform/plat_mem.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/plat_mgn_mem.h" beforeDir="false" afterPath="$PROJECT_DIR$/platform/plat_mgn_mem.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/plat_string.h" beforeDir="false" afterPath="$PROJECT_DIR$/platform/plat_string.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/plat_type.h" beforeDir="false" afterPath="$PROJECT_DIR$/platform/plat_type.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mmo/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/mmo/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platform/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/platform/README.md" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -46,47 +31,47 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="mmo.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/mmo/mmo.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="19" selection-start-line="19" selection-end-line="19" />
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mmo/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="FIRST">
+              <first_editor relative-caret-position="176">
+                <caret line="139" column="21" selection-start-line="139" selection-start-column="21" selection-end-line="139" selection-end-column="21" />
+              </first_editor>
+              <second_editor />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mmo_ext.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/mmo/mmo_ext.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="209" column="57" selection-start-line="209" selection-start-column="57" selection-end-line="209" selection-end-column="57" />
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/dybuf/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="FIRST">
+              <first_editor relative-caret-position="150">
+                <caret line="10" column="10" lean-forward="true" selection-start-line="10" selection-start-column="10" selection-end-line="10" selection-end-column="10" />
+              </first_editor>
+              <second_editor />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mmo_pack.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/mmo/mmo_pack.c">
+      <file leaf-file-name="test.c" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="19" selection-start-line="19" selection-end-line="19" />
+            <state relative-caret-position="693">
+              <caret line="240" column="30" selection-start-line="240" selection-start-column="30" selection-end-line="240" selection-end-column="30" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mmo_pack.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/mmo/mmo_pack.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-829">
-              <caret line="19" selection-start-line="19" selection-end-line="19" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="mmo_unittest.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/mmo/mmo_unittest.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1421">
-              <caret line="46" column="4" lean-forward="true" selection-start-line="46" selection-start-column="4" selection-end-line="75" selection-end-column="5" />
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="FIRST">
+              <first_editor relative-caret-position="270">
+                <caret line="18" column="12" selection-start-line="18" selection-start-column="12" selection-end-line="18" selection-end-column="12" />
+              </first_editor>
+              <second_editor />
             </state>
           </provider>
         </entry>
@@ -94,50 +79,32 @@
       <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/platform/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-            <state split_layout="SECOND">
-              <first_editor relative-caret-position="210">
-                <caret line="14" column="24" selection-start-line="14" selection-start-column="24" selection-end-line="14" selection-end-column="24" />
+            <state split_layout="FIRST">
+              <first_editor relative-caret-position="225">
+                <caret line="15" column="88" selection-start-line="15" selection-start-column="88" selection-end-line="15" selection-end-column="88" />
               </first_editor>
               <second_editor />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mmo_unittest.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/mmo/mmo_unittest.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="117">
-              <caret line="17" column="3" lean-forward="true" selection-start-line="17" selection-start-column="3" selection-end-line="17" selection-end-column="3" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="dybuf.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dybuf/dybuf.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="19" selection-start-line="19" selection-end-line="19" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/mmo/README.md">
+      <file leaf-file-name="GUIDES.md" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mmo/GUIDES.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-            <state split_layout="SECOND">
-              <first_editor relative-caret-position="141">
-                <caret line="72" column="71" selection-start-line="72" selection-start-column="71" selection-end-line="72" selection-end-column="71" />
+            <state split_layout="FIRST">
+              <first_editor relative-caret-position="90">
+                <caret line="6" column="7" lean-forward="true" selection-start-line="6" selection-start-column="7" selection-end-line="6" selection-end-column="7" />
               </first_editor>
               <second_editor />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dypkt.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dybuf/dypkt.h">
+      <file leaf-file-name="mmo_ext.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mmo/mmo_ext.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="19" selection-start-line="19" selection-end-line="19" />
+            <state relative-caret-position="3135">
+              <caret line="209" column="57" selection-start-line="209" selection-start-column="57" selection-end-line="209" selection-end-column="57" />
             </state>
           </provider>
         </entry>
@@ -151,6 +118,7 @@
       <find>utarray.h</find>
       <find>mmo_pack.h</find>
       <find>mmo</find>
+      <find>library</find>
     </findStrings>
     <replaceStrings>
       <replace>plat_io_printf_std</replace>
@@ -163,8 +131,6 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/main.c" />
-        <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/dybuf/README.md" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/test.c" />
         <option value="$PROJECT_DIR$/LICENSE" />
@@ -182,7 +148,10 @@
         <option value="$PROJECT_DIR$/dybuf/dypkt.h" />
         <option value="$PROJECT_DIR$/mmo/mmo_unittest.c" />
         <option value="$PROJECT_DIR$/mmo/README.md" />
+        <option value="$PROJECT_DIR$/mmo/GUIDES.md" />
         <option value="$PROJECT_DIR$/platform/README.md" />
+        <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/dybuf/README.md" />
       </list>
     </option>
   </component>
@@ -196,9 +165,8 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="y" value="23" />
     <option name="width" value="1280" />
-    <option name="height" value="709" />
+    <option name="height" value="800" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -206,7 +174,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -238,6 +205,7 @@
         </subPane>
         <option name="show-excluded-files" value="false" />
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -285,30 +253,34 @@
       <workItem from="1528180478624" duration="10115000" />
       <workItem from="1528247389705" duration="53000" />
       <workItem from="1528248564511" duration="4221000" />
+      <workItem from="1528261710544" duration="782000" />
+      <workItem from="1528266082482" duration="6183000" />
+      <workItem from="1528274736007" duration="778000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17131000" />
+    <option name="totallyTimeSpent" value="24874000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Messages" order="10" weight="0.328877" />
       <window_info anchor="bottom" id="CMake" order="11" weight="0.328877" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="9" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.328877" />
+      <window_info anchor="bottom" id="Version Control" order="9" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="8" />
-      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="Messages" order="10" weight="0.328877" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -321,19 +293,10 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/mmo/mmo_pack.c">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mmo/mmo_pack.h">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/test.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3600">
           <caret line="240" column="30" selection-start-line="240" selection-start-column="30" selection-end-line="240" selection-end-column="30" />
-          <folding>
-            <element signature="e#855#872#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -391,9 +354,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3600">
           <caret line="240" column="30" lean-forward="true" selection-start-line="240" selection-start-column="30" selection-end-line="240" selection-end-column="30" />
-          <folding>
-            <element signature="e#855#872#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -451,9 +411,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3825">
           <caret line="255" lean-forward="true" selection-start-line="255" selection-end-line="255" />
-          <folding>
-            <element signature="e#855#872#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -526,38 +483,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3600">
-          <caret line="240" column="30" selection-start-line="240" selection-start-column="30" selection-end-line="240" selection-end-column="30" />
-          <folding>
-            <element signature="e#855#872#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dybuf/README.md">
-      <provider editor-type-id="text-editor" />
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="FIRST">
-          <first_editor relative-caret-position="225">
-            <caret line="15" column="23" selection-start-line="14" selection-end-line="15" selection-end-column="23" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="text-editor" />
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="FIRST">
-          <first_editor relative-caret-position="225">
-            <caret line="15" column="10" selection-start-line="15" selection-start-column="10" selection-end-line="15" selection-end-column="10" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/LICENSE">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
@@ -627,32 +552,47 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/mmo/mmo_unittest.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="3" selection-start-line="17" selection-start-column="3" selection-end-line="17" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mmo/mmo_unittest.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="690">
+          <caret line="46" column="4" lean-forward="true" selection-start-line="46" selection-start-column="4" selection-end-line="75" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/mmo/mmo.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
+        <state relative-caret-position="39">
           <caret line="19" selection-start-line="19" selection-end-line="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mmo/docs/TOC.md" />
+    <entry file="file://$PROJECT_DIR$/mmo/mmo_ext.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3135">
+          <caret line="209" column="57" selection-start-line="209" selection-start-column="57" selection-end-line="209" selection-end-column="57" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/mmo/mmo_pack.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-829">
+        <state relative-caret-position="130">
           <caret line="19" selection-start-line="19" selection-end-line="19" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mmo/mmo_ext.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="209" column="57" selection-start-line="209" selection-start-column="57" selection-end-line="209" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/platform/README.md">
+    <entry file="file://$PROJECT_DIR$/mmo/GUIDES.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SECOND">
-          <first_editor relative-caret-position="210">
-            <caret line="14" column="24" selection-start-line="14" selection-start-column="24" selection-end-line="14" selection-end-column="24" />
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="90">
+            <caret line="6" column="7" lean-forward="true" selection-start-line="6" selection-start-column="7" selection-end-line="6" selection-end-column="7" />
           </first_editor>
           <second_editor />
         </state>
@@ -660,27 +600,52 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/mmo/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SECOND">
-          <first_editor relative-caret-position="141">
-            <caret line="72" column="71" selection-start-line="72" selection-start-column="71" selection-end-line="72" selection-end-column="71" />
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="176">
+            <caret line="139" column="21" selection-start-line="139" selection-start-column="21" selection-end-line="139" selection-end-column="21" />
           </first_editor>
           <second_editor />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mmo/mmo_unittest.h">
+    <entry file="file://$PROJECT_DIR$/test.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="117">
-          <caret line="17" column="3" lean-forward="true" selection-start-line="17" selection-start-column="3" selection-end-line="17" selection-end-column="3" />
+        <state relative-caret-position="693">
+          <caret line="240" column="30" selection-start-line="240" selection-start-column="30" selection-end-line="240" selection-end-column="30" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mmo/mmo_unittest.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1421">
-          <caret line="46" column="4" lean-forward="true" selection-start-line="46" selection-start-column="4" selection-end-line="75" selection-end-column="5" />
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="270">
+            <caret line="18" column="12" selection-start-line="18" selection-start-column="12" selection-end-line="18" selection-end-column="12" />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
+      <provider editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/platform/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="225">
+            <caret line="15" column="88" selection-start-line="15" selection-start-column="88" selection-end-line="15" selection-end-column="88" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dybuf/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="150">
+            <caret line="10" column="10" lean-forward="true" selection-start-line="10" selection-start-column="10" selection-end-line="10" selection-end-column="10" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor" />
     </entry>
   </component>
 </project>
