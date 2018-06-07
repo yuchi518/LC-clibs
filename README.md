@@ -10,7 +10,7 @@ C libraries include **platform**, **dybuf**, **mmo**, etc.
   string manipulation, memory management, simple input/output manipulation.
 * [dybuf](./dybuf/README.md) library provides a simple way to serialize variable, structure, etc.
 * [mmo](./mmo/README.md) library provides an objective architecture, this architecture includes many features:
-  life cycle management, serialization, inheritance, virtual function, runtime type casting, etc.
+  life cycle management, serialization, inheritance, virtual function, runtime type casting, comparison, hashable, etc.
  
  
 ### System Requirements

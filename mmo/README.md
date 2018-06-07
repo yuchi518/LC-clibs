@@ -1,6 +1,6 @@
 # **mmo** library
 Provide an objective architecture, this architecture includes many features:
-life cycle management, serialization, inheritance, virtual function, runtime type casting, etc.
+life cycle management, serialization, inheritance, virtual function, runtime type casting, comparison, hashable, etc.
 
 ### Version
 0.0.1
