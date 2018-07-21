@@ -536,7 +536,7 @@ plat_inline uint __oid_of_last_mmobj(void* stru) {
 #define oid_of_last_mmobj(stru) __oid_of_last_mmobj(stru)
 
 plat_inline bool __is_mmobj_kind_of_oid(void* stru, uint oid) {
-    if (stru == null) return null;
+    if (stru == null) return false;
     mmStruBase base = base_of_mmobj(stru);
     return base->cls->find(base, oid, oid)==null?true:false;
 }
@@ -668,8 +668,8 @@ plat_inline void __pack_varint(int64 value, const uint key, Packer pkr) {
 }
 #define pack_varint(key, value, pkr) __pack_varint(value, key, pkr)
 #define pack_bool(key, value, pkr) __pack_varint((value)?1:0, key, pkr)
-#define pack_uint(key, value, pkr) __pack_varint((int64)value, key, pkr)
-#define pack_int(key, value, pkr) __pack_varint((int64)value, key, pkr)
+#define pack_uint(key, value, pkr) __pack_varint((int64)(value), key, pkr)
+#define pack_int(key, value, pkr) __pack_varint((int64)(value), key, pkr)
 
 plat_inline void __pack_float(float value, const uint key, Packer pkr) {
     call_f(pkr, packFloat, key, value);
